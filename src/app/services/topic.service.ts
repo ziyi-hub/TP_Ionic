@@ -7,7 +7,9 @@ import { Post } from '../models/post';
 })
 export class TopicService {
 
-  constructor(private topics: Topic[]) {}
+  private topics: Topic[] = [];
+
+  constructor() {}
 
   // Récupérer tous les sujets
   getAll(): Topic[] {
