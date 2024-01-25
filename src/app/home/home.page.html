@@ -16,7 +16,7 @@
   <ion-content>
     <ion-list>
       <ion-item-sliding *ngFor="let topic of topics">
-        <ion-item>
+        <ion-item (click)="navigateToDetail(topic.id)">
           <!-- Affichez les détails du sujet ici -->
           {{ topic.name }}
         </ion-item>
@@ -30,20 +30,9 @@
   </ion-content>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button>
+    <ion-fab-button id="open-modal" expand="block" (click)="openModal()">
       <ion-icon name="chevron-up-circle"></ion-icon>
     </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button>
-        <ion-icon name="document"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button>
-        <ion-icon name="color-palette"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button>
-        <ion-icon name="globe"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
   </ion-fab>
 
 </ion-content>

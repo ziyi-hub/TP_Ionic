@@ -11,7 +11,7 @@ export class TopicService {
 
   constructor() {}
 
-  // Récupérer tous les sujets
+  // Récupérer tous les topics
   getAll(): Topic[] {
     return this.topics;
   }
