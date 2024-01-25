@@ -3,19 +3,6 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { TopicDetailPage } from './topic-detail/topic-detail.page';
 import { HomePage } from './home/home.page';
 
-// const routes: Routes = [
-//   {
-//     path: 'home',
-//     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
-//   },
-//   {
-//     path: '',
-//     redirectTo: 'home',
-//     pathMatch: 'full'
-//   },
-//
-// ];
-
 const routes: Routes = [
   { path: '', component: HomePage },
   { path: 'topic-detail/:id', component: TopicDetailPage }, // Paramètre id dans l'URL
