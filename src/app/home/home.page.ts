@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
-import { ModalController } from '@ionic/angular';
+import {ModalController, ToastController} from '@ionic/angular';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
 
 @Component({
@@ -17,6 +17,7 @@ export class HomePage implements OnInit {
   constructor(
     private topicService: TopicService,
     private modalController: ModalController,
+    private toastController: ToastController,
     private router: Router,
   ) {}
 
@@ -50,11 +51,21 @@ export class HomePage implements OnInit {
         const newTopic = { id: 2, name: data.data, posts: [] }
         this.topicService.addTopic(newTopic);
         // Reload the list of topics
+        this.presentToast('bottom');
         this.loadTopics();
       }
     });
 
     return await modal.present();
+  }
+
+  async presentToast(position: 'bottom') {
+    const toast = await this.toastController.create({
+      message: 'Hello World!',
+      duration: 1500,
+      position: position,
+    });
+    await toast.present();
   }
 
   navigateToDetail(topicId: number) {
