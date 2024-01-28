@@ -21,6 +21,10 @@ export class TopicService {
     return this.topics.find(topic => topic.id == topicId);
   }
 
+  getNameById(topicId: number): string | undefined {
+    return this.get(topicId)?.name;
+  }
+
   // Ajouter un nouveau sujet
   addTopic(topic: Topic): void {
     this.topics.push(topic);

@@ -43,11 +43,11 @@ export class HomePage implements OnInit {
       component: TopicModalComponent,
     });
 
-    modal.onDidDismiss().then((data) => {
+    modal.onWillDismiss().then((data) => {
       // console.log(data);
       if (!!data && data.data) {
         // Add the new topic to the list
-        const newTopic = { id: 1, name: data.data, posts: [] }
+        const newTopic = { id: 2, name: data.data, posts: [] }
         this.topicService.addTopic(newTopic);
         // Reload the list of topics
         this.loadTopics();

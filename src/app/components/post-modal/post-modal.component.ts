@@ -18,7 +18,13 @@ export class PostModalComponent {
   }
 
   confirm() {
-    return this.modalCtrl.dismiss(this.name, 'confirm');
+    const data = {
+      name: this.name,
+      description: this.description
+    };
+    return this.modalCtrl.dismiss(data, 'confirm');
   }
+
+
 
 }
