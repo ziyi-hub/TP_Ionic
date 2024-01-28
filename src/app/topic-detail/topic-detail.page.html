@@ -13,20 +13,31 @@
     </ion-toolbar>
   </ion-header>
 
+<!--  <ion-content>-->
+<!--    <ion-list>-->
+<!--      <ion-item-sliding *ngFor="let post of posts">-->
+<!--        <ion-item>-->
+<!--          &lt;!&ndash; Affichez les détails du sujet &ndash;&gt;-->
+<!--          <ion-label>{{ post.name }}</ion-label>-->
+<!--        </ion-item>-->
+
+<!--        <ion-item-options>-->
+<!--          <ion-item-option color="danger">-->
+<!--            <ion-icon name="trash-outline"></ion-icon>-->
+<!--          </ion-item-option>-->
+<!--        </ion-item-options>-->
+<!--      </ion-item-sliding>-->
+<!--    </ion-list>-->
+<!--  </ion-content>-->
+
   <ion-content>
     <ion-list>
-      <ion-item-sliding *ngFor="let post of posts">
-        <ion-item>
-          <!-- Affichez les détails du sujet -->
-          <ion-label>{{ post.name }}</ion-label>
-        </ion-item>
-
-        <ion-item-options>
-          <ion-item-option color="danger">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
+      <ion-item [button]="true" *ngFor="let post of posts">
+        <ion-label>
+          <h2>{{ post.name }}</h2>
+          <p>{{ post.description }}</p>
+        </ion-label>
+      </ion-item>
     </ion-list>
   </ion-content>
 
