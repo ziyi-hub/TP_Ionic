@@ -21,8 +21,8 @@ export class PostService {
   }
 
   // Ajouter un nouveau post
-  addPost(post: Post): void {
-    this.posts.push(post);
+  async addPost(post: Post): Promise<void> {
+    await this.posts.push(post);
   }
 
 }
