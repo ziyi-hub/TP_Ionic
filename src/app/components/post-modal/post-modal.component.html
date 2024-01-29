@@ -3,17 +3,19 @@
     <ion-buttons slot="start">
       <ion-button (click)="cancel()">Cancel</ion-button>
     </ion-buttons>
-    <ion-title>Modal Post</ion-title>
+    <ion-title>Add new Post</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="confirm()" [strong]="true">Confirm</ion-button>
+      <ion-button (click)="confirm()" [strong]="true"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-input labelPlacement="stacked" label="Enter your name" [(ngModel)]="name" placeholder="Your name"></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-input labelPlacement="stacked" label="Enter your description" [(ngModel)]="description" placeholder="Description"></ion-input>
-  </ion-item>
+  <form [formGroup]="post">
+    <ion-item>
+      <ion-input labelPlacement="stacked"  label="Name"  formControlName="name" ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-textarea label="Description" labelPlacement="stacked" [autoGrow]="true" formControlName="description"></ion-textarea>
+    </ion-item>
+  </form>
 </ion-content>

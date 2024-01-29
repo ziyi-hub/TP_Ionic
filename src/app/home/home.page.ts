@@ -2,17 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
-import {ModalController, ToastController} from '@ionic/angular';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
-
+import { ModalController, ToastController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { addOutline, trashOutline} from 'ionicons/icons';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  standalone: true,
+  imports: [ IonFab, IonFabButton, CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
 })
+
 export class HomePage implements OnInit {
   topics: Topic[] = [];
-  topic1: Topic = {id: 1, name: "L'amour", posts: []}
+  // topic1: Topic = {id: 1, name: "L'amour", posts: []}
 
   /**
    * Constructeur
@@ -21,6 +26,7 @@ export class HomePage implements OnInit {
    * @param toastController
    * @param router
    */
+  
   constructor(
     private topicService: TopicService,
     private modalController: ModalController,
@@ -32,7 +38,6 @@ export class HomePage implements OnInit {
    * Charger les topics lors de l'initialisation de la page
    */
   ngOnInit() {
-    this.topicService.addTopic(this.topic1);
     this.loadTopics();
   }
 
@@ -44,7 +49,7 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Ouvert Modal Topic
+   * Ouvrir Modal Topic
    */
   async openModal() {
     const modal = await this.modalController.create({
@@ -52,9 +57,7 @@ export class HomePage implements OnInit {
     });
 
     modal.onWillDismiss().then((data) => {
-      // console.log(data);
       if (!!data && data.data) {
-        // Add the new topic to the list
         const newTopic = { id: 2, name: data.data, posts: [] }
         this.topicService.addTopic(newTopic)
           .then(() => {
@@ -91,8 +94,14 @@ export class HomePage implements OnInit {
    * @param topicId
    */
   navigateToDetail(topicId: number) {
-    // Naviguer vers la page de détail avec l'id du topic
     this.router.navigate(['/topic-detail', topicId]);
   }
 
 }
+/**
+* Add icons 
+**/
+addIcons({
+  'add-outline': addOutline,
+  'trash-outline': trashOutline
+});

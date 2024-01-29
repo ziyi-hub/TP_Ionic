@@ -1,21 +1,28 @@
+import { Post } from './../models/post';
+import { TopicService } from './../services/topic.service';
 import {Component, OnInit} from '@angular/core';
 import {PostModalComponent} from "../components/post-modal/post-modal.component";
 import { ActivatedRoute } from '@angular/router';
 import {PostService} from "../services/post.service";
-import {ModalController, ToastController} from "@ionic/angular";
-import {Post} from '../models/post';
-import {TopicService} from "../services/topic.service";
+import { Topic } from '../models/topic';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import {IonFab,IonFabButton, ModalController, ToastController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { addOutline, trashOutline } from 'ionicons/icons';
 
 @Component({
+  standalone: true,
   selector: 'app-topic-detail',
   templateUrl: './topic-detail.page.html',
   styleUrls: ['./topic-detail.page.scss'],
+  imports : [ReactiveFormsModule, IonFab, IonFabButton,IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, CommonModule]
 })
+
 export class TopicDetailPage implements OnInit {
   posts: Post[] = [];
-  topicId: number | null = -1;
-  topicName: string | undefined = "";
-
+  topicId!: number;
+  topic: Topic | undefined;
   constructor(
     private postService: PostService,
     private topicService: TopicService,
@@ -23,14 +30,12 @@ export class TopicDetailPage implements OnInit {
     private toastController: ToastController,
     private route: ActivatedRoute,
   ) {}
+  
 
   /**
    * Charger les topics lors de l'initialisation de la page
    */
   ngOnInit() {
-    // Utilisation de paramMap pour récupérer les paramètres de l'URL
-    this.topicId = parseInt(<string>this.route.snapshot.paramMap.get('id'));
-    this.topicName = this.topicService.getNameById(this.topicId);
     this.loadPosts();
   }
 
@@ -39,8 +44,16 @@ export class TopicDetailPage implements OnInit {
    */
   loadPosts() {
     this.posts = this.postService.getAll();
+    this.getCurrentTopic();
+  
   }
 
+  getCurrentTopic(){
+    this.route.params.subscribe(params => {
+      this.topicId = params['id'];
+      this.topic = this.topicService.get(this.topicId);
+  });
+  }
   /**
    * Ouvrir fenetre Modal
    */
@@ -50,9 +63,8 @@ export class TopicDetailPage implements OnInit {
     });
 
     modal.onWillDismiss().then((data) => {
-      // console.log(data.data);
+      
       if (!!data && data.data) {
-        // Add the new post to the list
         const newPost = { id: 1, name: data.data.name, description: data.data.description }
         this.postService.addPost(newPost)
           .then(() => {
@@ -61,13 +73,13 @@ export class TopicDetailPage implements OnInit {
           .catch((err) => {
             this.presentToast(err, 'bottom', 'danger');
           })
-        // Reload the list of topics
         this.loadPosts();
-      }
+       }
     });
 
     return await modal.present();
   }
+
 
   /**
    * show toast
@@ -84,5 +96,10 @@ export class TopicDetailPage implements OnInit {
     });
     await toast.present();
   }
-
+    
 }
+
+addIcons({
+  'add-outline': addOutline,
+  'trash-outline' : trashOutline
+});
