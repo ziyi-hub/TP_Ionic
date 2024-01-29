@@ -16,7 +16,7 @@ export class TopicService {
     return this.topics;
   }
 
-  // Récupérer un sujet par ID
+  // Récupérer un sujet par id
   get(topicId: number): Topic | undefined {
     return this.topics.find(topic => topic.id == topicId);
   }
@@ -25,12 +25,12 @@ export class TopicService {
     return this.get(topicId)?.name;
   }
 
-  // Ajouter un nouveau sujet
-  addTopic(topic: Topic): void {
-    this.topics.push(topic);
+  // Ajouter un nouveau topic
+  async addTopic(topic: Topic): Promise<void> {
+    await this.topics.push(topic);
   }
 
-  // Ajouter un nouveau post à un sujet existant
+  // Ajouter un nouveau post à un topic existant
   addPost(post: Post, topicId: number): void {
     const topic = this.get(topicId);
     if (!!topic) {
