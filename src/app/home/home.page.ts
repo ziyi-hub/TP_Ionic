@@ -37,7 +37,7 @@ export class HomePage implements OnInit {
   }
 
   /**
-   * Ouvrir fenetre Modal
+   * Ouvert Modal Topic
    */
   async openModal() {
     const modal = await this.modalController.create({
@@ -51,7 +51,7 @@ export class HomePage implements OnInit {
         const newTopic = { id: 2, name: data.data, posts: [] }
         this.topicService.addTopic(newTopic);
         // Reload the list of topics
-        this.presentToast('bottom');
+        this.presentToast(data.data, 'bottom');
         this.loadTopics();
       }
     });
@@ -59,11 +59,17 @@ export class HomePage implements OnInit {
     return await modal.present();
   }
 
-  async presentToast(position: 'bottom') {
+  /**
+   * Affichage toast notification
+   * @param nameTopic
+   * @param position
+   */
+  async presentToast(nameTopic: string, position: 'bottom') {
     const toast = await this.toastController.create({
-      message: 'Hello World!',
+      message: 'Topic ' + nameTopic + " successfully created",
       duration: 1500,
       position: position,
+      color: 'success'
     });
     await toast.present();
   }
