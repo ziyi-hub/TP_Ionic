@@ -7,6 +7,8 @@ import { ModalController, ToastController, IonFab, IonFabButton, IonHeader, IonT
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { addOutline, trashOutline} from 'ionicons/icons';
+import { UUID } from 'angular2-uuid';
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -17,7 +19,6 @@ import { addOutline, trashOutline} from 'ionicons/icons';
 
 export class HomePage implements OnInit {
   topics: Topic[] = [];
-  // topic1: Topic = {id: 1, name: "L'amour", posts: []}
 
   /**
    * Constructeur
@@ -26,7 +27,7 @@ export class HomePage implements OnInit {
    * @param toastController
    * @param router
    */
-  
+
   constructor(
     private topicService: TopicService,
     private modalController: ModalController,
@@ -58,7 +59,7 @@ export class HomePage implements OnInit {
 
     modal.onWillDismiss().then((data) => {
       if (!!data && data.data) {
-        const newTopic = { id: 2, name: data.data, posts: [] }
+        const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
         this.topicService.addTopic(newTopic)
           .then(() => {
             this.presentToast(data.data, 'bottom', 'success');
@@ -93,13 +94,14 @@ export class HomePage implements OnInit {
    * Redirect page
    * @param topicId
    */
-  navigateToDetail(topicId: number) {
+  navigateToDetail(topicId: string) {
     this.router.navigate(['/topic-detail', topicId]);
   }
 
 }
+
 /**
-* Add icons 
+* Add icons
 **/
 addIcons({
   'add-outline': addOutline,

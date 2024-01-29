@@ -1,7 +1,7 @@
 import { Post } from "./post";
 
 export interface Topic {
-  id: number;
+  id: string;
   name: string;
   posts?: Post[];
 }

@@ -16,7 +16,7 @@ export class PostService {
   }
 
   // Récupérer un post par ID
-  get(postId: number): Post | undefined {
+  get(postId: string): Post | undefined {
     return this.posts.find(post => post.id == postId);
   }
 

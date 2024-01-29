@@ -17,11 +17,11 @@ export class TopicService {
   }
 
   // Récupérer un sujet par id
-  get(topicId: number): Topic | undefined {
+  get(topicId: string): Topic | undefined {
     return this.topics.find(topic => topic.id == topicId);
   }
 
-  getNameById(topicId: number): string | undefined {
+  getNameById(topicId: string): string | undefined {
     return this.get(topicId)?.name;
   }
 
@@ -31,7 +31,7 @@ export class TopicService {
   }
 
   // Ajouter un nouveau post à un topic existant
-  addPost(post: Post, topicId: number): void {
+  addPost(post: Post, topicId: string): void {
     const topic = this.get(topicId);
     if (!!topic) {
       if (!topic.posts) {
