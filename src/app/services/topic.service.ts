@@ -31,9 +31,9 @@ export class TopicService {
   }
 
   // Ajouter un nouveau post à un topic existant
-  addPost(post: Post, topicId: string): void {
+  async addPost(post: Post, topicId: string): Promise<void> {
     const topic = this.get(topicId);
-    if (!!topic) {
+    if (topic) {
       if (!topic.posts) {
         topic.posts = [];
       }

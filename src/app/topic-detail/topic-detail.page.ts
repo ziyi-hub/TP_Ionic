@@ -3,7 +3,6 @@ import { TopicService } from '../services/topic.service';
 import {Component, OnInit} from '@angular/core';
 import {PostModalComponent} from "../components/post-modal/post-modal.component";
 import { ActivatedRoute } from '@angular/router';
-import {PostService} from "../services/post.service";
 import { Topic } from '../models/topic';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -22,10 +21,8 @@ import { UUID } from 'angular2-uuid';
 
 export class TopicDetailPage implements OnInit {
   posts: Post[] = [];
-  topicId!: number;
   topic: Topic | undefined;
   constructor(
-    private postService: PostService,
     private topicService: TopicService,
     private modalController: ModalController,
     private toastController: ToastController,
@@ -37,22 +34,17 @@ export class TopicDetailPage implements OnInit {
    * Charger les topics lors de l'initialisation de la page
    */
   ngOnInit() {
-    this.loadPosts();
+    this.getCurrentTopic();
   }
 
   /**
    * Utiliser le service pour récupérer tous les topics
    */
-  loadPosts() {
-    this.posts = this.postService.getAll();
-    this.getCurrentTopic();
-
-  }
 
   getCurrentTopic(){
     this.route.params.subscribe(params => {
-      this.topicId = params['id'];
-      this.topic = this.topicService.get(String(this.topicId));
+      const topicId = params['id'];
+      this.topic = this.topicService.get(topicId);
   });
   }
   /**
@@ -65,16 +57,16 @@ export class TopicDetailPage implements OnInit {
 
     modal.onWillDismiss().then((data) => {
 
-      if (!!data && data.data) {
+      if (!!data && data.data && this.topic) {
         const newPost = { id: UUID.UUID(), name: data.data.name, description: data.data.description }
-        this.postService.addPost(newPost)
+        this.topicService.addPost(newPost, this.topic.id)
           .then(() => {
             this.presentToast(data.data.name, 'bottom', 'success');
           })
           .catch((err) => {
             this.presentToast(err, 'bottom', 'danger');
           })
-        this.loadPosts();
+        this.getCurrentTopic();
        }
     });
 
@@ -90,7 +82,7 @@ export class TopicDetailPage implements OnInit {
    */
   async presentToast(nameTopic: string, position: 'bottom', color: string) {
     const toast = await this.toastController.create({
-      message: 'Topic ' + nameTopic + " successfully created",
+      message: 'Topic ' + nameTopic + " successfully updated",
       duration: 1500,
       position: position,
       color: color
