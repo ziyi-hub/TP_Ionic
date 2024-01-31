@@ -8,7 +8,7 @@
 
 <ion-content>
     <ion-list>
-      <ion-item-sliding *ngFor="let post of posts">
+      <ion-item-sliding data-testid="posts" *ngFor="let post of posts">
         <ion-item>
           <ion-label>{{ post.name }}</ion-label>
         </ion-item>
@@ -21,7 +21,7 @@
     </ion-list>
 </ion-content>
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button id="open-modal" expand="block" (click)="openModal()"><ion-icon name="add-outline"></ion-icon></ion-fab-button> 
+  <ion-fab-button id="open-modal" data-testid="open-new-post-modal-btn" expand="block" (click)="openModal()"><ion-icon name="add-outline"></ion-icon></ion-fab-button>
 </ion-fab>
 
 

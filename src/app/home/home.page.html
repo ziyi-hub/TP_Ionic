@@ -7,7 +7,7 @@
 </ion-header>
 <ion-content>
   <ion-list>
-    <ion-item-sliding *ngFor="let topic of topics">
+    <ion-item-sliding data-testid="topics" *ngFor="let topic of topics">
       <ion-item (click)="navigateToDetail(topic.id)">
         <ion-label>{{ topic.name }}</ion-label>
       </ion-item>
@@ -20,7 +20,7 @@
   </ion-list>
 </ion-content>
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button id="open-modal" expand="block" (click)="openModal()">
+  <ion-fab-button data-testid="open-new-topic-modal-btn" id="open-modal" expand="block" (click)="openModal()">
     <ion-icon name="add-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>
