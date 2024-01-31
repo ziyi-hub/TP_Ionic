@@ -12,7 +12,7 @@
 <ion-content class="ion-padding">
   <form [formGroup]="post">
     <ion-item>
-      <ion-input labelPlacement="stacked"  label="Name"  formControlName="name" ></ion-input>
+      <ion-input labelPlacement="stacked"  label="Name"  formControlName="name" errorText="Invalid name" ></ion-input>
     </ion-item>
     <ion-item>
       <ion-textarea label="Description" labelPlacement="stacked" [autoGrow]="true" formControlName="description"></ion-textarea>

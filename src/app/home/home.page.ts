@@ -4,9 +4,8 @@ import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
 import { ModalController, ToastController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
-import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { addOutline, trashOutline} from 'ionicons/icons';
+import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 
 @Component({
@@ -14,7 +13,7 @@ import { UUID } from 'angular2-uuid';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [ IonFab, IonFabButton, CommonModule, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
+  imports: [ IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
 })
 
 export class HomePage implements OnInit {
@@ -52,7 +51,7 @@ export class HomePage implements OnInit {
   /**
    * Ouvrir Modal Topic
    */
-  async openModal() {
+  async createTopic() {
     const modal = await this.modalController.create({
       component: TopicModalComponent,
     });
@@ -62,7 +61,8 @@ export class HomePage implements OnInit {
         const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
         this.topicService.addTopic(newTopic)
           .then(() => {
-            this.presentToast(data.data, 'bottom', 'success');
+            const message = "This topic" + data.data + " is successfully created."
+            this.presentToast(message, 'bottom', 'success');
           })
           .catch((err) => {
             this.presentToast(err, 'bottom', 'danger');
@@ -80,9 +80,9 @@ export class HomePage implements OnInit {
    * @param position
    * @param color
    */
-  async presentToast(nameTopic: string, position: 'bottom', color: string) {
+  async presentToast(message: string, position: 'bottom', color: string) {
     const toast = await this.toastController.create({
-      message: 'Topic ' + nameTopic + " successfully created",
+      message: message,
       duration: 1500,
       position: position,
       color: color
@@ -97,7 +97,39 @@ export class HomePage implements OnInit {
   navigateToDetail(topicId: string) {
     this.router.navigate(['/topic-detail', topicId]);
   }
+  
+  async updateTopic(topicId: string) {
+    const modal = await this.modalController.create({
+      component: TopicModalComponent,
+    });
 
+    modal.onWillDismiss().then((data) => {
+      if (!!data && data.data) {
+          const updatedTopic = { id: topicId, name: data.data, posts: [] }
+          this.topicService.updateTopic(updatedTopic)
+            .then(() => {
+              const message = "This topic" + data.data + " is successfully updated."
+              this.presentToast(message, 'bottom', 'success');
+            })
+            .catch((err) => {
+              this.presentToast(err, 'bottom', 'danger');
+            })
+          this.loadTopics();
+        
+      }
+    });
+
+    return await modal.present();
+  }
+  async deleteTopic(topicId: string){
+    this.topicService.deleteTopic(topicId).then(() => {
+      const message = "Topic successfully deleted."
+      this.presentToast(message, 'bottom', 'success');
+    })
+    .catch((err) => {
+      this.presentToast(err, 'bottom', 'danger');
+    });
+  }
 }
 
 /**
@@ -105,5 +137,6 @@ export class HomePage implements OnInit {
 **/
 addIcons({
   'add-outline': addOutline,
-  'trash-outline': trashOutline
+  'trash-outline': trashOutline,
+  'pencil-outline' : pencilOutline
 });
