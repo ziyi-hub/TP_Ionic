@@ -100,6 +100,10 @@ export class TopicDetailPage implements OnInit {
   async editPost(postId: string) {
     const modal = await this.modalController.create({
       component: PostModalComponent,
+      componentProps: {
+        postId: postId,
+        topicId: this.topic?.id
+      }
     });
 
     modal.onWillDismiss().then((data) => {

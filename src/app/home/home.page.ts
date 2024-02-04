@@ -101,6 +101,9 @@ export class HomePage implements OnInit {
   async updateTopic(topicId: string) {
     const modal = await this.modalController.create({
       component: TopicModalComponent,
+      componentProps: {
+        topicId: topicId
+      }
     });
 
     modal.onWillDismiss().then((data) => {
