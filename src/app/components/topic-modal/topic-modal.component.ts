@@ -3,6 +3,7 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
+import {UtilitiesMixin} from 'src/app/mixins/utilities-mixin'
 import {
   FormControl,
   ReactiveFormsModule,
@@ -16,7 +17,7 @@ import { Topic } from 'src/app/models/topic';
   styleUrls: ['./topic-modal.component.scss'],
   imports:[ReactiveFormsModule,CommonModule, IonHeader, IonToolbar, IonItem, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
 })
-export class TopicModalComponent implements OnInit{
+export class TopicModalComponent extends UtilitiesMixin implements OnInit {
   @Input() topicId: string | undefined;
   topic : Topic | undefined ;
   name = new FormControl('');
@@ -30,10 +31,12 @@ export class TopicModalComponent implements OnInit{
         if(this.topic)
           this.name.setValue(this.topic.name);
         else
-          console.error('Topic not found.');
+          this.presentToast("Topic not found", "danger")
       }
     } catch (error) {
-      console.error('Error fetching topic:', error);
+      const msg = "Error fetching topic: " + error
+      this.presentToast(msg, "danger")
+
     }
   }
 

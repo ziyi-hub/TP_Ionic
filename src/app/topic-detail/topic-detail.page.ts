@@ -1,3 +1,4 @@
+import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { Post } from '../models/post';
 import { TopicService } from '../services/topic.service';
 import {Component, OnInit, inject} from '@angular/core';
@@ -5,7 +6,7 @@ import {PostModalComponent} from "../components/post-modal/post-modal.component"
 import { ActivatedRoute } from '@angular/router';
 import { Topic } from '../models/topic';
 import { ReactiveFormsModule } from '@angular/forms';
-import {IonFab,IonFabButton, ModalController, ToastController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
+import {IonFab,IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
@@ -18,12 +19,11 @@ import { UUID } from 'angular2-uuid';
   imports : [ReactiveFormsModule, IonFab, IonFabButton,IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
-export class TopicDetailPage implements OnInit {
+export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   posts: Post[] = [];
   topic: Topic | undefined;
   private readonly topicService = inject(TopicService); 
   private readonly modalController= inject(ModalController);
-  private readonly toastController =  inject(ToastController);
   private readonly route = inject(ActivatedRoute);
 
   /**
@@ -57,11 +57,11 @@ export class TopicDetailPage implements OnInit {
         const newPost = { id: UUID.UUID(), name: data.data.name, description: data.data.description }
         this.topicService.addPost(newPost, this.topic.id)
           .then(() => {
-            const message = "This post" + data.data.name + " is successfully created."
-            this.presentToast(message, 'bottom', 'success');
+            const message = data.data.name + " is successfully created."
+            this.presentToast(message, 'success');
           })
           .catch((err) => {
-            this.presentToast(err, 'bottom', 'danger');
+            this.presentToast(err,  'danger');
           })
         this.getCurrentTopic();
        }
@@ -70,32 +70,23 @@ export class TopicDetailPage implements OnInit {
     return await modal.present();
   }
 
-
-  /**
-   * show toast
-   * @param nameTopic
-   * @param position
-   * @param color
-   */
-  async presentToast(message: string, position: 'bottom', color: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 1500,
-      position: position,
-      color: color
-    });
-    await toast.present();
-  }
   async deletePost(postId:string){
-    if(this.topic)
-      this.topicService.deletePost(postId, this.topic.id) 
-      .then(() => {
-        const message = "Post successfully deleted."
-        this.presentToast(message, 'bottom', 'success');
-      })
-      .catch((err) => {
-        this.presentToast(err, 'bottom', 'danger');
-      })
+    if(this.topic){
+      let postName = "" ;
+      this.topicService.getPost(this.topic.id, postId).then((value)=>{
+        if(value && this.topic){
+          postName = value.name
+          this.topicService.deletePost(postId, this.topic.id) 
+          .then(() => {
+            const message = postName + " is successfully deleted."
+            this.presentToast(message, 'success');
+          })
+          .catch((err) => {
+            this.presentToast(err, 'danger');
+          })
+        }  
+      });
+    }
   }
   async editPost(postId: string) {
     const modal = await this.modalController.create({
@@ -107,25 +98,21 @@ export class TopicDetailPage implements OnInit {
     });
 
     modal.onWillDismiss().then((data) => {
-
       if (!!data && data.data && this.topic) {
         const post = { id: postId, name: data.data.name, description: data.data.description }
         this.topicService.updatePost(post, this.topic.id)
           .then(() => {
-            const message = "This post" + data.data.name + " is successfully updated."
-            this.presentToast(message, 'bottom', 'success');
+            const message = data.data.name + " is successfully updated."
+            this.presentToast(message, 'success');
           })
           .catch((err) => {
-            this.presentToast(err, 'bottom', 'danger');
+            this.presentToast(err, 'danger');
           })
         this.getCurrentTopic(); 
        }
     });
-
     return await modal.present();
   }
-
-
 }
 
 addIcons({

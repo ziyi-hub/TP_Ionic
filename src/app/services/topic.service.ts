@@ -21,16 +21,11 @@ export class TopicService {
     return this.topics.find(topic => topic.id == topicId);
   }
   async getPost(topicId: string, postId: string) {
-    try {
-      const topic = await this.get(topicId);
-      if (topic && topic.posts) {
-        return topic.posts.find(post => post.id === postId);
-      } else {
-        throw new Error('Topic not found or does not contain posts.');
-      }
-    } catch (error) {
-      console.error('Error fetching post:', error);
-      return null;
+    const topic = await this.get(topicId);
+    if (topic && topic.posts) {
+      return topic.posts.find(post => post.id === postId);
+    } else {
+      throw new Error('Topic not found or does not contain posts.');
     }
   }
   

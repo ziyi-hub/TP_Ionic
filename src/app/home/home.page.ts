@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
-import { ModalController, ToastController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
@@ -16,24 +17,13 @@ import { UUID } from 'angular2-uuid';
   imports: [ IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
 })
 
-export class HomePage implements OnInit {
+export class HomePage extends UtilitiesMixin implements OnInit {
   topics: Topic[] = [];
 
-  /**
-   * Constructeur
-   * @param topicService
-   * @param modalController
-   * @param toastController
-   * @param router
-   */
-
-  constructor(
-    private topicService: TopicService,
-    private modalController: ModalController,
-    private toastController: ToastController,
-    private router: Router,
-  ) {}
-
+  
+  private readonly topicService = inject(TopicService);
+  private readonly modalController = inject(ModalController);
+  private readonly router = inject(Router);
   /**
    * Charger les topics lors de l'initialisation de la page
    */
@@ -61,33 +51,17 @@ export class HomePage implements OnInit {
         const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
         this.topicService.addTopic(newTopic)
           .then(() => {
-            const message = "This topic" + data.data + " is successfully created."
-            this.presentToast(message, 'bottom', 'success');
+            const message =  data.data + " is successfully created."
+            this.presentToast(message, 'success');
           })
           .catch((err) => {
-            this.presentToast(err, 'bottom', 'danger');
+            this.presentToast(err, 'danger');
           })
         this.loadTopics();
       }
     });
 
     return await modal.present();
-  }
-
-  /**
-   * Show toast
-   * @param nameTopic
-   * @param position
-   * @param color
-   */
-  async presentToast(message: string, position: 'bottom', color: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 1500,
-      position: position,
-      color: color
-    });
-    await toast.present();
   }
 
   /**
@@ -111,11 +85,11 @@ export class HomePage implements OnInit {
           const updatedTopic = { id: topicId, name: data.data, posts: [] }
           this.topicService.updateTopic(updatedTopic)
             .then(() => {
-              const message = "This topic" + data.data + " is successfully updated."
-              this.presentToast(message, 'bottom', 'success');
+              const message = data.data + " is successfully updated."
+              this.presentToast(message, 'success');
             })
             .catch((err) => {
-              this.presentToast(err, 'bottom', 'danger');
+              this.presentToast(err, 'danger');
             })
           this.loadTopics();
         
@@ -125,12 +99,13 @@ export class HomePage implements OnInit {
     return await modal.present();
   }
   async deleteTopic(topicId: string){
+    const topicName =  this.topicService.get(topicId)?.name;
     this.topicService.deleteTopic(topicId).then(() => {
-      const message = "Topic successfully deleted."
-      this.presentToast(message, 'bottom', 'success');
+      const message = topicName + " is succesfully deleted."
+      this.presentToast(message,  'success');
     })
     .catch((err) => {
-      this.presentToast(err, 'bottom', 'danger');
+      this.presentToast(err, 'danger');
     });
   }
 }

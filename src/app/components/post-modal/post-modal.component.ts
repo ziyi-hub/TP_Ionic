@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Post } from 'src/app/models/post';
 import { TopicService } from 'src/app/services/topic.service';
+import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 @Component({
   standalone:true,
   selector: 'app-post-modal',
@@ -17,7 +18,7 @@ import { TopicService } from 'src/app/services/topic.service';
   styleUrls: ['./post-modal.component.scss'],
   imports : [ReactiveFormsModule, IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
-export class PostModalComponent implements OnInit{
+export class PostModalComponent extends UtilitiesMixin implements OnInit{
   @Input() postId : string |undefined;
   @Input() topicId : string |undefined;
   post : Post | undefined ;
@@ -37,11 +38,12 @@ export class PostModalComponent implements OnInit{
             description : value.description
           });
         } else {
-          console.error('Post not found.');
+          this.presentToast('Post not found.', 'danger')
         }
       }
     } catch (error) {
-      console.error('Error fetching post:', error);
+      const msg =  'Error fetching post: '+error
+      this.presentToast(msg, 'danger')
     }
   }
 
