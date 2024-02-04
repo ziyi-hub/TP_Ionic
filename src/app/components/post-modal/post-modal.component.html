@@ -5,17 +5,17 @@
     </ion-buttons>
     <ion-title>Add new Post</ion-title>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-post-modal-btn" (click)="confirm()" [strong]="true"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-post-modal-btn" (click)="confirm()" [strong]="true" [disabled]="postForm.invalid"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
   <form [formGroup]="postForm">
     <ion-item>
-      <ion-input data-testid="post-name" labelPlacement="stacked"  label="Name"  formControlName="name" errorText="Invalid name" ></ion-input>
+      <ion-input data-testid="post-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Name is required" ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-textarea data-testid="post-desc" label="Description" labelPlacement="stacked" [autoGrow]="true" formControlName="description"></ion-textarea>
+      <ion-textarea data-testid="post-desc" label="Description" labelPlacement="stacked" required formControlName="description" errorText="Description is required"></ion-textarea>
     </ion-item>
   </form>
 </ion-content>

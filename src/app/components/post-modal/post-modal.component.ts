@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit, inject } from '@angular/core';
 import { IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
@@ -23,7 +23,7 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
   @Input() topicId : string |undefined;
   post : Post | undefined ;
   postForm = new FormGroup({
-    name : new FormControl(''),
+    name : new FormControl('') ,
     description : new FormControl('')  });
 
   private readonly topicService = inject(TopicService);
@@ -34,9 +34,10 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
         const value = await this.topicService.getPost(this.topicId, this.postId);
         if (value && value.description) {
           this.postForm.setValue({
-            name: value.name,
-            description : value.description
+            name: value!.name,
+            description : value!.description
           });
+          
         } else {
           this.presentToast('Post not found.', 'danger')
         }

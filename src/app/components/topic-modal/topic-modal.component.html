@@ -5,12 +5,12 @@
     </ion-buttons>
     <ion-title>Add new Topic</ion-title>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-topic-modal-btn" (click)="confirm()" [strong]="true"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-topic-modal-btn" (click)="confirm()" [strong]="true" [disabled]="name.invalid"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
   <ion-item>
-    <ion-input data-testid="topic-name" labelPlacement="stacked" label="Name" [formControl]="name"></ion-input>
+    <ion-input data-testid="topic-name" required="true" labelPlacement="stacked" label="Name" [formControl]="name" errorText="Name is required"></ion-input>
   </ion-item>
 </ion-content>
