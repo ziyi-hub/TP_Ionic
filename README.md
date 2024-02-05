@@ -28,5 +28,4 @@
 - ouvert navigateur localhost:4200
 
 ## A faire ##
-- Test Update
-- Test Delete
+
