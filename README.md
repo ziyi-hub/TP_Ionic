@@ -29,5 +29,4 @@
 
 ## A faire ##
 - Test Update
-- Alert
 - Test Delete

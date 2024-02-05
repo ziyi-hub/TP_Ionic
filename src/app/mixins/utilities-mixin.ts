@@ -28,8 +28,8 @@ export class UtilitiesMixin {
    */
   async presentAlertDelete(deleteCallback: (topicId: string) => void, topicId: string, topicName: string) {
     const alert = await this.alertController.create({
-      header: 'Delete Item',
-      subHeader: 'Are you sure you want to delete ' + topicName + "?",
+      header: 'Are you sure you want to delete ' + topicName + "?",
+      subHeader: '',
       message: '',
       buttons: [
         {
