@@ -19,11 +19,10 @@ import { UUID } from 'angular2-uuid';
 
 export class HomePage extends UtilitiesMixin implements OnInit {
   topics: Topic[] = [];
-
-  
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
+
   /**
    * Charger les topics lors de l'initialisation de la page
    */
@@ -71,7 +70,11 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   navigateToDetail(topicId: string) {
     this.router.navigate(['/topic-detail', topicId]);
   }
-  
+
+  /**
+   * Update topic
+   * @param topicId
+   */
   async updateTopic(topicId: string) {
     const modal = await this.modalController.create({
       component: TopicModalComponent,
@@ -92,12 +95,17 @@ export class HomePage extends UtilitiesMixin implements OnInit {
               this.presentToast(err, 'danger');
             })
           this.loadTopics();
-        
+
       }
     });
 
     return await modal.present();
   }
+
+  /**
+   * Delete topic id
+   * @param topicId
+   */
   async deleteTopic(topicId: string){
     const topicName =  this.topicService.get(topicId)?.name;
     this.topicService.deleteTopic(topicId).then(() => {

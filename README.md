@@ -28,5 +28,6 @@
 - ouvert navigateur localhost:4200
 
 ## A faire ##
-- Validator
-- Notification
+- Test Update
+- Alert
+- Test Delete
