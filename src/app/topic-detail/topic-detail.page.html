@@ -11,8 +11,8 @@
     @for (post of topic?.posts; track topic?.id) {
       <ion-item-sliding data-testid="posts">
         <ion-item-options side="start">
-          <ion-item-option color="success">
-            <ion-icon name="pencil-outline"  (click)="editPost(post.id)"></ion-icon>
+          <ion-item-option color="success" (click)="editPost(post.id)">
+            <ion-icon name="pencil-outline"></ion-icon>
           </ion-item-option>
         </ion-item-options>
         <ion-item>
