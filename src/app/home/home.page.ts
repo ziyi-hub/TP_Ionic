@@ -57,13 +57,18 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    */
   ngOnInit() {
     this.loadTopics();
+
   }
 
   /**
    * Utiliser le service pour récupérer tous les topics
    */
   loadTopics() {
-    this.topics = this.topicService.getAll();
+    this.topics$ = this.topicService.getAllTopics();
+    this.topics$.subscribe((topics)=>{topics.forEach((topic) => {
+        console.log(topic)
+      })
+    })
   }
 
   /**
