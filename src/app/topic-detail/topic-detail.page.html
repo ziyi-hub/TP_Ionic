@@ -5,10 +5,9 @@
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
   <ion-list>
-    @for (post of topic?.posts; track topic?.id) {
+    @for (post of posts; track post?.id) {
       <ion-item-sliding data-testid="posts">
         <ion-item-options side="start">
           <ion-item-option color="success" (click)="editPost(post.id)">

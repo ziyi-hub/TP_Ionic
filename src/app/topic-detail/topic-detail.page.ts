@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { Post } from '../models/post';
 import { TopicService } from '../services/topic.service';
@@ -22,6 +23,7 @@ import { UUID } from 'angular2-uuid';
 export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   posts: Post[] = [];
   topic: Topic | undefined;
+  topic$: Observable<Topic | undefined> | undefined;
   private readonly topicService = inject(TopicService); 
   private readonly modalController= inject(ModalController);
   private readonly route = inject(ActivatedRoute);
@@ -40,8 +42,26 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   getCurrentTopic(){
     this.route.params.subscribe(params => {
       const topicId = params['id'];
-      this.topic = this.topicService.get(topicId);
-  });
+      this.topicService.getTopicById(topicId).subscribe(
+        topic => {
+          if(topic){
+            this.topic = topic;
+            this.topicService.getPostsByTopicId(topicId).subscribe(
+              posts => {
+                if(posts)
+                  this.posts = posts;
+                else 
+                  console.log('No posts found.');
+              },
+              error => {
+                console.error('Error occurred:', error);
+              }
+            );
+          }
+        });
+    }
+    );
+
   }
   /**
    * Ouvrir fenetre Modal

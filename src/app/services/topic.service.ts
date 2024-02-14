@@ -1,43 +1,16 @@
-import {inject, Injectable} from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import  { Topic } from '../models/topic';
 import { Post } from '../models/post';
-import {collection, collectionChanges, collectionData, Firestore, getDocs} from "@angular/fire/firestore";
-import {from, map, Observable} from "rxjs";
-
+import { Firestore, collection, collectionData, collectionChanges, getDocs} from '@angular/fire/firestore';
+import { Observable, map, Subscription, from } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
+ 
 export class TopicService {
-
-  private topics: Topic[] = [];
-
-  private firestore: Firestore = inject(Firestore);
-  topics$: Observable<Topic[]>;
-
-  constructor() {
-    // get a reference to the topics collection
-    const topicsCollection = collection(this.firestore, 'topics');
-    // get documents (data) from the collection using collectionData
-    this.topics$ = collectionData(topicsCollection, { idField: 'id'}) as Observable<Topic[]>;
-
-    // this.topics$ = from(
-    //   topicsCollection
-    //   ).pipe(
-    //     map((items) =>
-    //       items.map((item) => {
-    //         const data = item.doc.data();
-    //         const id = item.doc.id;
-    //         return {id};
-    //       })
-    //     )
-    //   );
-  }
-
-  // Récupérer tous les topics
-  getAll(): Observable<Topic[]> {
-    return this.topics$;
-  }
-
+  private readonly firestore = inject(Firestore);
+  private topics : Topic [] = [];
   getAllTopics(): Observable<Topic[]> {
     const topicCollectionRef = collection(this.firestore, 'topics');
     return from(getDocs(topicCollectionRef)).pipe(
@@ -46,15 +19,27 @@ export class TopicService {
         snapshot.forEach(doc => {
           topics.push({id: doc.id,name: doc.data()['name'],posts: []});
         });
+        
         return topics;
       })
     );
   }
 
-  // Récupérer un sujet par id
+  getTopicById(topicId: string): Observable<Topic | undefined> {
+    return this.getAllTopics().pipe(
+      map(topics => topics.find(topic => topic.id === topicId))
+    );
+  }
+
   get(topicId: string): Topic | undefined {
     return this.topics.find(topic => topic.id == topicId);
   }
+
+ 
+  getPostsByTopicId(topicId: string) : Observable<Post[] | undefined> {
+    return collectionData(collection(this.firestore, 'topics/'+topicId+'/posts')) as Observable<Post[]>;
+  }  
+
 
   async getPost(topicId: string, postId: string) {
     const topic = await this.get(topicId);
@@ -64,7 +49,7 @@ export class TopicService {
       throw new Error('Topic not found or does not contain posts.');
     }
   }
-
+  
   getNameById(topicId: string): string | undefined {
     return this.get(topicId)?.name;
   }

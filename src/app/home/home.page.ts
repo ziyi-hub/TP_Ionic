@@ -8,7 +8,7 @@ import { ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle,
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
-import { Firestore, collection, collectionData} from '@angular/fire/firestore';
+
 import {Observable} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
@@ -40,24 +40,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
-
-  private firestore: Firestore = inject(Firestore);
-  topics$: Observable<Topic[]>;
-
-  constructor() {
-    super();
-    // get a reference to the topics collection
-    const topicsCollection = collection(this.firestore, 'topics');
-    // get documents (data) from the collection using collectionData
-    this.topics$ = collectionData(topicsCollection) as Observable<Topic[]>;
-  }
+  topics$: Observable<Topic[]> | undefined;
 
   /**
    * Charger les topics lors de l'initialisation de la page
    */
   ngOnInit() {
     this.loadTopics();
-
+    
   }
 
   /**
@@ -65,10 +55,9 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    */
   loadTopics() {
     this.topics$ = this.topicService.getAllTopics();
-    this.topics$.subscribe((topics)=>{topics.forEach((topic) => {
-        console.log(topic)
-      })
-    })
+    this.topics$.forEach((element) => {
+      console.log(element);
+   });
   }
 
   /**
