@@ -7,7 +7,7 @@
 </ion-header>
 <ion-content>
   <ion-list>
-    @for (topic of topics; track topic.id) {
+    @for (topic of topics$ | async; track topic.id) {
     <ion-item-sliding data-testid="topics">
       <ion-item-options side="start">
         <ion-item-option color="success" (click)="updateTopic(topic.id)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>

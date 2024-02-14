@@ -8,13 +8,31 @@ import { ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle,
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
+import { Firestore, collection, collectionData} from '@angular/fire/firestore';
+import {Observable} from "rxjs";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [ IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
+  imports: [
+    IonFab,
+    IonFabButton,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItemSliding,
+    IonIcon,
+    IonItemOption,
+    IonItemOptions,
+    IonLabel,
+    IonItem,
+    AsyncPipe,
+  ],
 })
 
 export class HomePage extends UtilitiesMixin implements OnInit {
@@ -22,6 +40,17 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
+
+  private firestore: Firestore = inject(Firestore);
+  topics$: Observable<Topic[]>;
+
+  constructor() {
+    super();
+    // get a reference to the topics collection
+    const topicsCollection = collection(this.firestore, 'topics');
+    // get documents (data) from the collection using collectionData
+    this.topics$ = collectionData(topicsCollection) as Observable<Topic[]>;
+  }
 
   /**
    * Charger les topics lors de l'initialisation de la page
