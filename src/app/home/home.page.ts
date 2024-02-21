@@ -57,8 +57,8 @@ export class HomePage extends UtilitiesMixin{
       if (!!data && data.data) {
         const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
         this.topicService.addTopic(newTopic)
-          .then(() => {
-            const message =  data.data + " is successfully created."
+          .then((topicAdded: any) => {
+            const message =  topicAdded.name + " is successfully created."
             this.presentToast(message, 'success');
           })
           .catch((err) => {
@@ -94,8 +94,8 @@ export class HomePage extends UtilitiesMixin{
       if (!!data && data.data) {
           const updatedTopic = { id: topicId, name: data.data, posts: [] }
           this.topicService.updateTopic(updatedTopic)
-            .then(() => {
-              const message = data.data + " is successfully updated."
+            .then((topicUpdated: any) => {
+              const message = topicUpdated.name + " is successfully updated."
               this.presentToast(message, 'success');
             })
             .catch((err) => {
@@ -115,7 +115,7 @@ export class HomePage extends UtilitiesMixin{
     this.topicService.getTopicById(topicId).subscribe((value) => {
       if (value && value.name) {
         this.topicService.deleteTopic(topicId)
-          .then(() => {
+          .then((res: any) => {
             const message = value.name + " is succesfully deleted."
             this.presentToast(message,  'success');
           })

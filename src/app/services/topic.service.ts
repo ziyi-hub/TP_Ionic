@@ -74,47 +74,45 @@ export class TopicService {
    * Add new Topic
    * @param topic
    */
-  async addTopic(topic: Topic): Promise<void> {
-      if (!topic.name) return;
-      try {
-        await addDoc<DocumentData, DocumentData>(collection(this.firestore, 'topics'), {
-          name: topic.name,
-        });
-      } catch (error) {
-        throw new Error('Error adding document: '+ error);
+  async addTopic(topic: Topic) {
+    return new Promise((resolve, reject) => {
+      if (!!topic.name) {
+        addDoc<DocumentData, DocumentData>(collection(this.firestore, 'topics'), {name: topic.name})
+          .then(() => { resolve(topic) });
+      }else{
+        reject("Error: name undefined");
       }
+    })
   }
 
   /**
    * Mise à jour un topic
    * @param topicToUpdate
    */
-  async updateTopic(topicToUpdate: Topic): Promise<void> {
-    if (this.getTopicById(topicToUpdate.id)) {
-      try{
-        await updateDoc(doc(collection(this.firestore, 'topics'), topicToUpdate.id), {
-          name: topicToUpdate.name
-        });
-      }catch (error) {
-        throw new Error('Error updating topic : '+topicToUpdate.name + ' '+ error);
+  async updateTopic(topicToUpdate: Topic){
+    return new Promise((resolve, reject) => {
+      if (this.getTopicById(topicToUpdate.id)) {
+        updateDoc(doc(collection(this.firestore, 'topics'), topicToUpdate.id), {name: topicToUpdate.name})
+          .then(() => { resolve(topicToUpdate) })
+      } else {
+        reject("Error: topic not found");
       }
-    } else {
-      throw new Error('Topic not found');
-    }
+    });
   }
 
   /**
    * Suppression un topic
    * @param topicId
    */
-  async deleteTopic(topicId: string): Promise<void> {
-    if (!topicId) return;
-    try {
-      const topicToDelete = doc(collection(this.firestore, 'topics'), topicId);
-      await deleteDoc(topicToDelete);
-    } catch (error) {
-      console.error('Error adding document:', error);
-    }
+  async deleteTopic(topicId: string) {
+    return new Promise((resolve, reject) => {
+      if (!!topicId) {
+        const topicToDelete = doc(collection(this.firestore, 'topics'), topicId);
+        deleteDoc(topicToDelete).then(() => { resolve( this.getTopicById(topicId) ) })
+      }else{
+        reject("Error: topic id undefined");
+      }
+    });
   }
 
   /**
@@ -122,17 +120,18 @@ export class TopicService {
    * @param post
    * @param topicId
    */
-  async addPost(post: Post, topicId: string): Promise<void> {
-    if (!post.description && !post.name) return;
-    try {
-      const postCollectionRef = collection(this.firestore, 'topics/' + topicId + '/posts');
-      await addDoc<DocumentData, DocumentData>(postCollectionRef, {
-        description: post.description,
-        name: post.name,
-      });
-    } catch (error) {
-      throw new Error('Error adding document: '+ error);
-    }
+  async addPost(post: Post, topicId: string): Promise<Post> {
+    return new Promise((resolve, reject) => {
+      if (!!post.name && !!post.description) {
+        const postCollectionRef = collection(this.firestore, 'topics/' + topicId + '/posts');
+        addDoc<DocumentData, DocumentData>(postCollectionRef, {
+          description: post.description,
+          name: post.name,
+        }).then(() => { resolve(post) });
+      }else{
+        reject("Error: post undefined");
+      }
+    })
   }
 
   /**
@@ -140,15 +139,15 @@ export class TopicService {
    * @param postId
    * @param topicId
    */
-  async deletePost(postId: string, topicId: string): Promise<void> {
-    if (!postId && !topicId) return;
-    try {
-      const postToDelete = doc(collection(this.firestore, 'topics/' + topicId + '/posts'), postId);
-      console.log(postToDelete);
-      await deleteDoc(postToDelete);
-    } catch (error) {
-      console.error('Error adding document:', error);
-    }
+  async deletePost(postId: string, topicId: string) {
+    return new Promise((resolve, reject) => {
+      if (!!postId && !!topicId) {
+        const postToDelete = doc(collection(this.firestore, 'topics/' + topicId + '/posts'), postId);
+        deleteDoc(postToDelete).then(() => { resolve( this.getPost(topicId, postId) ) })
+      }else{
+        reject("Error: post undefined");
+      }
+    });
   }
 
   /**
@@ -156,20 +155,18 @@ export class TopicService {
    * @param updatedPost
    * @param topicId
    */
-  async updatePost(updatedPost: Post, topicId: string): Promise<void> {
-    if (this.getTopicById(topicId)) {
-      try{
+  async updatePost(updatedPost: Post, topicId: string) {
+    return new Promise((resolve, reject) => {
+      if (this.getTopicById(topicId)) {
         const path = 'topics/'+topicId+'/posts'
-        await updateDoc(doc(collection(this.firestore, path), updatedPost.id), {
+        updateDoc(doc(collection(this.firestore, path), updatedPost.id), {
           name: updatedPost.name,
           description : updatedPost.description
-        });
-      }catch (error) {
-        throw new Error('Error updating post : '+updatedPost.name + ' '+ error);
+        }).then(() => { resolve(updatedPost)})
+      } else {
+        reject("Error: post not found");
       }
-    } else {
-      throw new Error('Topic not found');
-    }
+    });
   }
 
 }
