@@ -3,9 +3,16 @@
     <ion-buttons slot="start">
       <ion-button (click)="cancel()">Cancel</ion-button>
     </ion-buttons>
-    <ion-title>Add new Topic</ion-title>
+    
+    
+    <div *ngIf="topicId; else newTopic">
+      <ion-title>Update Topic</ion-title>
+    </div>
+    <ng-template #newTopic>
+      <ion-title>Add new Topic</ion-title>
+    </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-topic-modal-btn" (click)="confirm()" [strong]="true" [disabled]="name.invalid"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-topic-modal-btn" (click)="confirm()" [strong]="true" [disabled]="name.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

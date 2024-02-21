@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import  { Topic } from '../models/topic';
 import { Post } from '../models/post';
-import {Firestore, collection, collectionData, getDocs, addDoc} from '@angular/fire/firestore';
-import { Observable, map, from, BehaviorSubject } from 'rxjs';
+import {Firestore, collection, collectionData, addDoc} from '@angular/fire/firestore';
+import { Observable, map, from, BehaviorSubject, switchMap } from 'rxjs';
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
-import CollectionReference = firebase.firestore.CollectionReference;
 import "firebase/firestore";
+import { doc, updateDoc } from 'firebase/firestore';
+
 
 @Injectable({
   providedIn: 'root'
@@ -14,81 +15,100 @@ import "firebase/firestore";
 
 export class TopicService {
   private readonly firestore = inject(Firestore);
-  private topics : Topic [] = [];
   private bsyTopics$: BehaviorSubject<Topic[]> = new BehaviorSubject<Topic[]>([]);
   private bsyPosts$ : BehaviorSubject<Post[]>  = new BehaviorSubject<Post[]>([]);
   
+  /**
+   * Retrieve all topics.
+   */
   getAllTopics(): Observable<Topic[]> {
-    const topicCollectionRef = collection(this.firestore, 'topics');
-    return from(getDocs(topicCollectionRef)).pipe(
-      map(snapshot => {
-        const topics: Topic[] = [];
-        snapshot.forEach(doc => {
-          topics.push({id: doc.id,name: doc.data()['name'],posts: []});
-        });
-        this.bsyTopics$.next(topics);
-        return this.bsyTopics$.getValue();
-      })
-    );
+    const topicCollectionRef = collectionData(collection(this.firestore, 'topics'), {idField: 'id'}) as Observable<Topic[]>
+    topicCollectionRef.forEach((value)=>{
+      this.bsyTopics$.next(value);
+    })
+    return this.bsyTopics$.asObservable();
+ 
   }
-
+  /**
+   * Retrieve a topic by its identifier.
+   * @param topicId
+   */
   getTopicById(topicId: string): Observable<Topic | undefined> {
     return this.getAllTopics().pipe(
       map(topics => topics.find(topic => topic.id === topicId))
     );
   }
 
- 
+  /**
+   * Retrieve all posts from a topic.
+   * @param topicId
+   */
   getPostsByTopicId(topicId: string) : Observable<Post[] | undefined> {
-    return collectionData(collection(this.firestore, 'topics/'+topicId+'/posts')) as Observable<Post[]>;
+    const postCollectionRef = collectionData(collection(this.firestore, 'topics/'+topicId+'/posts'), {idField:'id'}) as Observable<Post[]>;
+    postCollectionRef.forEach(value=>{
+      this.bsyPosts$.next(value);
+    })
+    return this.bsyPosts$.asObservable();
   }
 
-
-  async getPost(topicId: string, postId: string) {
-    await this.getTopicById(topicId).pipe(
-      map((topic)=>{
-        if (topic && topic.posts) {
-          return topic.posts.find(post => post.id === postId);
+  /**
+   * Retrieve a post from a topic.
+   * @param topicId
+   * @param postId
+   */
+  getPost(topicId: string, postId: string): Observable<Post | undefined> {
+    return this.getTopicById(topicId).pipe(
+      switchMap((topic) => {
+        if (topic) {
+          return this.getPostsByTopicId(topicId).pipe(
+            map(posts => posts!.find(post => post.id === postId))
+          );
         } else {
           throw new Error('Topic not found or does not contain posts.');
         }
       })
-      );
+    );
   }
 
   /**
-   * Ajouter un nouveau topic
+   * Add new Topic
    * @param topic
    */
   async addTopic(topic: Topic): Promise<void> {
-      if (!topic.name && !topic.posts) return;
-      const topicCollectionRef = collection(this.firestore, 'topics');
-
+      if (!topic.name) return;
       try {
-        await addDoc<DocumentData, DocumentData>(topicCollectionRef, {
+        await addDoc<DocumentData, DocumentData>(collection(this.firestore, 'topics'), {
           name: topic.name,
         });
       } catch (error) {
-        console.error('Error adding document:', error);
+        throw new Error('Error adding document: '+ error);
       }
   }
-
+  /**
+   * Update a Topic
+   * @param topic
+   */
   async updateTopic(topicToUpdate: Topic): Promise<void> {
-    const index = this.topics.findIndex(topic => topic.id === topicToUpdate.id);
-    if (index !== -1) {
-      this.topics[index].name = topicToUpdate.name;
+    if (this.getTopicById(topicToUpdate.id)) {
+      try{
+        await updateDoc(doc(collection(this.firestore, 'topics'), topicToUpdate.id), {
+          name: topicToUpdate.name
+        });
+      }catch (error) {
+        throw new Error('Error updating topic : '+topicToUpdate.name + ' '+ error);
+      }
     } else {
       throw new Error('Topic not found');
     }
   }
 
   async deleteTopic(topicId: string): Promise<void> {
-    const index = this.topics.findIndex(topic => topic.id === topicId);
-    if (index !== -1) {
-      this.topics.splice(index, 1);
-    } else {
-      throw new Error('Topic not found');
-    }
+    // const index = this.topics.findIndex(topic => topic.id === topicId);
+    // if (index !== -1) {
+    //   this.topics.splice(index, 1);
+    // } else {
+    //   throw new Error('Topic not found');
+    // }
   }
 
   /**
@@ -105,7 +125,7 @@ export class TopicService {
         name: post.name,
       });
     } catch (error) {
-      console.error('Error adding document:', error);
+      throw new Error('Error adding document: '+ error);
     }
   }
 
@@ -124,17 +144,19 @@ export class TopicService {
   }
 
   async updatePost(updatedPost: Post, topicId: string): Promise<void> {
-    const topic = this.getTopicById(topicId);
-    // if (topic && topic.posts) {
-    //   const index = topic.posts.findIndex(post => post.id === updatedPost.id);
-    //   if (index !== -1) {
-    //     topic.posts[index] = updatedPost;
-    //   } else {
-    //     throw new Error('Post not found');
-    //   }
-    // } else {
-    //   throw new Error('Topic not found or has no posts');
-    // }
+    if (this.getTopicById(topicId)) {
+      try{
+        const path = 'topics/'+topicId+'/posts'
+        await updateDoc(doc(collection(this.firestore, path), updatedPost.id), {
+          name: updatedPost.name,
+          description : updatedPost.description
+        });
+      }catch (error) {
+        throw new Error('Error updating post : '+updatedPost.name + ' '+ error);
+      }
+    } else {
+      throw new Error('Topic not found');
+    }
   }
 
 }

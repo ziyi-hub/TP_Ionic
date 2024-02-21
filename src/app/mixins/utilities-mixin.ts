@@ -1,10 +1,16 @@
-import { inject } from "@angular/core";
+import { Component, OnDestroy, inject } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular/standalone";
+import { Subscription } from "rxjs";
 
-export class UtilitiesMixin {
+@Component({
+  template: ''
+})
+export class UtilitiesMixin implements OnDestroy {
+  
   private readonly toastController =  inject(ToastController);
   private readonly alertController =  inject(AlertController);
-
+  postSubscription: Subscription | undefined;
+  
   /**
    * show toast
    * @param message
@@ -50,5 +56,13 @@ export class UtilitiesMixin {
     });
 
     await alert.present();
+  }
+  unsubscribePost() {
+    if (this.postSubscription) {
+      this.postSubscription.unsubscribe();
+    }
+  }
+  ngOnDestroy(): void {
+    this.unsubscribePost();
   }
 }

@@ -1,5 +1,5 @@
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
@@ -35,7 +35,8 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 
-export class HomePage extends UtilitiesMixin {
+export class HomePage extends UtilitiesMixin{
+ 
   topics: Topic[] = [];
   topics1: Topic[] = [];
   private readonly topicService = inject(TopicService);
@@ -100,7 +101,6 @@ export class HomePage extends UtilitiesMixin {
             .catch((err) => {
               this.presentToast(err, 'danger');
             })
-
       }
     });
 

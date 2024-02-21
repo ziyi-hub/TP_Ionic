@@ -3,9 +3,14 @@
     <ion-buttons slot="start">
       <ion-button (click)="cancel()">Cancel</ion-button>
     </ion-buttons>
-    <ion-title>Add new Post</ion-title>
+    <div *ngIf="postId; else newPost">
+      <ion-title>Update Post</ion-title>
+    </div>
+    <ng-template #newPost>
+      <ion-title>Add new post</ion-title>
+    </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-post-modal-btn" (click)="confirm()" [strong]="true" [disabled]="postForm.invalid"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-post-modal-btn" (click)="confirm()" [strong]="true" [disabled]="postForm.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

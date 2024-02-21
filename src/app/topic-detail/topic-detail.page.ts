@@ -40,13 +40,13 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
    */
 
   getCurrentTopic(){
-    this.route.params.subscribe(params => {
+    this.postSubscription  =  this.route.params.subscribe(params => {
       const topicId = params['id'];
-      this.topicService.getTopicById(topicId).subscribe(
+      this.postSubscription  =  this.topicService.getTopicById(topicId).subscribe(
         topic => {
           if(topic){
             this.topic = topic;
-            this.topicService.getPostsByTopicId(topicId).subscribe(
+            this.postSubscription  =  this.topicService.getPostsByTopicId(topicId).subscribe(
               posts => {
                 if(posts)
                   this.posts = posts;
@@ -93,7 +93,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   async deletePost(postId:string){
     if(this.topic){
       let postName = "" ;
-      this.topicService.getPost(this.topic.id, postId).then((value)=>{
+      // this.topicService.getPost(this.topic.id, postId).then((value)=>{
         // if(value && this.topic){
         //   postName = value.name
         //   this.topicService.deletePost(postId, this.topic.id) 
@@ -105,7 +105,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
         //     this.presentToast(err, 'danger');
         //   })
         // }  
-      });
+      // });
     }
   }
   async editPost(postId: string) {
@@ -116,7 +116,6 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
         topicId: this.topic?.id
       }
     });
-
     modal.onWillDismiss().then((data) => {
       if (!!data && data.data && this.topic) {
         const post = { id: postId, name: data.data.name, description: data.data.description }
