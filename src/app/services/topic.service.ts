@@ -1,16 +1,25 @@
 import { Injectable, inject } from '@angular/core';
 import  { Topic } from '../models/topic';
 import { Post } from '../models/post';
-import { Firestore, collection, collectionData, collectionChanges, getDocs} from '@angular/fire/firestore';
-import { Observable, map, Subscription, from } from 'rxjs';
+import {Firestore, collection, collectionData, getDocs, addDoc} from '@angular/fire/firestore';
+import { Observable, map, from } from 'rxjs';
+import firebase from "firebase/compat";
+import DocumentData = firebase.firestore.DocumentData;
+import CollectionReference = firebase.firestore.CollectionReference;
+import "firebase/firestore";
+
 @Injectable({
   providedIn: 'root'
 })
-
- 
 export class TopicService {
   private readonly firestore = inject(Firestore);
   private topics : Topic [] = [];
+  // private topicCollectionRef: CollectionReference;
+  //
+  // constructor() {
+  //   this.topicCollectionRef = collection(this.firestore, 'topics');
+  // }
+
   getAllTopics(): Observable<Topic[]> {
     const topicCollectionRef = collection(this.firestore, 'topics');
     return from(getDocs(topicCollectionRef)).pipe(
@@ -19,7 +28,7 @@ export class TopicService {
         snapshot.forEach(doc => {
           topics.push({id: doc.id,name: doc.data()['name'],posts: []});
         });
-        
+
         return topics;
       })
     );
@@ -35,10 +44,10 @@ export class TopicService {
     return this.topics.find(topic => topic.id == topicId);
   }
 
- 
+
   getPostsByTopicId(topicId: string) : Observable<Post[] | undefined> {
     return collectionData(collection(this.firestore, 'topics/'+topicId+'/posts')) as Observable<Post[]>;
-  }  
+  }
 
 
   async getPost(topicId: string, postId: string) {
@@ -49,14 +58,26 @@ export class TopicService {
       throw new Error('Topic not found or does not contain posts.');
     }
   }
-  
+
   getNameById(topicId: string): string | undefined {
     return this.get(topicId)?.name;
   }
 
-  // Ajouter un nouveau topic
+  /**
+   * Ajouter un nouveau topic
+   * @param topic
+   */
   async addTopic(topic: Topic): Promise<void> {
-    this.topics.push(topic);
+      if (!topic.name && !topic.posts) return;
+      const topicCollectionRef = collection(this.firestore, 'topics');
+
+      try {
+        await addDoc<DocumentData, DocumentData>(topicCollectionRef, {
+          name: topic.name,
+        });
+      } catch (error) {
+        console.error('Error adding document:', error);
+      }
   }
 
   async updateTopic(topicToUpdate: Topic): Promise<void> {
@@ -77,16 +98,24 @@ export class TopicService {
     }
   }
 
-  // Ajouter un nouveau post à un topic existant
+  /**
+   * Ajouter un nouveau post à un topic existant
+   * @param post
+   * @param topicId
+   */
   async addPost(post: Post, topicId: string): Promise<void> {
-    const topic = this.get(topicId);
-    if (topic) {
-      if (!topic.posts) {
-        topic.posts = [];
-      }
-      topic.posts.push(post);
+    if (!post.description && !post.name) return;
+    try {
+      const postCollectionRef = collection(this.firestore, 'topics/' + topicId + '/posts');
+      await addDoc<DocumentData, DocumentData>(postCollectionRef, {
+        description: post.description,
+        name: post.name,
+      });
+    } catch (error) {
+      console.error('Error adding document:', error);
     }
   }
+
   async deletePost(postId: string, topicId: string): Promise<void> {
     const topic = this.get(topicId);
     if (topic && topic.posts) {

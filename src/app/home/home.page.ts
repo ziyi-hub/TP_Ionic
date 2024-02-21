@@ -47,7 +47,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    */
   ngOnInit() {
     this.loadTopics();
-    
+
   }
 
   /**
