@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import  { Topic } from '../models/topic';
 import { Post } from '../models/post';
 import {Firestore, collection, collectionData, getDocs, addDoc} from '@angular/fire/firestore';
-import { Observable, map, from } from 'rxjs';
+import { Observable, map, from, BehaviorSubject } from 'rxjs';
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
 import CollectionReference = firebase.firestore.CollectionReference;
@@ -11,15 +11,13 @@ import "firebase/firestore";
 @Injectable({
   providedIn: 'root'
 })
+
 export class TopicService {
   private readonly firestore = inject(Firestore);
   private topics : Topic [] = [];
-  // private topicCollectionRef: CollectionReference;
-  //
-  // constructor() {
-  //   this.topicCollectionRef = collection(this.firestore, 'topics');
-  // }
-
+  private bsyTopics$: BehaviorSubject<Topic[]> = new BehaviorSubject<Topic[]>([]);
+  private bsyPosts$ : BehaviorSubject<Post[]>  = new BehaviorSubject<Post[]>([]);
+  
   getAllTopics(): Observable<Topic[]> {
     const topicCollectionRef = collection(this.firestore, 'topics');
     return from(getDocs(topicCollectionRef)).pipe(
@@ -28,8 +26,8 @@ export class TopicService {
         snapshot.forEach(doc => {
           topics.push({id: doc.id,name: doc.data()['name'],posts: []});
         });
-
-        return topics;
+        this.bsyTopics$.next(topics);
+        return this.bsyTopics$.getValue();
       })
     );
   }
@@ -40,27 +38,22 @@ export class TopicService {
     );
   }
 
-  get(topicId: string): Topic | undefined {
-    return this.topics.find(topic => topic.id == topicId);
-  }
-
-
+ 
   getPostsByTopicId(topicId: string) : Observable<Post[] | undefined> {
     return collectionData(collection(this.firestore, 'topics/'+topicId+'/posts')) as Observable<Post[]>;
   }
 
 
   async getPost(topicId: string, postId: string) {
-    const topic = await this.get(topicId);
-    if (topic && topic.posts) {
-      return topic.posts.find(post => post.id === postId);
-    } else {
-      throw new Error('Topic not found or does not contain posts.');
-    }
-  }
-
-  getNameById(topicId: string): string | undefined {
-    return this.get(topicId)?.name;
+    await this.getTopicById(topicId).pipe(
+      map((topic)=>{
+        if (topic && topic.posts) {
+          return topic.posts.find(post => post.id === postId);
+        } else {
+          throw new Error('Topic not found or does not contain posts.');
+        }
+      })
+      );
   }
 
   /**
@@ -117,31 +110,31 @@ export class TopicService {
   }
 
   async deletePost(postId: string, topicId: string): Promise<void> {
-    const topic = this.get(topicId);
-    if (topic && topic.posts) {
-      const index = topic.posts.findIndex(post => post.id === postId);
-      if (index !== -1) {
-        topic.posts.splice(index, 1);
-      } else {
-        throw new Error('Post not found');
-      }
-    } else {
-      throw new Error('Topic not found or has no posts');
-    }
+    const topic = this.getTopicById(topicId);
+    // if (topic && topic.posts) {
+    //   const index = topic.posts.findIndex(post => post.id === postId);
+    //   if (index !== -1) {
+    //     topic.posts.splice(index, 1);
+    //   } else {
+    //     throw new Error('Post not found');
+    //   }
+    // } else {
+    //   throw new Error('Topic not found or has no posts');
+    // }
   }
 
   async updatePost(updatedPost: Post, topicId: string): Promise<void> {
-    const topic = this.get(topicId);
-    if (topic && topic.posts) {
-      const index = topic.posts.findIndex(post => post.id === updatedPost.id);
-      if (index !== -1) {
-        topic.posts[index] = updatedPost;
-      } else {
-        throw new Error('Post not found');
-      }
-    } else {
-      throw new Error('Topic not found or has no posts');
-    }
+    const topic = this.getTopicById(topicId);
+    // if (topic && topic.posts) {
+    //   const index = topic.posts.findIndex(post => post.id === updatedPost.id);
+    //   if (index !== -1) {
+    //     topic.posts[index] = updatedPost;
+    //   } else {
+    //     throw new Error('Post not found');
+    //   }
+    // } else {
+    //   throw new Error('Topic not found or has no posts');
+    // }
   }
 
 }

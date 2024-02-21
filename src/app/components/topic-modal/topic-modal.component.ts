@@ -26,13 +26,13 @@ export class TopicModalComponent extends UtilitiesMixin implements OnInit {
   private readonly modalCtrl = inject(ModalController);
   async ngOnInit(): Promise<void> {
     try {
-      if(this.topicId){
-        this.topic = this.topicService.get(this.topicId);
-        if(this.topic)
-          this.name.setValue(this.topic.name);
-        else
-          this.presentToast("Topic not found", "danger")
-      }
+      // if(this.topicId){
+      //   this.topic = this.topicService.get(this.topicId);
+      //   if(this.topic)
+      //     this.name.setValue(this.topic.name);
+      //   else
+      //     this.presentToast("Topic not found", "danger")
+      // }
     } catch (error) {
       const msg = "Error fetching topic: " + error
       this.presentToast(msg, "danger")

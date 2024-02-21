@@ -94,17 +94,17 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
     if(this.topic){
       let postName = "" ;
       this.topicService.getPost(this.topic.id, postId).then((value)=>{
-        if(value && this.topic){
-          postName = value.name
-          this.topicService.deletePost(postId, this.topic.id) 
-          .then(() => {
-            const message = postName + " is successfully deleted."
-            this.presentToast(message, 'success');
-          })
-          .catch((err) => {
-            this.presentToast(err, 'danger');
-          })
-        }  
+        // if(value && this.topic){
+        //   postName = value.name
+        //   this.topicService.deletePost(postId, this.topic.id) 
+        //   .then(() => {
+        //     const message = postName + " is successfully deleted."
+        //     this.presentToast(message, 'success');
+        //   })
+        //   .catch((err) => {
+        //     this.presentToast(err, 'danger');
+        //   })
+        // }  
       });
     }
   }

@@ -35,30 +35,14 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 
-export class HomePage extends UtilitiesMixin implements OnInit {
+export class HomePage extends UtilitiesMixin {
   topics: Topic[] = [];
+  topics1: Topic[] = [];
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
-  topics$: Observable<Topic[]> | undefined;
-
-  /**
-   * Charger les topics lors de l'initialisation de la page
-   */
-  ngOnInit() {
-    this.loadTopics();
-
-  }
-
-  /**
-   * Utiliser le service pour récupérer tous les topics
-   */
-  loadTopics() {
-    this.topics$ = this.topicService.getAllTopics();
-    this.topics$.forEach((element) => {
-      console.log(element);
-   });
-  }
+  topics$: Observable<Topic[]> = this.topicService.getAllTopics();
+  
 
   /**
    * Ouvrir Modal Topic
@@ -79,7 +63,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           .catch((err) => {
             this.presentToast(err, 'danger');
           })
-        this.loadTopics();
       }
     });
 
@@ -117,7 +100,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             .catch((err) => {
               this.presentToast(err, 'danger');
             })
-          this.loadTopics();
 
       }
     });
@@ -130,14 +112,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    * @param topicId
    */
   async deleteTopic(topicId: string){
-    const topicName =  this.topicService.get(topicId)?.name;
-    this.topicService.deleteTopic(topicId).then(() => {
-      const message = topicName + " is succesfully deleted."
-      this.presentToast(message,  'success');
-    })
-    .catch((err) => {
-      this.presentToast(err, 'danger');
-    });
+    // const topicName =  this.topicService.get(topicId)?.name;
+    // this.topicService.deleteTopic(topicId).then(() => {
+    //   const message = topicName + " is succesfully deleted."
+    //   this.presentToast(message,  'success');
+    // })
+    // .catch((err) => {
+    //   this.presentToast(err, 'danger');
+    // });
   }
 }
 

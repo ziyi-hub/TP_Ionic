@@ -32,15 +32,15 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
     try {
       if (this.postId && this.topicId) {
         const value = await this.topicService.getPost(this.topicId, this.postId);
-        if (value && value.description) {
-          this.postForm.setValue({
-            name: value!.name,
-            description : value!.description
-          });
+        // if (value && value.description) {
+        //   this.postForm.setValue({
+        //     name: value!.name,
+        //     description : value!.description
+        //   });
           
-        } else {
-          this.presentToast('Post not found.', 'danger')
-        }
+        // } else {
+        //   this.presentToast('Post not found.', 'danger')
+        // }
       }
     } catch (error) {
       const msg =  'Error fetching post: '+error
