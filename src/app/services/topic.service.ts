@@ -84,9 +84,10 @@ export class TopicService {
         throw new Error('Error adding document: '+ error);
       }
   }
+
   /**
-   * Update a Topic
-   * @param topic
+   * Mise à jour un topic
+   * @param topicToUpdate
    */
   async updateTopic(topicToUpdate: Topic): Promise<void> {
     if (this.getTopicById(topicToUpdate.id)) {
@@ -102,13 +103,18 @@ export class TopicService {
     }
   }
 
+  /**
+   * Suppression un topic
+   * @param topicId
+   */
   async deleteTopic(topicId: string): Promise<void> {
-    // const index = this.topics.findIndex(topic => topic.id === topicId);
-    // if (index !== -1) {
-    //   this.topics.splice(index, 1);
-    // } else {
-    //   throw new Error('Topic not found');
-    // }
+    if (!topicId) return;
+    try {
+      const topicToDelete = doc(collection(this.firestore, 'topics'), topicId);
+      await deleteDoc(topicToDelete);
+    } catch (error) {
+      console.error('Error adding document:', error);
+    }
   }
 
   /**
@@ -129,6 +135,11 @@ export class TopicService {
     }
   }
 
+  /**
+   * Suppression un post
+   * @param postId
+   * @param topicId
+   */
   async deletePost(postId: string, topicId: string): Promise<void> {
     if (!postId && !topicId) return;
     try {
@@ -140,6 +151,11 @@ export class TopicService {
     }
   }
 
+  /**
+   * Mise à jour un post
+   * @param updatedPost
+   * @param topicId
+   */
   async updatePost(updatedPost: Post, topicId: string): Promise<void> {
     if (this.getTopicById(topicId)) {
       try{

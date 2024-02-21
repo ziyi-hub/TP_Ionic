@@ -106,25 +106,6 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
     }
   }
 
-  // async deletePost(postId:string){
-  //   if(this.topic){
-  //     let postName = "" ;
-  //     this.topicService.getPost(this.topic.id, postId).then((value)=>{
-  //       if(value && this.topic){
-  //         postName = value.name
-  //         this.topicService.deletePost(postId, this.topic.id)
-  //         .then(() => {
-  //           const message = postName + " is successfully deleted."
-  //           this.presentToast(message, 'success');
-  //         })
-  //         .catch((err) => {
-  //           this.presentToast(err, 'danger');
-  //         })
-  //       }
-  //     });
-  //   }
-  // }
-
   async editPost(postId: string) {
     const modal = await this.modalController.create({
       component: PostModalComponent,

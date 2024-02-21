@@ -36,14 +36,14 @@ import { AsyncPipe } from "@angular/common";
 })
 
 export class HomePage extends UtilitiesMixin{
- 
+
   topics: Topic[] = [];
   topics1: Topic[] = [];
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
   topics$: Observable<Topic[]> = this.topicService.getAllTopics();
-  
+
 
   /**
    * Ouvrir Modal Topic
@@ -79,7 +79,7 @@ export class HomePage extends UtilitiesMixin{
   }
 
   /**
-   * Update topic
+   * Mise à jour un topic
    * @param topicId
    */
   async updateTopic(topicId: string) {
@@ -108,24 +108,25 @@ export class HomePage extends UtilitiesMixin{
   }
 
   /**
-   * Delete topic id
+   * Suppression un topic
    * @param topicId
    */
   async deleteTopic(topicId: string){
-    // const topicName =  this.topicService.get(topicId)?.name;
-    // this.topicService.deleteTopic(topicId).then(() => {
-    //   const message = topicName + " is succesfully deleted."
-    //   this.presentToast(message,  'success');
-    // })
-    // .catch((err) => {
-    //   this.presentToast(err, 'danger');
-    // });
+    this.topicService.getTopicById(topicId).subscribe((value) => {
+      if (value && value.name) {
+        this.topicService.deleteTopic(topicId)
+          .then(() => {
+            const message = value.name + " is succesfully deleted."
+            this.presentToast(message,  'success');
+          })
+          .catch((err:any) => {
+            this.presentToast(err, 'danger');
+          });
+      }
+    })
   }
 }
 
-/**
-* Add icons
-**/
 addIcons({
   'add-outline': addOutline,
   'trash-outline': trashOutline,
