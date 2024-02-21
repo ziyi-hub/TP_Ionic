@@ -24,7 +24,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   posts: Post[] = [];
   topic: Topic | undefined;
   topic$: Observable<Topic | undefined> | undefined;
-  private readonly topicService = inject(TopicService); 
+  private readonly topicService = inject(TopicService);
   private readonly modalController= inject(ModalController);
   private readonly route = inject(ActivatedRoute);
 
@@ -50,7 +50,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
               posts => {
                 if(posts)
                   this.posts = posts;
-                else 
+                else
                   console.log('No posts found.');
               },
               error => {
@@ -90,24 +90,41 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
     return await modal.present();
   }
 
-  async deletePost(postId:string){
-    if(this.topic){
-      let postName = "" ;
-      // this.topicService.getPost(this.topic.id, postId).then((value)=>{
-        // if(value && this.topic){
-        //   postName = value.name
-        //   this.topicService.deletePost(postId, this.topic.id) 
-        //   .then(() => {
-        //     const message = postName + " is successfully deleted."
-        //     this.presentToast(message, 'success');
-        //   })
-        //   .catch((err) => {
-        //     this.presentToast(err, 'danger');
-        //   })
-        // }  
-      // });
+  async deletePost(postId: string) {
+    if (postId) {
+      try {
+        this.topicService.getPost(this.topic!.id, postId).subscribe((value) => {
+          if (value && value.name) {
+            this.topicService.deletePost(postId, this.topic!.id);
+            const message = `${value.name} is successfully deleted.`;
+            this.presentToast(message, 'success');
+          }
+        })
+      } catch (err: any) {
+        await this.presentToast(err.message, 'danger');
+      }
     }
   }
+
+  // async deletePost(postId:string){
+  //   if(this.topic){
+  //     let postName = "" ;
+  //     this.topicService.getPost(this.topic.id, postId).then((value)=>{
+  //       if(value && this.topic){
+  //         postName = value.name
+  //         this.topicService.deletePost(postId, this.topic.id)
+  //         .then(() => {
+  //           const message = postName + " is successfully deleted."
+  //           this.presentToast(message, 'success');
+  //         })
+  //         .catch((err) => {
+  //           this.presentToast(err, 'danger');
+  //         })
+  //       }
+  //     });
+  //   }
+  // }
+
   async editPost(postId: string) {
     const modal = await this.modalController.create({
       component: PostModalComponent,
@@ -127,7 +144,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
           .catch((err) => {
             this.presentToast(err, 'danger');
           })
-        this.getCurrentTopic(); 
+        this.getCurrentTopic();
        }
     });
     return await modal.present();

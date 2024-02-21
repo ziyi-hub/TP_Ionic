@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import  { Topic } from '../models/topic';
 import { Post } from '../models/post';
-import {Firestore, collection, collectionData, addDoc} from '@angular/fire/firestore';
+import {Firestore, collection, collectionData, addDoc, deleteDoc, getDoc} from '@angular/fire/firestore';
 import { Observable, map, from, BehaviorSubject, switchMap } from 'rxjs';
 import firebase from "firebase/compat";
 import DocumentData = firebase.firestore.DocumentData;
@@ -17,7 +17,7 @@ export class TopicService {
   private readonly firestore = inject(Firestore);
   private bsyTopics$: BehaviorSubject<Topic[]> = new BehaviorSubject<Topic[]>([]);
   private bsyPosts$ : BehaviorSubject<Post[]>  = new BehaviorSubject<Post[]>([]);
-  
+
   /**
    * Retrieve all topics.
    */
@@ -27,7 +27,7 @@ export class TopicService {
       this.bsyTopics$.next(value);
     })
     return this.bsyTopics$.asObservable();
- 
+
   }
   /**
    * Retrieve a topic by its identifier.
@@ -130,17 +130,14 @@ export class TopicService {
   }
 
   async deletePost(postId: string, topicId: string): Promise<void> {
-    const topic = this.getTopicById(topicId);
-    // if (topic && topic.posts) {
-    //   const index = topic.posts.findIndex(post => post.id === postId);
-    //   if (index !== -1) {
-    //     topic.posts.splice(index, 1);
-    //   } else {
-    //     throw new Error('Post not found');
-    //   }
-    // } else {
-    //   throw new Error('Topic not found or has no posts');
-    // }
+    if (!postId && !topicId) return;
+    try {
+      const postToDelete = doc(collection(this.firestore, 'topics/' + topicId + '/posts'), postId);
+      console.log(postToDelete);
+      await deleteDoc(postToDelete);
+    } catch (error) {
+      console.error('Error adding document:', error);
+    }
   }
 
   async updatePost(updatedPost: Post, topicId: string): Promise<void> {
