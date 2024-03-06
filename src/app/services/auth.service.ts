@@ -31,11 +31,6 @@ export class AuthService {
 
   async createUser(email: string, password: string){
     return await createUserWithEmailAndPassword(this.auth, email, password);
-      // .then((userCredential) => {
-      //   const user = userCredential.user;
-      //   this.sendEmailVerification(user);
-      //   this.logOut();
-      // })
   }
 
   async signIn(email: string, password: string){

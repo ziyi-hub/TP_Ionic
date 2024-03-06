@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IonicModule, LoadingController} from '@ionic/angular';
@@ -6,6 +6,7 @@ import {addIcons} from "ionicons";
 import {chevronForward, lockClosedOutline, personOutline} from "ionicons/icons";
 import {Router, RouterModule} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
+import {UtilitiesMixin} from "../../mixins/utilities-mixin";
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +15,7 @@ import {AuthService} from "../../services/auth.service";
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, ReactiveFormsModule]
 })
-export class SignupPage{
+export class SignupPage extends UtilitiesMixin{
 
   regForm: FormGroup = this.formBuilder.group({
     email: ['', [
@@ -31,7 +32,9 @@ export class SignupPage{
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {}
+  constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
+    super();
+  }
 
   get errorControl(){
     return this.regForm?.controls;
@@ -46,11 +49,12 @@ export class SignupPage{
           const user = res.user;
           this.authService.sendEmailVerification(user);
           this.authService.logOut();
+          this.presentToast("Registration successful.", 'success');
           this.router.navigate(['/login']);
           loading.dismiss();
         })
         .catch((err) => {
-          console.log(err);
+          this.presentToast(err, 'danger');
           loading.dismiss();
         })
     }

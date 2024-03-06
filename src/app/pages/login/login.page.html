@@ -10,7 +10,7 @@
       </ion-item>
 
       <ion-item>
-        <ion-input formControlName="password" placeholder="password"></ion-input>
+        <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
       </ion-item>
 
       <div>
@@ -23,7 +23,7 @@
     </div>
 
     <ion-fab vertical="bottom" horizontal="end">
-      <ion-fab-button [routerLink]="['/home']">
+      <ion-fab-button (click)="login()">
         <ion-icon name="chevron-forward"></ion-icon>
       </ion-fab-button>
     </ion-fab>
