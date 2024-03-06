@@ -23,7 +23,6 @@ import { UUID } from 'angular2-uuid';
 export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   posts: Post[] = [];
   topic: Topic | undefined;
-  topic$: Observable<Topic | undefined> | undefined;
   private readonly topicService = inject(TopicService);
   private readonly modalController= inject(ModalController);
   private readonly route = inject(ActivatedRoute);
@@ -40,23 +39,24 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
    */
 
   getCurrentTopic(){
-    this.postSubscription  =  this.route.params.subscribe(params => {
+    this.subscription  =  this.route.params.subscribe(params => {
       const topicId = params['id'];
-      this.postSubscription  =  this.topicService.getTopicById(topicId).subscribe(
+      this.subscription  =  this.topicService.getTopicById(topicId).subscribe(
         topic => {
           if(topic){
             this.topic = topic;
-            this.postSubscription  =  this.topicService.getPostsByTopicId(topicId).subscribe(
-              posts => {
+            this.subscription = this.topicService.getPostsByTopicId(topicId).subscribe({
+              next: (posts: any) => {
                 if(posts)
                   this.posts = posts;
-                else
-                  console.log('No posts found.');
               },
-              error => {
-                console.error('Error occurred:', error);
+              error: (error: any) => {
+                this.presentToast(error,  'danger');
+              },
+              complete: () => {
+                console.log('Observable terminé');
               }
-            );
+            });
           }
         });
     }
@@ -92,7 +92,8 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
 
   async deletePost(postId: string) {
     if (postId) {
-      this.topicService.getPost(this.topic!.id, postId).subscribe((value) => {
+      this.subscription = this.topicService.getPost(this.topic!.id, postId).subscribe({
+      next: (value: any) => {
         if (value && value.name) {
           this.topicService.deletePost(postId, this.topic!.id)
             .then((isDeleted: any) => {
@@ -105,9 +106,18 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
               this.presentToast(err.message, 'danger');
             })
         }
-      })
-    }
+      },
+      error: (error: any) => {
+        this.presentToast(error, 'danger');
+      },
+      complete: () => {
+        console.log('Observable terminé');
+      }
+    });
+  }else{
+    this.presentToast('Invalid id', 'danger');
   }
+}
 
   async editPost(postId: string) {
     const modal = await this.modalController.create({

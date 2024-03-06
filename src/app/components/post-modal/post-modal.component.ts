@@ -37,12 +37,20 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
   loadPost(){
     try {
       if (this.postId && this.topicId) {
-        this.postSubscription = this.topicService.getPost(this.topicId, this.postId).subscribe((value)=>{
-          if (value && value.description) {
-            this.postForm.setValue({
-              name: value!.name,
-              description : value!.description
-            });
+        this.subscription = this.topicService.getPost(this.topicId, this.postId).subscribe({
+          next: (value: any) => {
+            if (value && value.description) {
+              this.postForm.setValue({
+                name: value!.name,
+                description : value!.description
+              });
+            }
+          },
+          error: (error: any) => {
+            this.presentToast(error, 'danger');
+          },
+          complete: () => {
+            console.log('Observable terminé');
           }
         });
       }

@@ -36,9 +36,6 @@ import { AsyncPipe } from "@angular/common";
 })
 
 export class HomePage extends UtilitiesMixin{
-
-  topics: Topic[] = [];
-  topics1: Topic[] = [];
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
@@ -103,7 +100,6 @@ export class HomePage extends UtilitiesMixin{
             })
       }
     });
-
     return await modal.present();
   }
 
@@ -112,20 +108,28 @@ export class HomePage extends UtilitiesMixin{
    * @param topicId
    */
   async deleteTopic(topicId: string){
-    this.topicService.getTopicById(topicId).subscribe((value) => {
-      if (value && value.name) {
-        this.topicService.deleteTopic(topicId)
-          .then((isDeleted: any) => {
-            if(isDeleted === true){
-              const message = value.name + " is succesfully deleted.";
-              this.presentToast(message,  'success')
-            }
-          })
-          .catch((err:any) => {
-            this.presentToast(err, 'danger');
-          });
+    this.subscription = this.topicService.getTopicById(topicId).subscribe({
+      next: (value: any) => {
+        if (value && value.name) {
+          this.topicService.deleteTopic(topicId)
+            .then((isDeleted: any) => {
+              if(isDeleted === true){
+                const message = value.name + " is succesfully deleted.";
+                this.presentToast(message,  'success')
+              }
+            })
+            .catch((err:any) => {
+              this.presentToast(err, 'danger');
+            });
+        }
+      },
+      error: (error: any) => {
+        this.presentToast(error, 'danger');
+      },
+      complete: () => {
+        console.log('Observable terminé');
       }
-    })
+    });
   }
 }
 

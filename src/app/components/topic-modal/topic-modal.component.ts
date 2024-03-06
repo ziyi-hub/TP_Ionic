@@ -1,4 +1,3 @@
-import { Observable, filter, map, Subscription } from 'rxjs';
 import { TopicService } from './../../services/topic.service';
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
@@ -11,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Topic } from 'src/app/models/topic';
 @Component({
   standalone:true,
   selector: 'app-topic-modal',
@@ -23,7 +21,6 @@ export class TopicModalComponent extends UtilitiesMixin implements OnInit, OnDes
   @Input() topicId: string | undefined;
   private readonly topicService = inject(TopicService);
   private readonly modalCtrl = inject(ModalController);
-  topic$ : Observable<Topic | undefined> | undefined ;
   name = new FormControl('', [Validators.required]);
 
   async ngOnInit(): Promise<void> {
@@ -32,19 +29,20 @@ export class TopicModalComponent extends UtilitiesMixin implements OnInit, OnDes
   loadTopic() {
     try {
       if (this.topicId) {
-        this.postSubscription = this.topicService.getTopicById(this.topicId).subscribe(
-          (value) => {
+        this.subscription = this.topicService.getTopicById(this.topicId).subscribe({
+          next: (value: any) => {
             if (value) {
               this.name.setValue(value.name);
-            } else {
-              this.presentToast("Topic not found", "danger");
-            }
+            } 
           },
-          (error) => {
+          error: (error: any) => {
             const msg = "Error fetching topic: " + error;
             this.presentToast(msg, "danger");
+          },
+          complete: () => {
+            console.log('Observable terminé');
           }
-        );
+        });
       }
     } catch (error) {
       const msg = "Error fetching topic: " + error;

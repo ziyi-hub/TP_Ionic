@@ -160,7 +160,6 @@ export class TopicService {
       }
     });
   }
-
   /**
    * Mise à jour un post
    * @param updatedPost

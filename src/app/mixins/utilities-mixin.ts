@@ -9,7 +9,7 @@ export class UtilitiesMixin implements OnDestroy {
   
   private readonly toastController =  inject(ToastController);
   private readonly alertController =  inject(AlertController);
-  postSubscription: Subscription | undefined;
+  subscription: Subscription | undefined;
   
   /**
    * show toast
@@ -58,8 +58,8 @@ export class UtilitiesMixin implements OnDestroy {
     await alert.present();
   }
   unsubscribePost() {
-    if (this.postSubscription) {
-      this.postSubscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
   ngOnDestroy(): void {
