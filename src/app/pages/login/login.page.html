@@ -1,0 +1,31 @@
+<ion-content [fullscreen]="true">
+  <div>
+    <p>Login to access your account</p>
+  </div>
+
+  <form [formGroup]="loginForm" novalidate>
+    <div class="ion-padding">
+      <ion-item>
+        <ion-input formControlName="email" placeholder="email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input formControlName="password" placeholder="password"></ion-input>
+      </ion-item>
+
+      <div>
+        <a>Forgot password?</a>
+      </div>
+
+      <div>
+        <p>New member?<a [routerLink]="['/signup']">Signup now</a></p>
+      </div>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="end">
+      <ion-fab-button [routerLink]="['/home']">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </form>
+</ion-content>

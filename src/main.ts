@@ -8,6 +8,7 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import {getAuth, provideAuth} from "@angular/fire/auth";
 
 
 if (environment.production) {
@@ -22,6 +23,9 @@ bootstrapApplication(AppComponent, {
     importProvidersFrom(provideFirebaseApp(() => initializeApp(
       environment.firebaseConfig
     ))),
-    importProvidersFrom(provideFirestore(() => getFirestore())),
+    importProvidersFrom(
+      provideFirestore(() => getFirestore()),
+      provideAuth(() => getAuth())
+    ),
   ],
 });

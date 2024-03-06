@@ -1,0 +1,36 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div>
+    <p>Sign up to access your account</p>
+  </div>
+
+  <ion-img
+    src="../../assets/img/login.png"
+    alt="The Wisconsin State Capitol building in Madison, WI at night"
+  ></ion-img>
+
+  <form [formGroup]="regForm" novalidate>
+    <div>
+      <ion-item>
+        <ion-input formControlName="email" placeholder="email"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-input formControlName="password" placeholder="password"></ion-input>
+      </ion-item>
+
+      <div>
+        <a>Forgot password?</a>
+      </div>
+
+      <div>
+        <p>Already a member?<a [routerLink]="['/login']">Signin now</a></p>
+      </div>
+    </div>
+
+    <ion-fab vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="signUp()">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </form>
+</ion-content>

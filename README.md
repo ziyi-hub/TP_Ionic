@@ -11,7 +11,7 @@
 - [Controller Modals](https://ionicframework.com/docs/api/modal#controller-modals)
 
 ## Créer une nouvelle page topic-detail ##
-- ionic generate page topic-detail
+- ionic g page pages/signin --standalone
 
 ## Build ##
 - ionic build ionic capacitor add ios
