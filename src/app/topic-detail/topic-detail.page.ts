@@ -76,8 +76,8 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
       if (!!data && data.data && this.topic) {
         const newPost = { id: UUID.UUID(), name: data.data.name, description: data.data.description }
         this.topicService.addPost(newPost, this.topic.id)
-          .then(() => {
-            const message = data.data.name + " is successfully created."
+          .then((res: Post) => {
+            const message = res.name + " is successfully created."
             this.presentToast(message, 'success');
           })
           .catch((err) => {
@@ -95,9 +95,11 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
       this.topicService.getPost(this.topic!.id, postId).subscribe((value) => {
         if (value && value.name) {
           this.topicService.deletePost(postId, this.topic!.id)
-            .then(() => {
-              const message = `${value.name} is successfully deleted.`;
-              this.presentToast(message, 'success');
+            .then((isDeleted: any) => {
+              if(isDeleted === true){
+                const message = value.name + " is succesfully deleted.";
+                this.presentToast(message,  'success')
+              }
             })
             .catch((err: any) => {
               this.presentToast(err.message, 'danger');

@@ -9,7 +9,7 @@ import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 
-import {Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
@@ -115,9 +115,11 @@ export class HomePage extends UtilitiesMixin{
     this.topicService.getTopicById(topicId).subscribe((value) => {
       if (value && value.name) {
         this.topicService.deleteTopic(topicId)
-          .then((res: any) => {
-            const message = value.name + " is succesfully deleted."
-            this.presentToast(message,  'success');
+          .then((isDeleted: any) => {
+            if(isDeleted === true){
+              const message = value.name + " is succesfully deleted.";
+              this.presentToast(message,  'success')
+            }
           })
           .catch((err:any) => {
             this.presentToast(err, 'danger');

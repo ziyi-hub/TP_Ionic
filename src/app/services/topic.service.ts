@@ -108,7 +108,11 @@ export class TopicService {
     return new Promise((resolve, reject) => {
       if (!!topicId) {
         const topicToDelete = doc(collection(this.firestore, 'topics'), topicId);
-        deleteDoc(topicToDelete).then(() => { resolve( this.getTopicById(topicId) ) })
+        deleteDoc(topicToDelete).then(() => {
+          this.getTopicById(topicId).subscribe((value) => {
+            value == null ? resolve(true) : reject("Error: Failed to delete" + topicId);
+          })
+        })
       }else{
         reject("Error: topic id undefined");
       }
@@ -127,7 +131,9 @@ export class TopicService {
         addDoc<DocumentData, DocumentData>(postCollectionRef, {
           description: post.description,
           name: post.name,
-        }).then(() => { resolve(post) });
+        }).then(() => {
+          resolve(post)
+        });
       }else{
         reject("Error: post undefined");
       }
@@ -143,7 +149,12 @@ export class TopicService {
     return new Promise((resolve, reject) => {
       if (!!postId && !!topicId) {
         const postToDelete = doc(collection(this.firestore, 'topics/' + topicId + '/posts'), postId);
-        deleteDoc(postToDelete).then(() => { resolve( this.getPost(topicId, postId) ) })
+        deleteDoc(postToDelete).then(() => {
+          this.getPost(topicId, postId).subscribe((value) => {
+            value == null ? resolve(true) : reject("Error: Failed to delete" + postId);
+          })
+          resolve( this.getPost(topicId, postId) )
+        })
       }else{
         reject("Error: post undefined");
       }
@@ -162,7 +173,7 @@ export class TopicService {
         updateDoc(doc(collection(this.firestore, path), updatedPost.id), {
           name: updatedPost.name,
           description : updatedPost.description
-        }).then(() => { resolve(updatedPost)})
+        }).then(() => { resolve(updatedPost) })
       } else {
         reject("Error: post not found");
       }
