@@ -30,7 +30,10 @@ export class LoginPage extends UtilitiesMixin{
     ]],
     password: ['', [
       Validators.required,
-      Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
+      Validators.required,
+      Validators.minLength(4),
+      Validators.maxLength(50),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
     ]]
   })
 

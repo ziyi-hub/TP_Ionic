@@ -25,8 +25,18 @@ export class SignupPage extends UtilitiesMixin{
     ]],
     password: ['', [
       Validators.required,
-      Validators.pattern("(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,}")
-    ]]
+      Validators.required,
+      Validators.minLength(4),
+      Validators.maxLength(50),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
+    ]],
+    confirmPassword: ['', [
+      Validators.required,
+      Validators.required,
+      Validators.minLength(4),
+      Validators.maxLength(50),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
+    ]],
   })
 
   private readonly authService = inject(AuthService);
@@ -43,7 +53,7 @@ export class SignupPage extends UtilitiesMixin{
   async signUp(){
     const loading = await this.loadingCtrl.create();
     await loading.present();
-    if(this.regForm?.valid){
+    if(this.regForm?.valid && this.regForm.value.password === this.regForm.value.confirmPassword){
       this.authService.createUser(this.regForm.value.email, this.regForm.value.password)
         .then((res) => {
           const user = res.user;
