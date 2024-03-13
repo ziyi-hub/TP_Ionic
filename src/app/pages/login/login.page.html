@@ -1,31 +1,43 @@
 <ion-content [fullscreen]="true">
-  <div>
-    <p>Login to access your account</p>
-  </div>
 
-  <form [formGroup]="loginForm" novalidate>
-    <div class="ion-padding">
-      <ion-item>
-        <ion-input formControlName="email" placeholder="email"></ion-input>
-      </ion-item>
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title>
+        <h1>Login</h1>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-      <ion-item>
-        <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
-      </ion-item>
+  <form [formGroup]="loginForm" class="ion-padding" novalidate>
+    <ion-item class="ion-padding-vertical">
+      <ion-input formControlName="email" placeholder="email"></ion-input>
+    </ion-item>
 
-      <div>
+    <ion-item>
+      <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
+    </ion-item>
+
+    <ion-row class="ion-justify-content-between ion-align-items-center ion-padding-vertical">
+      <ion-row class="ion-align-items-center">
+        <ion-checkbox class="ion-padding-end"/>
+        <p>Remember me</p>
+      </ion-row>
+
+      <ion-label>
         <a>Forgot password?</a>
-      </div>
+      </ion-label>
+    </ion-row>
 
-      <div>
-        <p>New member?<a [routerLink]="['/signup']">Signup now</a></p>
-      </div>
-    </div>
+    <ion-button (click)="login()" expand="block" class="ion-padding-vertical">Sign in</ion-button>
+    <ion-button fill="outline" expand="block">Sign in with Google</ion-button>
 
-    <ion-fab vertical="bottom" horizontal="end">
-      <ion-fab-button (click)="login()">
-        <ion-icon name="chevron-forward"></ion-icon>
-      </ion-fab-button>
-    </ion-fab>
+    <ion-row>
+      <ion-col>
+        <p class="ion-text-center">
+          Not a member yet?
+          <a [routerLink]="['/signup']">&nbsp;Signup</a>
+        </p>
+      </ion-col>
+    </ion-row>
   </form>
 </ion-content>
