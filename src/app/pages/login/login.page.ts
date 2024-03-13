@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, OnInit, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IonicModule, LoadingController} from '@ionic/angular';
@@ -20,7 +20,7 @@ import {UtilitiesMixin} from "../../mixins/utilities-mixin";
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, ReactiveFormsModule]
 })
-export class LoginPage extends UtilitiesMixin{
+export class LoginPage extends UtilitiesMixin implements OnInit{
 
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', [
@@ -42,6 +42,22 @@ export class LoginPage extends UtilitiesMixin{
 
   constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
     super();
+  }
+  ngOnInit(): void {
+    const isAuthenticatedSubscription = this.authService.isAuthenticated().subscribe({
+      next: (value: any) => {
+        if (!!value && value.auth && !!value.auth.currentUser) {
+          this.router.navigateByUrl('/');
+        }
+        isAuthenticatedSubscription.unsubscribe(); 
+      },
+      error: (error: any) => {
+        console.error(error);
+      },
+      complete: () => {
+        console.log('Observable completed');
+      }
+    });
   }
 
   async login(){
