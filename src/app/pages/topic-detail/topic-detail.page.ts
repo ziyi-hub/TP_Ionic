@@ -1,23 +1,23 @@
-import { Observable } from 'rxjs';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
-import { Post } from '../models/post';
-import { TopicService } from '../services/topic.service';
+import { Post } from '../../models/post';
+import { TopicService } from '../../services/topic.service';
 import {Component, OnInit, inject} from '@angular/core';
-import {PostModalComponent} from "../components/post-modal/post-modal.component";
-import { ActivatedRoute } from '@angular/router';
-import { Topic } from '../models/topic';
+import {PostModalComponent} from "../../components/post-modal/post-modal.component";
+import { ActivatedRoute, Router } from '@angular/router';
+import { Topic } from '../../models/topic';
 import { ReactiveFormsModule } from '@angular/forms';
-import {IonFab,IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
+import {IonBackButton, IonButtons, IonFab,IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, pencilOutline, trashOutline } from 'ionicons/icons';
+import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
+import { map } from 'rxjs';
 
 @Component({
   standalone: true,
   selector: 'app-topic-detail',
   templateUrl: './topic-detail.page.html',
   styleUrls: ['./topic-detail.page.scss'],
-  imports : [ReactiveFormsModule, IonFab, IonFabButton,IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports : [ReactiveFormsModule, IonBackButton, IonButtons, IonFab, IonFabButton,IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class TopicDetailPage extends UtilitiesMixin implements OnInit {
@@ -26,6 +26,7 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   private readonly topicService = inject(TopicService);
   private readonly modalController= inject(ModalController);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router)
 
   /**
    * Charger les topics lors de l'initialisation de la page
@@ -45,10 +46,12 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
         topic => {
           if(topic){
             this.topic = topic;
-            this.subscription = this.topicService.getPostsByTopicId(topicId).subscribe({
+            this.subscription = this.topicService.getPostsByTopicId(topicId).pipe(
+              map((posts: any) => posts.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)))
+          ).subscribe({
               next: (posts: any) => {
                 if(posts)
-                  this.posts = posts;
+                  this.posts = posts
               },
               error: (error: any) => {
                 this.presentToast(error,  'danger');
@@ -62,6 +65,9 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
     }
     );
 
+  }
+  showPost(topicId: string, postId : string){
+    this.router.navigate(['/topic-detail/', topicId, 'post-detail', postId]);
   }
   /**
    * Ouvrir fenetre Modal
@@ -143,10 +149,14 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
     });
     return await modal.present();
   }
+  closeIonSliding(ionItemSliding:IonItemSliding){
+    ionItemSliding.close()
+  }
 }
 
 addIcons({
   'add-outline': addOutline,
   'trash-outline' : trashOutline,
-  'pencil-outline' : pencilOutline
+  'pencil-outline' : pencilOutline,
+  'caret-back': caretBack
 });

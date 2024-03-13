@@ -8,9 +8,9 @@
 <ion-content>
   <ion-list>
     @for (topic of topics$ | async; track topic.id) {
-    <ion-item-sliding data-testid="topics">
+    <ion-item-sliding data-testid="topics" #ionItemSliding>
       <ion-item-options side="start">
-        <ion-item-option color="success" (click)="updateTopic(topic.id)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
+        <ion-item-option color="success" (click)="updateTopic(topic.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
       </ion-item-options>
 
       <ion-item (click)="navigateToDetail(topic.id)">
@@ -18,7 +18,7 @@
       </ion-item>
 
       <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteTopic.bind(this), topic.id, topic.name)">
+        <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteTopic.bind(this), topic.id, topic.name);closeIonSliding(ionItemSliding)">
           <ion-icon name="trash-outline"></ion-icon>
         </ion-item-option>
       </ion-item-options>

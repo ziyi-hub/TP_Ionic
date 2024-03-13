@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
+import { IonBackButton,IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {
@@ -18,7 +18,7 @@ import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
   selector: 'app-post-modal',
   templateUrl: './post-modal.component.html',
   styleUrls: ['./post-modal.component.scss'],
-  imports : [ReactiveFormsModule, IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
+  imports : [ReactiveFormsModule, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
 export class PostModalComponent extends UtilitiesMixin implements OnInit{
   @Input() postId : string |undefined;

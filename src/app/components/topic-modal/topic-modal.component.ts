@@ -1,6 +1,6 @@
 import { TopicService } from './../../services/topic.service';
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
+import { IonBackButton,IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {UtilitiesMixin} from 'src/app/mixins/utilities-mixin'
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-topic-modal',
   templateUrl: './topic-modal.component.html',
   styleUrls: ['./topic-modal.component.scss'],
-  imports:[ReactiveFormsModule,CommonModule, IonHeader, IonToolbar, IonItem, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
+  imports:[ReactiveFormsModule,CommonModule, IonBackButton, IonHeader, IonToolbar, IonItem, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
 })
 export class TopicModalComponent extends UtilitiesMixin implements OnInit, OnDestroy {
   @Input() topicId: string | undefined;

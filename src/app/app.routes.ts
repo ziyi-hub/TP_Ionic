@@ -4,7 +4,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'topic-detail/:id',
-    loadComponent: () => import('./topic-detail/topic-detail.page').then((m) => m.TopicDetailPage),
+    loadComponent: () => import('./pages/topic-detail/topic-detail.page').then((m) => m.TopicDetailPage),
   },
   {
     path: 'home',
@@ -22,5 +22,9 @@ export const routes: Routes = [
   {
     path: 'signup',
     loadComponent: () => import('./pages/signup/signup.page').then( m => m.SignupPage)
+  },
+  {
+    path: 'topic-detail/:topicId/post-detail/:id',
+    loadComponent: () => import('./pages/post-detail/post-detail.page').then( m => m.PostDetailPage)
   },
 ];

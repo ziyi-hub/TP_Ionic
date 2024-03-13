@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
-import { ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { IonBackButton, IonButtons, ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 
-import {map, Observable} from "rxjs";
+import {Observable, map} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
@@ -27,6 +27,8 @@ import { AsyncPipe } from "@angular/common";
     IonList,
     IonItemSliding,
     IonIcon,
+    IonBackButton, 
+    IonButtons,
     IonItemOption,
     IonItemOptions,
     IonLabel,
@@ -39,8 +41,10 @@ export class HomePage extends UtilitiesMixin{
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
   private readonly router = inject(Router);
-  topics$: Observable<Topic[]> = this.topicService.getAllTopics();
-
+  // Sort the topics$ Observable alphabetically by topic name
+  topics$: Observable<Topic[]> = this.topicService.getAllTopics().pipe(
+  map((topics: any[]) => topics.sort((a, b) => a.name.localeCompare(b.name)))
+);
 
   /**
    * Ouvrir Modal Topic
@@ -79,7 +83,7 @@ export class HomePage extends UtilitiesMixin{
    * Mise à jour un topic
    * @param topicId
    */
-  async updateTopic(topicId: string) {
+  async updateTopic(topicId: string)  {
     const modal = await this.modalController.create({
       component: TopicModalComponent,
       componentProps: {
@@ -102,7 +106,6 @@ export class HomePage extends UtilitiesMixin{
     });
     return await modal.present();
   }
-
   /**
    * Suppression un topic
    * @param topicId
@@ -130,6 +133,9 @@ export class HomePage extends UtilitiesMixin{
         console.log('Observable terminé');
       }
     });
+  }
+  closeIonSliding(ionItemSliding:IonItemSliding){
+    ionItemSliding.close()
   }
 }
 
