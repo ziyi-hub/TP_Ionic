@@ -1,19 +1,22 @@
 
 import { Routes } from '@angular/router';
+import { AuthGuard } from './services/auth-guard.service';
 
 export const routes: Routes = [
   {
     path: 'topic-detail/:id',
     loadComponent: () => import('./pages/topic-detail/topic-detail.page').then((m) => m.TopicDetailPage),
+    canActivate: [AuthGuard]
   },
   {
     path: 'home',
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+    canActivate: [AuthGuard],
   },
   {
     path: '',
     redirectTo: 'home',
-    pathMatch: 'full',
+    pathMatch: 'full'
   },
   {
     path: 'login',
@@ -25,6 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'topic-detail/:topicId/post-detail/:id',
-    loadComponent: () => import('./pages/post-detail/post-detail.page').then( m => m.PostDetailPage)
+    loadComponent: () => import('./pages/post-detail/post-detail.page').then( m => m.PostDetailPage),
+    canActivate: [AuthGuard]
   },
 ];
