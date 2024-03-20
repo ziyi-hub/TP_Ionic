@@ -1,12 +1,13 @@
-import {Component, inject} from '@angular/core';
+import { UsersService } from './../../services/users.service';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {IonicModule, LoadingController} from '@ionic/angular';
-import {addIcons} from "ionicons";
-import {chevronForward, lockClosedOutline, personOutline} from "ionicons/icons";
-import {Router, RouterModule} from "@angular/router";
-import {AuthService} from "../../services/auth.service";
-import {UtilitiesMixin} from "../../mixins/utilities-mixin";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonicModule, LoadingController } from '@ionic/angular';
+import { addIcons } from "ionicons";
+import { chevronForward, lockClosedOutline, personOutline } from "ionicons/icons";
+import { Router, RouterModule } from "@angular/router";
+import { AuthService } from "../../services/auth.service";
+import { UtilitiesMixin } from "../../mixins/utilities-mixin";
 
 @Component({
   selector: 'app-signup',
@@ -15,13 +16,16 @@ import {UtilitiesMixin} from "../../mixins/utilities-mixin";
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, ReactiveFormsModule]
 })
-export class SignupPage extends UtilitiesMixin{
+export class SignupPage extends UtilitiesMixin {
 
   regForm: FormGroup = this.formBuilder.group({
     email: ['', [
       Validators.required,
       Validators.email,
       Validators.pattern("[a-z0-9._%+\\-]+@[a-z0-9.\\-]+\\.[a-z]{2,}$")
+    ]],
+    username: ['', [
+      Validators.required
     ]],
     password: ['', [
       Validators.required,
@@ -40,40 +44,76 @@ export class SignupPage extends UtilitiesMixin{
   })
 
   private readonly authService = inject(AuthService);
+  private readonly usersService = inject(UsersService);
   private readonly router = inject(Router);
 
   constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
     super();
   }
 
-  get errorControl(){
+  get errorControl() {
     return this.regForm?.controls;
   }
 
-  async signUp(){
-    const loading = await this.loadingCtrl.create();
-    await loading.present();
-    if(this.regForm?.valid && this.regForm.value.password === this.regForm.value.confirmPassword){
-      this.authService.createUser(this.regForm.value.email, this.regForm.value.password)
-        .then((res) => {
-          const user = res.user;
-          this.authService.sendEmailVerification(user);
-          this.authService.logOut();
-          this.presentToast("Registration successful.", 'success');
-          this.router.navigate(['/login']);
-          loading.dismiss();
-        })
-        .catch((err) => {
-          this.presentToast(err, 'danger');
-          loading.dismiss();
-        })
+  // async signUp(){
+  //   // const loading = await this.loadingCtrl.create();
+  //   // await loading.present();
+  //   if(this.regForm?.valid && this.regForm.value.password === this.regForm.value.confirmPassword && this.regForm.value.username){
+  //     this.authService.createUser(this.regForm.value.email, this.regForm.value.password)
+  //       .then((account) => {
+  //         this.usersService.addUser({id: account.user.uid , username : this.regForm.value.username},account.user.uid).then(()=>{
+  //         this.authService.sendEmailVerification(account.user);
+  //         this.authService.logOut();
+  //         this.presentToast("Registration successful.", 'success');
+  //         this.router.navigate(['/login']);
+  //         // loading.dismiss();
+  //         })
+  //         .catch((err) => {
+  //           this.presentToast(err, 'danger');
+  //           // loading.dismiss();
+  //         })
+
+  //       })
+  //       .catch((err) => {
+  //         this.presentToast(err, 'danger');
+  //         // loading.dismiss();
+  //       })
+  //   }
+  // }
+
+  async signUp() {
+    try {
+      if (!this.regForm?.valid) {
+        throw new Error('Form is invalid.');
+      }
+
+      const { email, password, confirmPassword, username } = this.regForm.value;
+
+      if (password !== confirmPassword) {
+        throw new Error('Passwords do not match.');
+      }
+
+      if (!username) {
+        throw new Error('Username is required.');
+      }
+
+      const account = await this.authService.createUser(email, password);
+      await this.authService.sendEmailVerification(account.user);
+      await this.authService.logOut();
+      await this.usersService.addUser({ id: account.user.uid, username }, account.user.uid)
+      this.presentToast('Registration successful.', 'success');
+      this.router.navigate(['/login']);
+    } catch (error) {
+      this.presentToast(error + " in in", 'danger');
     }
   }
 
 }
 
+
+
 addIcons({
-  'lock-closed-outline' : lockClosedOutline,
-  'person-outline' : personOutline,
-  'chevron-forward' : chevronForward,
+  'lock-closed-outline': lockClosedOutline,
+  'person-outline': personOutline,
+  'chevron-forward': chevronForward,
 });

@@ -12,6 +12,7 @@ import {
 } from "ionicons/icons";
 import {AuthService} from "../../services/auth.service";
 import {UtilitiesMixin} from "../../mixins/utilities-mixin";
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -44,36 +45,37 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
     super();
   }
   ngOnInit(): void {
-    const isAuthenticatedSubscription = this.authService.isAuthenticated().subscribe({
+   this.authService.isAuthenticated().pipe(first()).subscribe({
       next: (value: any) => {
         if (!!value && value.auth && !!value.auth.currentUser) {
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/home');
         }
-        isAuthenticatedSubscription.unsubscribe(); 
       },
       error: (error: any) => {
         console.error(error);
-      },
-      complete: () => {
-        console.log('Observable completed');
       }
     });
   }
 
   async login(){
-    const loading = await this.loadingCtrl.create();
-    await loading.present();
+    // const loading = await this.loadingCtrl.create();
+    // await loading.present();
     if(this.loginForm?.valid){
-      this.authService.signIn(this.loginForm.value.email, this.loginForm.value.password)
-        .then((res) => {
+      await this.authService.signIn(this.loginForm.value.email, this.loginForm.value.password)
+        .then(() => {
+          // loading.dismiss();
           this.presentToast("Login succeeded", 'success');
           this.router.navigate(['/home']);
-          loading.dismiss();
+          
         })
         .catch((err) => {
+          // loading.dismiss();
           this.presentToast(err + " Login failed", 'danger');
-          loading.dismiss();
+          
         })
+    }else{
+      // loading.dismiss();
+      this.presentToast("Invalid credentials", 'danger');
     }
   }
 

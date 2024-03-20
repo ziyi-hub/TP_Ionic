@@ -1,7 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {
   Auth,
-  authState,
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signInWithEmailAndPassword,
@@ -9,6 +8,7 @@ import {
 } from "@angular/fire/auth";
 import {Router} from "@angular/router";
 import { Observable } from 'rxjs';
+import { UsersService } from './users.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +17,8 @@ export class AuthService {
   
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
+  private readonly usersService = inject(UsersService);
   connectedUser$ = user(this.auth);
-  user$ = authState(this.auth);
   constructor() {
     this.connectedUser$.subscribe(
       user => {
@@ -35,9 +35,8 @@ export class AuthService {
     return await createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  async signIn(email: string, password: string){
-    return await signInWithEmailAndPassword(this.auth, email, password)
-    .catch((err)=>{throw new Error('login failed '+err)});
+  async signIn(email: string, password: string):Promise<void>{
+    await signInWithEmailAndPassword(this.auth, email, password);
   }
 
   async logOut(){
@@ -45,7 +44,7 @@ export class AuthService {
   }
 
   isAuthenticated(): Observable<User | null>{
-    return this.user$;
+    return this.connectedUser$;
   }
 
   async sendEmailVerification(user: User){
