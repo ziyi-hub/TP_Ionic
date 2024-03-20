@@ -1,15 +1,44 @@
-import { AuthService } from './../services/auth.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopicService } from '../services/topic.service';
 import { Topic } from '../models/topic';
 import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
-import { IonBackButton, IonButtons, ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import {
+  IonBackButton,
+  IonButtons,
+  ModalController,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItemSliding,
+  IonIcon,
+  IonCardHeader,
+  IonCard,
+  IonCardContent,
+  IonItemOption,
+  IonItemOptions,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonRow,
+  IonCol,
+  IonMenu,
+  IonMenuButton,
+  IonMenuToggle,
+  IonToggle,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
+import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
-
+import { TabPage } from '../components/tab/tab.page';
 import {Observable, map} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
@@ -18,7 +47,9 @@ import { AsyncPipe } from "@angular/common";
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonButton, 
+  imports: [
+    CommonModule,
+    IonButton,
     IonFab,
     IonFabButton,
     IonHeader,
@@ -28,20 +59,31 @@ import { AsyncPipe } from "@angular/common";
     IonList,
     IonItemSliding,
     IonIcon,
-    IonBackButton, 
+    IonBackButton,
     IonButtons,
     IonItemOption,
     IonItemOptions,
     IonLabel,
     IonItem,
     AsyncPipe,
+    IonCardHeader,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonRow,
+    IonCol,
+    IonMenu,
+    IonMenuButton,
+    IonMenuToggle,
+    IonToggle,
+    TabPage,
   ],
 })
 
 export class HomePage extends UtilitiesMixin{
   private readonly topicService = inject(TopicService);
   private readonly modalController = inject(ModalController);
-  private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   // Sort the topics$ Observable alphabetically by topic name
   topics$: Observable<Topic[]> = this.topicService.getAllTopics().pipe(
@@ -80,9 +122,7 @@ export class HomePage extends UtilitiesMixin{
   navigateToDetail(topicId: string) {
     this.router.navigate(['/topic-detail', topicId]);
   }
-  logout(){
-    this.authService.logOut();
-  }
+
   /**
    * Mise à jour un topic
    * @param topicId
@@ -146,5 +186,8 @@ export class HomePage extends UtilitiesMixin{
 addIcons({
   'add-outline': addOutline,
   'trash-outline': trashOutline,
-  'pencil-outline' : pencilOutline
+  'pencil-outline' : pencilOutline,
+  'person-circle': personCircle,
+  'settings-outline': settingsOutline,
+  'log-out-outline': logOutOutline,
 });

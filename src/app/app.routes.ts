@@ -31,4 +31,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/post-detail/post-detail.page').then( m => m.PostDetailPage),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'tab',
+    loadComponent: () => import('./components/tab/tab.page').then( m => m.TabPage)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage)
+  },
 ];

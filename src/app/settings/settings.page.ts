@@ -1,0 +1,35 @@
+import {Component, inject} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
+import {AuthService} from "../services/auth.service";
+import { TabPage } from '../components/tab/tab.page';
+import {addIcons} from "ionicons";
+import {logOutOutline} from "ionicons/icons";
+
+@Component({
+  selector: 'app-settings',
+  templateUrl: './settings.page.html',
+  styleUrls: ['./settings.page.scss'],
+  standalone: true,
+  imports: [
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    TabPage
+  ]
+})
+export class SettingsPage{
+
+  private readonly authService = inject(AuthService);
+
+  logout(){
+    this.authService.logOut();
+  }
+
+}
+
+addIcons({
+  'log-out-outline': logOutOutline,
+});
+

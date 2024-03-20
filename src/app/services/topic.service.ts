@@ -12,13 +12,13 @@ export class TopicService {
   private bsyTopics$: BehaviorSubject<Topic[]> = new BehaviorSubject<Topic[]>([]);
   private bsyPosts$ : BehaviorSubject<Post[]>  = new BehaviorSubject<Post[]>([]);
   private readonly firestore = inject(Firestore);
-  
+
   /**
    * Retrieve all topics and populate the BehaviorSubject with the data.
    * @returns Observable array of topics
    */
   getAllTopics(): Observable<Topic[]> {
-    const topicCollectionRef = collectionData(collection(this.firestore, 'topics'), {idField: 'id'}) as Observable<Topic[]>
+    const topicCollectionRef = collectionData(collection(this.firestore, 'categories'), {idField: 'id'}) as Observable<Topic[]>
     topicCollectionRef.subscribe({
       next: (topics) => this.bsyTopics$.next(topics),
       error: (error) => {throw new Error('Error fetching topics: '+ error)}
@@ -43,7 +43,7 @@ export class TopicService {
    * @returns Observable array of posts for the specified topic
    */
   getPostsByTopicId(topicId: string) : Observable<Post[] | undefined> {
-    const postCollectionRef = collectionData(collection(this.firestore, 'topics/'+topicId+'/posts'), {idField:'id'}) as Observable<Post[]>;
+    const postCollectionRef = collectionData(collection(this.firestore, 'categories/'+topicId+'/posts'), {idField:'id'}) as Observable<Post[]>;
     postCollectionRef.subscribe({
       next: (posts) => this.bsyPosts$.next(posts),
       error: (error) => console.error('Error fetching posts:', error)
@@ -79,7 +79,7 @@ export class TopicService {
  */
 async addTopic(topic: Topic): Promise<Topic> {
   if (!topic.name) throw new Error('Topic name is required');
-  const docRef = await addDoc(collection(this.firestore, 'topics'), { name: topic.name });
+  const docRef = await addDoc(collection(this.firestore, 'categories'), { name: topic.name });
   return { ...topic, id: docRef.id };
 }
 
@@ -91,7 +91,7 @@ async addTopic(topic: Topic): Promise<Topic> {
  */
 async updateTopic(topicToUpdate: Topic): Promise<Topic> {
   if (!topicToUpdate.id) throw new Error('Topic id is required');
-  const topicDocRef = doc(collection(this.firestore, 'topics'), topicToUpdate.id);
+  const topicDocRef = doc(collection(this.firestore, 'categories'), topicToUpdate.id);
   await updateDoc(topicDocRef, { name: topicToUpdate.name });
   return topicToUpdate;
 }

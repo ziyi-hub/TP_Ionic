@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Title</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="create" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-list [inset]="true">
+    <ion-item>
+      <ion-input label="Name"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-checkbox>Check for a free puppy</ion-checkbox>
+    </ion-item>
+    <ion-item>
+      <ion-toggle>Dark Mode</ion-toggle>
+    </ion-item>
+
+    <ion-item (click)="logout()" routerDirection="forward">
+      <ion-icon name="log-out-outline" slot="start"></ion-icon>
+      Logout
+    </ion-item>
+
+  </ion-list>
+</ion-content>
+
+<app-tab></app-tab>
