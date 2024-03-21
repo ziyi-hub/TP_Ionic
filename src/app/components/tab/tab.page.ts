@@ -7,7 +7,7 @@ import {homeOutline, searchOutline, settingsOutline} from "ionicons/icons";
 import { RouterModule } from "@angular/router";
 
 @Component({
-  selector: 'app-tab',
+  selector: 'app-custom-tab',
   templateUrl: './tab.page.html',
   styleUrls: ['./tab.page.scss'],
   standalone: true,

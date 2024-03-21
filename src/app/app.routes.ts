@@ -33,10 +33,24 @@ export const routes: Routes = [
   },
   {
     path: 'tab',
-    loadComponent: () => import('./components/tab/tab.page').then( m => m.TabPage)
+    loadComponent: () => import('./components/tab/tab.page').then( m => m.TabPage),
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage),
+        canActivate: [AuthGuard]
+      },
+    ],
   },
   {
-    path: 'settings',
-    loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage)
+    path: 'tab/settings',
+    loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage),
+    canActivate: [AuthGuard]
   },
 ];

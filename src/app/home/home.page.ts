@@ -34,9 +34,10 @@ import {
   IonMenuButton,
   IonMenuToggle,
   IonToggle,
+  IonAvatar,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline } from 'ionicons/icons';
+import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline, personCircleOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 import { TabPage } from '../components/tab/tab.page';
 import {Observable, map} from "rxjs";
@@ -78,6 +79,7 @@ import { AsyncPipe } from "@angular/common";
     IonMenuToggle,
     IonToggle,
     TabPage,
+    IonAvatar,
   ],
 })
 
@@ -190,4 +192,5 @@ addIcons({
   'person-circle': personCircle,
   'settings-outline': settingsOutline,
   'log-out-outline': logOutOutline,
+  'person-circle-outline': personCircleOutline,
 });

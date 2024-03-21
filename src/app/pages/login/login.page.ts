@@ -48,7 +48,7 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
    this.authService.isAuthenticated().pipe(first()).subscribe({
       next: (value: any) => {
         if (!!value && value.auth && !!value.auth.currentUser) {
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('/tab/home');
         }
       },
       error: (error: any) => {
@@ -65,13 +65,13 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
         .then(() => {
           // loading.dismiss();
           this.presentToast("Login succeeded", 'success');
-          this.router.navigate(['/home']);
-          
+          this.router.navigate(['/tab/home']);
+
         })
         .catch((err) => {
           // loading.dismiss();
           this.presentToast(err + " Login failed", 'danger');
-          
+
         })
     }else{
       // loading.dismiss();

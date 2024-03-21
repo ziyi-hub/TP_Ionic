@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
-    <ion-title>Title</ion-title>
+    <ion-title>Settings</ion-title>
     <ion-buttons slot="end">
       <ion-button>
         <ion-icon name="create" slot="icon-only"></ion-icon>
@@ -13,10 +13,20 @@
 </ion-header>
 
 <ion-content color="light">
+
+  <ion-card class="ion-text-center">
+    <ion-card-header class="ion-align-items-center ion-text-center">
+      <ion-avatar>
+        <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+      </ion-avatar>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-card-title>Ziyi</ion-card-title>
+      <ion-card-subtitle>ziyi.wang&#64;gmail.com</ion-card-subtitle>
+    </ion-card-content>
+  </ion-card>
+
   <ion-list [inset]="true">
-    <ion-item>
-      <ion-input label="Name"></ion-input>
-    </ion-item>
     <ion-item>
       <ion-checkbox>Check for a free puppy</ion-checkbox>
     </ion-item>
@@ -31,5 +41,3 @@
 
   </ion-list>
 </ion-content>
-
-<app-tab></app-tab>

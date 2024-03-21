@@ -1,14 +1,19 @@
 <div class="ion-page" id="main-content">
   <ion-header [translucent]="true">
-    <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <p>Good morning</p>
-        <p>username</p>
+        <p class="ion-padding-horizontal">Good morning</p>
+        <p class="ion-padding-horizontal">username</p>
+        <ion-buttons slot="end">
+          <ion-button>
+            <ion-avatar>
+              <img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+            </ion-avatar>
+          </ion-button>
+        </ion-buttons>
       </ion-toolbar>
-    </ion-header>
   </ion-header>
 
   <ion-content>
@@ -53,5 +58,3 @@
     </ion-fab-button>
   </ion-fab>
 </div>
-
-<app-tab></app-tab>

@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -21,9 +21,9 @@ import {logOutOutline} from "ionicons/icons";
 })
 export class SettingsPage{
 
-  private readonly authService = inject(AuthService);
+  constructor(private authService: AuthService) {}
 
-  logout(){
+  logout() {
     this.authService.logOut();
   }
 
