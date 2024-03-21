@@ -15,29 +15,39 @@
 <ion-content color="light">
 
   <ion-card class="ion-text-center">
-    <ion-card-header class="ion-align-items-center ion-text-center">
-      <ion-avatar>
-        <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
-      </ion-avatar>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-card-title>Ziyi</ion-card-title>
-      <ion-card-subtitle>ziyi.wang&#64;gmail.com</ion-card-subtitle>
-    </ion-card-content>
+    <ion-row>
+      <ion-col class="content-col">
+        <ion-thumbnail class="user-image">
+          <img class="rounded-full" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+        </ion-thumbnail>
+
+        <ion-text color="dark">
+          <h2 class="ion-text-center">Ziyi Wang</h2>
+        </ion-text>
+      </ion-col>
+    </ion-row>
   </ion-card>
 
   <ion-list [inset]="true">
+    <ion-item>
+      <ion-label position="stacked">Phone</ion-label>
+      <ion-input color="primary" readonly="true">0638948234</ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input color="primary" readonly="true">ziyi.wang&#64;gmail.com</ion-input>
+    </ion-item>
     <ion-item>
       <ion-checkbox>Check for a free puppy</ion-checkbox>
     </ion-item>
     <ion-item>
       <ion-toggle>Dark Mode</ion-toggle>
     </ion-item>
-
     <ion-item (click)="logout()" routerDirection="forward">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
       Logout
     </ion-item>
-
   </ion-list>
+
 </ion-content>
+

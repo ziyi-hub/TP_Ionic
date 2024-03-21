@@ -7,7 +7,7 @@ import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { ActivatedRoute } from '@angular/router';
 import { Post } from 'src/app/models/post';
 import { addIcons } from 'ionicons';
-import { caretBack } from 'ionicons/icons';
+import {caretBack, shareSocialOutline} from 'ionicons/icons';
 
 @Component({
   selector: 'app-post-detail',
@@ -17,8 +17,8 @@ import { caretBack } from 'ionicons/icons';
   imports: [IonicModule, CommonModule, FormsModule]
 })
 export class PostDetailPage extends UtilitiesMixin implements OnInit {
-  
-  
+
+
   private readonly route = inject(ActivatedRoute);
   private readonly topicService = inject(TopicService);
   post : Post  | undefined ;
@@ -42,6 +42,7 @@ export class PostDetailPage extends UtilitiesMixin implements OnInit {
   }
 }
 addIcons({
-  'caret-back': caretBack
+  'caret-back': caretBack,
+  'share-social-outline': shareSocialOutline,
 });
 
