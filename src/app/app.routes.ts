@@ -9,11 +9,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-    canActivate: [AuthGuard],
-  },
-  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
@@ -47,10 +42,5 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
       },
     ],
-  },
-  {
-    path: 'tab/settings',
-    loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage),
-    canActivate: [AuthGuard]
   },
 ];
