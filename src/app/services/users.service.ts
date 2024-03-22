@@ -9,7 +9,7 @@ import { serverTimestamp } from 'firebase/firestore';
 })
 
 export class UsersService {
-  private bsyUser$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+  // private bsyUser$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   private readonly firestore = inject(Firestore);
   
   /**
@@ -17,12 +17,7 @@ export class UsersService {
    * @returns Observable array of users
    */
   getAllUsers(): Observable<User[]> {
-    const userCollectionRef = collectionData(collection(this.firestore, 'users'), {idField: 'id'}) as Observable<User[]>
-    userCollectionRef.pipe(first()).subscribe({
-      next: (users) => this.bsyUser$.next(users),
-      error: (error) => {throw new Error('Error fetching users: '+ error)}
-    });
-    return this.bsyUser$.asObservable();
+    return collectionData(collection(this.firestore, 'users'), {idField: 'id'}) as Observable<User[]>
 
   }
   /**

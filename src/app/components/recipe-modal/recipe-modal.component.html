@@ -20,7 +20,12 @@
       <ion-input data-testid="recipe-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Name is required" ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-textarea data-testid="recipe-desc" label="Description" labelPlacement="stacked" required formControlName="description" errorText="Description is required"></ion-textarea>
+      <ion-select label="Serving" labelPlacement="stacked" required formControlName="serving" errorText="Serving is required">
+        <ion-select-option *ngFor="let num of numbers" [value]="num">{{ num }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-input data-testid="duration" labelPlacement="stacked"  label="Duration"  required formControlName="duration" errorText="Duration is required" ></ion-input>
     </ion-item>
   </form>
 </ion-content>

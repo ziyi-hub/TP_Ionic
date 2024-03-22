@@ -1,17 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, DocumentData, serverTimestamp, query, where } from '@angular/fire/firestore';
-import { Observable, map, BehaviorSubject, switchMap, first } from 'rxjs';
+import { Observable, map, BehaviorSubject, switchMap, first, catchError } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class CategoryService {
-  private bsyCategories$: BehaviorSubject<Category[]> = new BehaviorSubject<Category[]>([]);
-  private bsyRecipes$: BehaviorSubject<Recipe[]> = new BehaviorSubject<Recipe[]>([]);
   private readonly firestore = inject(Firestore);
   private readonly categoryCollection = collection(this.firestore, 'categories');
   /**
@@ -19,14 +16,7 @@ export class CategoryService {
    * @returns Observable array of categories
    **/
   getAllCategories(username : string): Observable<Category[]> {
-    const categoryCollectionRef = collectionData(query(this.categoryCollection, where("owner", "==", username)), { idField: 'id' }) as Observable<Category[]>
-    // const categoryCollectionRef = collectionData(query(this.categoryCollection), { idField: 'id' }) as Observable<Category[]>
-    categoryCollectionRef.pipe(first()).subscribe({
-      next: (categories) => this.bsyCategories$.next(categories),
-      error: (error) => { throw new Error('Error fetching categories: ' + error) },
-    });
-    return this.bsyCategories$.asObservable();
-
+    return collectionData(query(this.categoryCollection, where("owner", "==", username)), { idField: 'id' }) as Observable<Category[]>
   }
   /**
    * Retrieve a category by its identifier.
@@ -45,12 +35,7 @@ export class CategoryService {
    * @returns Observable array of recipes for the specified category
    */
   getRecipesByCategoryId(categoryId: string): Observable<Recipe[] | undefined> {
-    const recipeCollectionRef = collectionData(collection(this.firestore, 'categories/' + categoryId + '/recipes'), { idField: 'id' }) as Observable<Recipe[]>;
-    recipeCollectionRef.pipe(first()).subscribe({
-      next: (recipes) => this.bsyRecipes$.next(recipes),
-      error: (error) => console.error('Error fetching recipes:', error)
-    });
-    return this.bsyRecipes$.asObservable();
+   return collectionData(collection(this.firestore, 'categories/' + categoryId + '/recipes'), { idField: 'id' }) as Observable<Recipe[]>;
   }
 
   /**
@@ -140,10 +125,12 @@ export class CategoryService {
       name: recipe.name,
       duration: recipe.duration,
       serving: recipe.serving,
+      owner : recipe.owner,
       steps: recipe.steps,
       ingredients: recipe.ingredients,
       tags: recipe.tags,
       readers: recipe.readers,
+      editors: recipe.editors,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
@@ -165,10 +152,12 @@ export class CategoryService {
       name: updatedRecipe.name,
       duration: updatedRecipe.duration,
       serving: updatedRecipe.serving,
+      owner: updatedRecipe.owner,
       steps: updatedRecipe.steps,
       ingredients: updatedRecipe.ingredients,
       tags: updatedRecipe.tags,
       readers: updatedRecipe.readers,
+      editors: updatedRecipe.editors,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }

@@ -1,6 +1,5 @@
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
-import { Component, NgZone, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
 import { CategoryService } from '../services/category.service';
 import { Category } from '../models/category';
 import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
@@ -9,7 +8,7 @@ import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 
-import {Observable, first, map} from "rxjs";
+import {Observable, first, of} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
@@ -46,15 +45,24 @@ export class HomePage extends UtilitiesMixin implements OnInit{
     try {
       this.username = await this.getCurrentUserName();
       if(this.username)
-        this.categories$ = this.CategoryService.getAllCategories(this.username).pipe(
-          map((categories: any[]) => categories.sort((a, b) => a.name.localeCompare(b.name)))
-        );
+        this.loadCategories(this.username)
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
   }
-  // Sort the categories$ Observable alphabetically by category name
-  
+
+  loadCategories(username : string){
+    try {
+      const subscription = this.CategoryService.getAllCategories(username).subscribe((categories: any[]) => {
+        this.categories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
+        subscription.unsubscribe();
+      });        
+    } catch (error) {
+      const msg =  'Error fetching categories: '+error
+      this.presentToast(msg, 'danger')
+    }
+    
+  }
   
 
   /**
@@ -76,10 +84,14 @@ export class HomePage extends UtilitiesMixin implements OnInit{
           .then((categoryAdded: any) => {
             const message =  categoryAdded.name + " is successfully created."
             this.presentToast(message, 'success');
+            if(this.username)
+              this.loadCategories(this.username)
           })
           .catch((err) => {
             this.presentToast(err, 'danger');
-          })
+          });
+          
+        
       }
     });
 
@@ -110,16 +122,23 @@ export class HomePage extends UtilitiesMixin implements OnInit{
     });
 
     modal.onWillDismiss().then((data) => {
-      if (!!data && data.data) {
-          // const updatedCategory = { id: categoryId, name: data.data, recipes: [] }
-          // this.CategoryService.updateCategory(updatedCategory)
-          //   .then((categoryUpdated: any) => {
-          //     const message = categoryUpdated.name + " is successfully updated."
-          //     this.presentToast(message, 'success');
-          //   })
-          //   .catch((err) => {
-          //     this.presentToast(err, 'danger');
-          //   })
+      if (!!data && data.data && this.username ) {
+          const updatedCategory = {
+            id: categoryId,
+            name: data.data.name,
+            imgUrl: data.data.imgUrl || '',
+            owner: this.username
+          };
+          this.CategoryService.updateCategory(updatedCategory)
+            .then((categoryUpdated: any) => {
+              const message = categoryUpdated.name + " is successfully updated."
+              if(this.username)
+                this.loadCategories(this.username)
+              this.presentToast(message, 'success');
+            })
+            .catch((err) => {
+              this.presentToast(err, 'danger');
+            })
       }
     });
     return await modal.present();
@@ -135,8 +154,9 @@ export class HomePage extends UtilitiesMixin implements OnInit{
           if (value && value.name) {
             this.CategoryService.deleteCategory(categoryId)
               .then((isDeleted: any) => {
-                if(isDeleted === true){
+                if(isDeleted === true && this.username){
                   const message = value.name + " is succesfully deleted.";
+                  this.loadCategories(this.username)
                   this.presentToast(message,  'success')
                 }
               })

@@ -3,10 +3,12 @@ export interface Recipe {
   name: string;
   serving:number;
   duration:string;
-  steps: [];
-  ingredients : [];
-  tags : [];
-  readers : [];
+  owner : string;
+  steps?: string[];
+  ingredients? : string[];
+  tags? : string[];
+  readers? : string[];
+  editors? : string[];
   createdAt? : Date;
   updatedAt? : Date;
 }

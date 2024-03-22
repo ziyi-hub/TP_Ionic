@@ -6,25 +6,24 @@ import { RecipeModalComponent } from "../../components/recipe-modal/recipe-modal
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../models/category';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonBackButton, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
+import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
-import { first, map } from 'rxjs';
-import { user } from '@angular/fire/auth';
+import { first, map, catchError } from 'rxjs';
 
 @Component({
   standalone: true,
   selector: 'app-category-detail',
   templateUrl: './category-detail.page.html',
   styleUrls: ['./category-detail.page.scss'],
-  imports: [ReactiveFormsModule, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports: [IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   recipes: Recipe[] = [];
   category: Category | undefined;
-  private readonly CategoryService = inject(CategoryService);
+  private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   private readonly route = inject(ActivatedRoute);
 
@@ -49,11 +48,11 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     this.route.params.pipe(first()).subscribe(params => {
       const categoryId = params['id'];
       if (this.username)
-        this.CategoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe(
+        this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe(
           category => {
             if (category) {
               this.category = category;
-              this.CategoryService.getRecipesByCategoryId(categoryId).pipe(
+              this.categoryService.getRecipesByCategoryId(categoryId).pipe(
                 map((recipes: any) => recipes.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)))
               ).subscribe({
                 next: (recipes: any) => {
@@ -86,18 +85,20 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
 
     modal.onWillDismiss().then((data) => {
 
-      if (!!data && data.data && this.category) {
+      if (!!data && data.data && this.category && this.username) {
         const recipeValue = {
           id: UUID.UUID(),
           name: data.data.name,
           duration: data.data.duration,
           serving: data.data.serving,
+          owner : this.username,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
           tags: data.data.tags,
-          readers: data.data.readers
+          readers: data.data.readers,
+          editors: data.data.editors,
         }
-        this.CategoryService.addRecipe(recipeValue, this.category.id)
+        this.categoryService.addRecipe(recipeValue, this.category.id)
           .then((res: Recipe) => {
             const message = res.name + " is successfully created."
             this.presentToast(message, 'success');
@@ -114,10 +115,10 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
 
   async deleteRecipe(recipeId: string, username: string) {
     if (recipeId) {
-      this.CategoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
+      this.categoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
         next: (value: any) => {
           if (value && value.name) {
-            this.CategoryService.deleteRecipe(recipeId, this.category!.id, username)
+            this.categoryService.deleteRecipe(recipeId, this.category!.id, username)
               .then((isDeleted: any) => {
                 if (isDeleted === true) {
                   const message = value.name + " is succesfully deleted.";
@@ -156,12 +157,14 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           name: data.data.name,
           duration: data.data.duration,
           serving: data.data.serving,
+          owner: data.data.owner,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
           tags: data.data.tags,
-          readers: data.data.readers
+          readers: data.data.readers,
+          editors : data.data.editors
         }
-        this.CategoryService.updateRecipe(recipeValue, this.category.id)
+        this.categoryService.updateRecipe(recipeValue, this.category.id)
           .then((updatedRecipe: any) => {
             const message = updatedRecipe.name + " is successfully updated."
             this.presentToast(message, 'success');
@@ -174,6 +177,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     });
     return await modal.present();
   }
+  
   closeIonSliding(ionItemSliding: IonItemSliding) {
     ionItemSliding.close()
   }
