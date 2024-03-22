@@ -1,23 +1,23 @@
 
-describe('Add a new post', () => {
+describe('Add a new recipe', () => {
   it('passes', () => {
     cy.visit('http://localhost:4200')
 
-    cy.get('[data-testid="topics"]').should('have.length', 0)
-    cy.get('[data-testid="open-new-topic-modal-btn"]').click()
-    cy.get('[data-testid="topic-name"]').type('Add Topic 1{enter}')
-    cy.get('[data-testid="confirm-new-topic-modal-btn"]').click()
-    cy.get('[data-testid="topics"]').should('have.length', 1)
-    cy.get('[data-testid="topics"]').first().find('ion-label').contains('Add Topic 1')
+    cy.get('[data-testid="categories"]').should('have.length', 0)
+    cy.get('[data-testid="open-new-category-modal-btn"]').click()
+    cy.get('[data-testid="category-name"]').type('Add Category 1{enter}')
+    cy.get('[data-testid="confirm-new-category-modal-btn"]').click()
+    cy.get('[data-testid="categories"]').should('have.length', 1)
+    cy.get('[data-testid="categories"]').first().find('ion-label').contains('Add Category 1')
 
-    cy.get('[data-testid="posts"]').should('have.length', 0)
-    cy.get('[data-testid="topics"]').first().click()
-    cy.get('[data-testid="open-new-post-modal-btn"]').click()
-    cy.get('[data-testid="post-name"]').type('Post A{enter}')
-    cy.get('[data-testid="post-desc"]').type('Enter post description {enter}')
-    cy.get('[data-testid="confirm-new-post-modal-btn"]').click()
-    cy.get('[data-testid="posts"]').should('have.length', 1)
-    cy.get('[data-testid="posts"]').find('ion-label').contains('Post A')
+    cy.get('[data-testid="recipes"]').should('have.length', 0)
+    cy.get('[data-testid="categories"]').first().click()
+    cy.get('[data-testid="open-new-recipe-modal-btn"]').click()
+    cy.get('[data-testid="recipe-name"]').type('Recipe A{enter}')
+    cy.get('[data-testid="recipe-desc"]').type('Enter recipe description {enter}')
+    cy.get('[data-testid="confirm-new-recipe-modal-btn"]').click()
+    cy.get('[data-testid="recipes"]').should('have.length', 1)
+    cy.get('[data-testid="recipes"]').find('ion-label').contains('Recipe A')
   })
 
 })

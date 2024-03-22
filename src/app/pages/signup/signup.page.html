@@ -15,17 +15,31 @@
 
   <form [formGroup]="regForm" class="ion-padding" novalidate>
     <ion-item class="ion-padding-vertical">
+      <ion-input formControlName="firstName" placeholder="firstName"></ion-input>
+    </ion-item>
+    <div class="text-danger" *ngIf="this.regForm.controls['firstName'].touched && this.regForm.controls['firstName'].invalid">
+      A firstname is required
+    </div>
+
+    <ion-item class="ion-padding-vertical">
+      <ion-input formControlName="lastName" placeholder="lastName"></ion-input>
+    </ion-item>
+    <div class="text-danger" *ngIf="this.regForm.controls['lastName'].touched && this.regForm.controls['lastName'].invalid">
+      A lastname is required
+    </div>
+
+    <ion-item class="ion-padding-vertical">
       <ion-input formControlName="username" placeholder="username"></ion-input>
     </ion-item>
     <div class="text-danger" *ngIf="this.regForm.controls['username'].touched && this.regForm.controls['username'].invalid">
-      Username is required
+      A username is required
     </div>
 
     <ion-item class="ion-padding-vertical">
       <ion-input formControlName="email" placeholder="email"></ion-input>
     </ion-item>
     <div class="text-danger" *ngIf="this.regForm.controls['email'].touched && this.regForm.controls['email'].invalid">
-      Email invalid
+      The email is invalid
     </div>
     
     <ion-item>

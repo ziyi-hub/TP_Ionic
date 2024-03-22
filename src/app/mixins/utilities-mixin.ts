@@ -1,15 +1,23 @@
-import { Component, OnDestroy, inject } from "@angular/core";
+import { AuthService } from './../services/auth.service';
+import { Component, inject } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular/standalone";
-import { Subscription } from "rxjs";
+import {Observable, Subscription, first, switchMap } from "rxjs";
+import { User } from "../models/user";
+import { UsersService } from '../services/users.service';
+import { user } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Component({
   template: ''
 })
-export class UtilitiesMixin implements OnDestroy {
+export class UtilitiesMixin {
   
   private readonly toastController =  inject(ToastController);
   private readonly alertController =  inject(AlertController);
-  subscription: Subscription | undefined;
+  username : string | undefined;
+  readonly usersService = inject(UsersService);
+  readonly authService = inject(AuthService)
+  readonly router = inject(Router);
   
   /**
    * show toast
@@ -29,12 +37,12 @@ export class UtilitiesMixin implements OnDestroy {
   /**
    * show a confirm alert before delete
    * @param deleteCallback
-   * @param topicId
-   * @param topicName
+   * @param categoryId
+   * @param categoryName
    */
-  async presentAlertDelete(deleteCallback: (topicId: string) => void, topicId: string, topicName: string) {
+  async presentAlertDelete(deleteCallback: (categoryId: string) => void, categoryId: string, categoryName: string) {
     const alert = await this.alertController.create({
-      header: 'Are you sure you want to delete ' + topicName + "?",
+      header: 'Are you sure you want to delete ' + categoryName + "?",
       subHeader: '',
       message: '',
       buttons: [
@@ -49,20 +57,49 @@ export class UtilitiesMixin implements OnDestroy {
           text: 'OK',
           role: 'confirm',
           handler: () => {
-            deleteCallback(topicId);
+            deleteCallback(categoryId);
           },
         },
       ],
     });
 
     await alert.present();
-  }
-  unsubscribePost() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
+}
+async getCurrentUserName(): Promise<string | undefined> {
+  try {
+    const user = await this.authService.connectedUser$.pipe(first()).toPromise();
+    
+    if (user) {
+      const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
+      if (value) {
+        this.username = value.username;
+        return value.username; // Return the username
+      } 
     }
+    return undefined; // Return undefined if no user or value is found
+  } catch (error) {
+    console.log('Error retrieving username:', error);
+    throw error;
   }
-  ngOnDestroy(): void {
-    this.unsubscribePost();
-  }
+}
+
+
+
+loadUser(){
+  this.authService.connectedUser$.subscribe(
+    user => {
+      if(!user) 
+        this.router.navigateByUrl("/login");
+      else
+        this.router.navigateByUrl("/home");
+      if(user && !user.emailVerified){
+        this.authService.sendEmailVerification(user);
+        this.authService.logOut();
+      }
+    }
+  )
+}
+
+
+
 }

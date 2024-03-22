@@ -1,16 +1,16 @@
 # TP_Ionic #
 
 ## Créez un service ##
--  ionic g service services/topic
+-  ionic g service services/category
 
 ## Créer une interface ##
--  ionic g interface models/post 
+-  ionic g interface models/recipe 
 
-## Créer une component topic modal ##
-- ng generate component components/topic-modal
+## Créer une component category modal ##
+- ng generate component components/category-modal
 - [Controller Modals](https://ionicframework.com/docs/api/modal#controller-modals)
 
-## Créer une nouvelle page topic-detail ##
+## Créer une nouvelle page category-detail ##
 - ionic g page pages/signin --standalone
 
 ## Build ##

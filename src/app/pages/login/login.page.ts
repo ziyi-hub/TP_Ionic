@@ -3,16 +3,14 @@ import { CommonModule } from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IonicModule, LoadingController} from '@ionic/angular';
 import {addIcons} from "ionicons";
-import {Router, RouterModule} from '@angular/router';
+import {RouterModule} from '@angular/router';
 
 import {
   lockClosedOutline,
   personOutline,
   chevronForward,
 } from "ionicons/icons";
-import {AuthService} from "../../services/auth.service";
 import {UtilitiesMixin} from "../../mixins/utilities-mixin";
-import { first } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +20,6 @@ import { first } from 'rxjs';
   imports: [IonicModule, CommonModule, FormsModule, RouterModule, ReactiveFormsModule]
 })
 export class LoginPage extends UtilitiesMixin implements OnInit{
-
   loginForm: FormGroup = this.formBuilder.group({
     email: ['', [
       Validators.required,
@@ -38,23 +35,11 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
     ]]
   })
 
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-
   constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
     super();
   }
-  ngOnInit(): void {
-   this.authService.isAuthenticated().pipe(first()).subscribe({
-      next: (value: any) => {
-        if (!!value && value.auth && !!value.auth.currentUser) {
-          this.router.navigateByUrl('/home');
-        }
-      },
-      error: (error: any) => {
-        console.error(error);
-      }
-    });
+  ngOnInit() {
+    this.loadUser()
   }
 
   async login(){
@@ -78,7 +63,6 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
       this.presentToast("Invalid credentials", 'danger');
     }
   }
-
 }
 
 addIcons({

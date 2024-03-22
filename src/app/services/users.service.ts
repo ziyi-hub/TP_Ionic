@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import {Firestore, collection, collectionData, deleteDoc, doc,updateDoc, setDoc, addDoc} from '@angular/fire/firestore';
-import { Observable, map, BehaviorSubject } from 'rxjs';
+import { Observable, map, BehaviorSubject, first, catchError, of } from 'rxjs';
 import  { User } from '../models/user';
+import { serverTimestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class UsersService {
    */
   getAllUsers(): Observable<User[]> {
     const userCollectionRef = collectionData(collection(this.firestore, 'users'), {idField: 'id'}) as Observable<User[]>
-    userCollectionRef.subscribe({
+    userCollectionRef.pipe(first()).subscribe({
       next: (users) => this.bsyUser$.next(users),
       error: (error) => {throw new Error('Error fetching users: '+ error)}
     });
@@ -30,10 +31,11 @@ export class UsersService {
    * @returns Observable of the user with the specified ID
    */
   getUserById(userId: string): Observable<User | undefined> {
-    return this.getAllUsers().pipe(
+    return (collectionData(collection(this.firestore, 'users'), {idField: 'id'}) as Observable<User[]>).pipe(
       map(users => users.find(user => user.id === userId))
     );
   }
+  
 
   /**
  * Add a new user to Firestore.
@@ -43,11 +45,20 @@ export class UsersService {
  * @throws Error if the user name is not provided
  */
 async addUser(user: User, docId: string): Promise<User> {
-  if (!user.username) throw new Error('Username is required');
+  if (!user.username) throw new Error('A username is required');
+  if (!user.firstName) throw new Error('A firstname is required');
+  if (!user.lastName) throw new Error('A lastname is required');
+  const userValue = { 
+    username: user.username,
+    firstName : user.firstName,
+    lastName: user.lastName,
+    createdAt : serverTimestamp(),
+    updatedAt : serverTimestamp(),
+  };
   const userDocRef = doc(this.firestore, 'users', docId);
-  console.log("")
+  
   try {
-      await setDoc(userDocRef, { username: user.username });
+      await setDoc(userDocRef, userValue);
       console.log("User added successfully");
   } catch (error) {
       console.error("Error adding user:", error);
@@ -66,7 +77,13 @@ async addUser(user: User, docId: string): Promise<User> {
 async updateUser(userToUpdate: User): Promise<User> {
   if (!userToUpdate.id) throw new Error('user id is required');
   const userDocRef = doc(collection(this.firestore, 'users'), userToUpdate.id);
-  await updateDoc(userDocRef, { username: userToUpdate.username });
+  const userValue = { 
+    username: userToUpdate.username,
+    firstName : userToUpdate.firstName,
+    lastName: userToUpdate.lastName,
+    updatedAt : serverTimestamp(), 
+  };
+  await updateDoc(userDocRef, userValue);
   return userToUpdate;
 }
 

@@ -9,38 +9,45 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Post } from 'src/app/models/post';
-import { TopicService } from 'src/app/services/topic.service';
+import { Recipe } from 'src/app/models/recipe';
+import { CategoryService } from 'src/app/services/category.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
+import { first } from 'rxjs';
 
 @Component({
   standalone:true,
-  selector: 'app-post-modal',
-  templateUrl: './post-modal.component.html',
-  styleUrls: ['./post-modal.component.scss'],
+  selector: 'app-recipe-modal',
+  templateUrl: './recipe-modal.component.html',
+  styleUrls: ['./recipe-modal.component.scss'],
   imports : [ReactiveFormsModule, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
-export class PostModalComponent extends UtilitiesMixin implements OnInit{
-  @Input() postId : string |undefined;
-  @Input() topicId : string |undefined;
-  post : Post | undefined ;
-  postForm = new FormGroup({
+export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
+  @Input() recipeId : string |undefined;
+  @Input() categoryId : string |undefined;
+  recipe : Recipe | undefined ;
+  recipeForm = new FormGroup({
     name : new FormControl('', [Validators.required]) ,
     description : new FormControl('', [Validators.required])});
 
-  private readonly topicService = inject(TopicService);
+  private readonly CategoryService = inject(CategoryService);
   private readonly modalCtrl = inject(ModalController);
   
-  ngOnInit() {
-    this.loadPost()
-  }
-  loadPost(){
+  async ngOnInit() {
     try {
-      if (this.postId && this.topicId) {
-        this.subscription = this.topicService.getPost(this.topicId, this.postId).subscribe({
+      this.username = await this.getCurrentUserName();
+      if(this.username)
+        this.loadRecipe()
+    } catch (error) {
+      this.presentToast("Failed to retrieve logged-in user.", "danger")
+    }
+  }
+  loadRecipe(){
+    try {
+      if (this.recipeId && this.categoryId && this.username) {
+        this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.username).pipe(first()).subscribe({
           next: (value: any) => {
             if (value && value.description) {
-              this.postForm.setValue({
+              this.recipeForm.setValue({
                 name: value!.name,
                 description : value!.description
               });
@@ -55,7 +62,7 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
         });
       }
     } catch (error) {
-      const msg =  'Error fetching post: '+error
+      const msg =  'Error fetching recipe: '+error
       this.presentToast(msg, 'danger')
     }
     
@@ -65,7 +72,7 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
   }
 
   confirm() {
-    return this.modalCtrl.dismiss(this.postForm.value, 'confirm');
+    return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
   } 
 }
 addIcons({

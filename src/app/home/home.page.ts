@@ -1,16 +1,15 @@
-import { AuthService } from './../services/auth.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
-import { Component, inject } from '@angular/core';
+import { Component, NgZone, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TopicService } from '../services/topic.service';
-import { Topic } from '../models/topic';
-import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
+import { CategoryService } from '../services/category.service';
+import { Category } from '../models/category';
+import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
 import { IonBackButton, IonButtons, ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 
-import {Observable, map} from "rxjs";
+import {Observable, first, map} from "rxjs";
 import { AsyncPipe } from "@angular/common";
 
 @Component({
@@ -38,30 +37,44 @@ import { AsyncPipe } from "@angular/common";
   ],
 })
 
-export class HomePage extends UtilitiesMixin{
-  private readonly topicService = inject(TopicService);
+export class HomePage extends UtilitiesMixin implements OnInit{
+ 
+  private readonly CategoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
-  private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-  // Sort the topics$ Observable alphabetically by topic name
-  topics$: Observable<Topic[]> = this.topicService.getAllTopics().pipe(
-  map((topics: any[]) => topics.sort((a, b) => a.name.localeCompare(b.name)))
-);
+  categories$ : Observable<Category[]> | undefined;
+  async ngOnInit() {
+    try {
+      this.username = await this.getCurrentUserName();
+      if(this.username)
+        this.categories$ = this.CategoryService.getAllCategories(this.username).pipe(
+          map((categories: any[]) => categories.sort((a, b) => a.name.localeCompare(b.name)))
+        );
+    } catch (error) {
+      this.presentToast("Failed to retrieve logged-in user.", "danger")
+    }
+  }
+  // Sort the categories$ Observable alphabetically by category name
+  
+  
 
   /**
-   * Ouvrir Modal Topic
+   * Ouvrir Modal Category
    */
-  async createTopic() {
+  async createCategory() {
     const modal = await this.modalController.create({
-      component: TopicModalComponent,
+      component: CategoryModalComponent,
     });
-
     modal.onWillDismiss().then((data) => {
-      if (!!data && data.data) {
-        const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
-        this.topicService.addTopic(newTopic)
-          .then((topicAdded: any) => {
-            const message =  topicAdded.name + " is successfully created."
+      if (!!data && data.data &&this.username) {
+        const newCategory = {
+          id: UUID.UUID(),
+          name: data.data.name,
+          imgUrl: data.data.imgUrl || '',
+          owner: this.username
+        };
+        this.CategoryService.addCategory(newCategory)
+          .then((categoryAdded: any) => {
+            const message =  categoryAdded.name + " is successfully created."
             this.presentToast(message, 'success');
           })
           .catch((err) => {
@@ -75,72 +88,75 @@ export class HomePage extends UtilitiesMixin{
 
   /**
    * Redirect page
-   * @param topicId
+   * @param categoryId
    */
-  navigateToDetail(topicId: string) {
-    this.router.navigate(['/topic-detail', topicId]);
+  navigateToDetail(categoryId: string) {
+    this.router.navigate(['/category-detail', categoryId]);
   }
   logout(){
     this.authService.logOut();
+    this.loadUser();
   }
   /**
-   * Mise à jour un topic
-   * @param topicId
+   * Mise à jour un category
+   * @param categoryId
    */
-  async updateTopic(topicId: string)  {
+  async updateCategory(categoryId: string)  {
     const modal = await this.modalController.create({
-      component: TopicModalComponent,
+      component: CategoryModalComponent,
       componentProps: {
-        topicId: topicId
+        categoryId: categoryId
       }
     });
 
     modal.onWillDismiss().then((data) => {
       if (!!data && data.data) {
-          const updatedTopic = { id: topicId, name: data.data, posts: [] }
-          this.topicService.updateTopic(updatedTopic)
-            .then((topicUpdated: any) => {
-              const message = topicUpdated.name + " is successfully updated."
-              this.presentToast(message, 'success');
-            })
-            .catch((err) => {
-              this.presentToast(err, 'danger');
-            })
+          // const updatedCategory = { id: categoryId, name: data.data, recipes: [] }
+          // this.CategoryService.updateCategory(updatedCategory)
+          //   .then((categoryUpdated: any) => {
+          //     const message = categoryUpdated.name + " is successfully updated."
+          //     this.presentToast(message, 'success');
+          //   })
+          //   .catch((err) => {
+          //     this.presentToast(err, 'danger');
+          //   })
       }
     });
     return await modal.present();
   }
   /**
-   * Suppression un topic
-   * @param topicId
+   * Suppression un category
+   * @param categoryId
    */
-  async deleteTopic(topicId: string){
-    this.subscription = this.topicService.getTopicById(topicId).subscribe({
-      next: (value: any) => {
-        if (value && value.name) {
-          this.topicService.deleteTopic(topicId)
-            .then((isDeleted: any) => {
-              if(isDeleted === true){
-                const message = value.name + " is succesfully deleted.";
-                this.presentToast(message,  'success')
-              }
-            })
-            .catch((err:any) => {
-              this.presentToast(err, 'danger');
-            });
+  async deleteCategory(categoryId: string){
+    if(this.username)
+      this.CategoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe({
+        next: (value: any) => {
+          if (value && value.name) {
+            this.CategoryService.deleteCategory(categoryId)
+              .then((isDeleted: any) => {
+                if(isDeleted === true){
+                  const message = value.name + " is succesfully deleted.";
+                  this.presentToast(message,  'success')
+                }
+              })
+              .catch((err:any) => {
+                this.presentToast(err, 'danger');
+              });
+          }
+        },
+        error: (error: any) => {
+          this.presentToast(error, 'danger');
+        },
+        complete: () => {
+          console.log('Observable terminé');
         }
-      },
-      error: (error: any) => {
-        this.presentToast(error, 'danger');
-      },
-      complete: () => {
-        console.log('Observable terminé');
-      }
-    });
-  }
+      });
+    }
   closeIonSliding(ionItemSliding:IonItemSliding){
     ionItemSliding.close()
   }
+  
 }
 
 addIcons({

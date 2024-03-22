@@ -6,8 +6,8 @@ import { IonicModule, LoadingController } from '@ionic/angular';
 import { addIcons } from "ionicons";
 import { chevronForward, lockClosedOutline, personOutline } from "ionicons/icons";
 import { Router, RouterModule } from "@angular/router";
-import { AuthService } from "../../services/auth.service";
 import { UtilitiesMixin } from "../../mixins/utilities-mixin";
+import { User } from 'src/app/models/user';
 
 @Component({
   selector: 'app-signup',
@@ -27,6 +27,12 @@ export class SignupPage extends UtilitiesMixin {
     username: ['', [
       Validators.required
     ]],
+    firstName: ['', [
+      Validators.required
+    ]],
+    lastName: ['', [
+      Validators.required
+    ]],
     password: ['', [
       Validators.required,
       Validators.required,
@@ -42,10 +48,6 @@ export class SignupPage extends UtilitiesMixin {
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
     ]],
   })
-
-  private readonly authService = inject(AuthService);
-  private readonly usersService = inject(UsersService);
-  private readonly router = inject(Router);
 
   constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
     super();
@@ -87,7 +89,7 @@ export class SignupPage extends UtilitiesMixin {
         throw new Error('Form is invalid.');
       }
 
-      const { email, password, confirmPassword, username } = this.regForm.value;
+      const { email, password, confirmPassword, username, lastName, firstName } = this.regForm.value;
 
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match.');
@@ -100,17 +102,20 @@ export class SignupPage extends UtilitiesMixin {
       const account = await this.authService.createUser(email, password);
       await this.authService.sendEmailVerification(account.user);
       await this.authService.logOut();
-      await this.usersService.addUser({ id: account.user.uid, username }, account.user.uid)
-      this.presentToast('Registration successful.', 'success');
+      const userValue : User = {
+        username: username,
+        firstName: firstName,
+        lastName: lastName
+      };
+      await this.usersService.addUser(userValue, account.user.uid)
+      this.presentToast('Registration successfull.', 'success');
       this.router.navigate(['/login']);
     } catch (error) {
-      this.presentToast(error + " in in", 'danger');
+      this.presentToast(error+"", 'danger');
     }
   }
 
 }
-
-
 
 addIcons({
   'lock-closed-outline': lockClosedOutline,
