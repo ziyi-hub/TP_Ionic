@@ -1,5 +1,5 @@
 import { TopicService } from 'src/app/services/topic.service';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -18,6 +18,25 @@ import {caretBack, shareSocialOutline} from 'ionicons/icons';
 })
 export class PostDetailPage extends UtilitiesMixin implements OnInit {
 
+  steps: string[] = [
+    "Check for a free puppy",
+    "Check for a free puppy",
+    "Check for a free puppy",
+    "Check for a free puppy",
+    "Check for a free puppy",
+  ];
+
+  ingredients: { name: string, volume: string }[] = [
+    { name: "Green Spinach", volume: "220 grams" },
+    { name: "Seseme seeds", volume: "1 pinch" },
+    { name: "Egg", volume: "4 nos." },
+    { name: "Rice", volume: "2 bowl." },
+    { name: "Jucchini", volume: "2 nos." },
+    { name: "Vegetable Oil", volume: "30 ml" },
+    { name: "Salt", volume: "As required" },
+  ];
+
+  segmentValue: string = 'ingredients';
 
   private readonly route = inject(ActivatedRoute);
   private readonly topicService = inject(TopicService);

@@ -40,9 +40,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div style="height: 250px; background-size: cover; background-position: center; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1492683962492-deef0ec456c0?q=80&w=1156&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');" class="ion-text-center ion-align-items-center ion-padding">
-    <div class="ion-padding-vertical ion-align-items-end" style="background: rgba(0, 0, 0, 0.5); ">
+<ion-content color="light">
+  <div class="ion-text-center ion-align-items-center ion-padding bg-img-style" style="background-image: url('https://images.unsplash.com/photo-1492683962492-deef0ec456c0?q=80&w=1156&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+    <div class="ion-padding-vertical bg-black-trans">
       <h3>Nom de repas</h3>
       <p>producer</p>
     </div>
@@ -53,7 +53,6 @@
       <ion-label class="ion-text-nowrap">
         Soup with <b>Dimsus</b> and <b>Vegetables</b>
       </ion-label>
-
       <br/><br/>
 
       <ion-label>
@@ -64,11 +63,67 @@
       <ion-label color="primary">
         #Western
       </ion-label>
+
       <ion-label color="primary">
         #Salade
       </ion-label>
     </ion-col>
   </ion-row>
 
+  <ion-row class="ion-padding-horizontal">
+    <ion-segment [(ngModel)]="segmentValue" color="tertiary" value="ingredients">
+      <ion-segment-button value="ingredients">
+        <ion-label>Ingredients</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="steps">
+        <ion-label>Steps</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-row>
+
+  <ion-list [inset]="true" *ngIf="segmentValue === 'steps'">
+    <ion-item *ngFor="let step of steps">
+      <ion-checkbox labelPlacement="end">{{step}}</ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <ion-list [inset]="true" *ngIf="segmentValue === 'ingredients'">
+    <ion-row *ngFor="let ingredient of ingredients" class="ion-justify-content-between ion-align-items-center ion-padding">
+      <ion-row class="ion-align-items-center">
+        <ion-checkbox></ion-checkbox>
+        <label class="ion-padding-horizontal">{{ingredient.name}}</label>
+      </ion-row>
+      <label>{{ingredient.volume}}</label>
+    </ion-row>
+  </ion-list>
+
+
+  <!--  <ion-row class="ion-padding-horizontal">-->
+<!--    <ion-segment [(ngModel)]="" color="tertiary" value="ingredients">-->
+<!--      <ion-segment-button value="ingredients">-->
+<!--        <ion-label>Ingredients</ion-label>-->
+<!--      </ion-segment-button>-->
+<!--      <ion-segment-button value="steps">-->
+<!--        <ion-label>Steps</ion-label>-->
+<!--      </ion-segment-button>-->
+<!--    </ion-segment>-->
+<!--  </ion-row>-->
+
+<!--  <ion-list [inset]="true">-->
+<!--    <ion-item *ngFor="let step of steps">-->
+<!--      <ion-checkbox labelPlacement="end">{{step}}</ion-checkbox>-->
+<!--    </ion-item>-->
+<!--  </ion-list>-->
+
+<!--  <ion-list [inset]="true">-->
+<!--    <ion-row *ngFor="let ingredient of ingredients" class="ion-justify-content-between ion-align-items-center ion-padding">-->
+<!--      <ion-row class="ion-align-items-center">-->
+<!--        <ion-checkbox></ion-checkbox>-->
+<!--        <label class="ion-padding-horizontal">{{ingredient.name}}</label>-->
+<!--      </ion-row>-->
+
+<!--      <label>{{ingredient.volume}}</label>-->
+<!--    </ion-row>-->
+<!--  </ion-list>-->
 
 </ion-content>
