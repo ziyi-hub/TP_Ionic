@@ -6,18 +6,24 @@ import {PostModalComponent} from "../../components/post-modal/post-modal.compone
 import { ActivatedRoute, Router } from '@angular/router';
 import { Topic } from '../../models/topic';
 import { ReactiveFormsModule } from '@angular/forms';
-import {IonBackButton, IonButtons, IonFab,IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem} from '@ionic/angular/standalone';
+import { ModalController, IonItemSliding} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 import { map } from 'rxjs';
+import {IonicModule} from "@ionic/angular";
+import { CommonModule } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-topic-detail',
   templateUrl: './topic-detail.page.html',
   styleUrls: ['./topic-detail.page.scss'],
-  imports : [ReactiveFormsModule, IonBackButton, IonButtons, IonFab, IonFabButton,IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports : [
+    IonicModule,
+    CommonModule,
+    ReactiveFormsModule,
+  ]
 })
 
 export class TopicDetailPage extends UtilitiesMixin implements OnInit {
@@ -27,6 +33,17 @@ export class TopicDetailPage extends UtilitiesMixin implements OnInit {
   private readonly modalController= inject(ModalController);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router)
+
+  recipes = [
+    {
+      name: "Turkey Noodle Soup",
+      img: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    },
+    {
+      name: "Vegetable Soup",
+      img: "https://images.unsplash.com/photo-1519202270721-a737823482cc?q=80&w=1634&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    }
+  ]
 
   /**
    * Charger les topics lors de l'initialisation de la page

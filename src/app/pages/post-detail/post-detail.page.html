@@ -56,7 +56,12 @@
       <br/><br/>
 
       <ion-label>
-        30 Minutes
+        <b>30</b> Minutes
+      </ion-label>
+      <br/><br/>
+
+      <ion-label>
+        <b>4</b> serving
       </ion-label>
       <br/><br/>
 
@@ -82,9 +87,10 @@
   </ion-row>
 
   <ion-list [inset]="true" *ngIf="segmentValue === 'steps'">
-    <ion-item *ngFor="let step of steps">
-      <ion-checkbox labelPlacement="end">{{step}}</ion-checkbox>
-    </ion-item>
+    <ion-row *ngFor="let step of steps" class="ion-justify-content-between ion-align-items-center ion-padding">
+      <ion-checkbox></ion-checkbox>
+      <label>{{step}}</label>
+    </ion-row>
   </ion-list>
 
   <ion-list [inset]="true" *ngIf="segmentValue === 'ingredients'">

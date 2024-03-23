@@ -3,6 +3,7 @@ import {
   Auth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut, user, User
 } from "@angular/fire/auth";
@@ -14,7 +15,7 @@ import { UsersService } from './users.service';
   providedIn: 'root'
 })
 export class AuthService {
-  
+
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly usersService = inject(UsersService);
@@ -49,6 +50,10 @@ export class AuthService {
 
   async sendEmailVerification(user: User){
     await sendEmailVerification(user);
+  }
+
+  resetPassword(email: string){
+    return sendPasswordResetEmail(this.auth, email);
   }
 
 }
