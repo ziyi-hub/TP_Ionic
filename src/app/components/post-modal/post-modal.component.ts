@@ -1,5 +1,22 @@
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { IonBackButton,IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
+import {
+  IonBackButton,
+  IonTextarea,
+  IonIcon,
+  IonCard,
+  IonHeader,
+  IonCardSubtitle,
+  IonCardContent,
+  IonCardHeader,
+  IonToolbar,
+  IonTitle,
+  IonItem,
+  IonContent,
+  IonInput,
+  IonButtons,
+  IonButton,
+  ModalController
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {
@@ -12,13 +29,32 @@ import { CommonModule } from '@angular/common';
 import { Post } from 'src/app/models/post';
 import { TopicService } from 'src/app/services/topic.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
+import {UploadService} from "../../services/upload.service";
 
 @Component({
   standalone:true,
   selector: 'app-post-modal',
   templateUrl: './post-modal.component.html',
   styleUrls: ['./post-modal.component.scss'],
-  imports : [ReactiveFormsModule, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
+  imports : [
+    ReactiveFormsModule,
+    IonBackButton,
+    IonTextarea,
+    IonIcon,
+    IonCard,
+    IonCardSubtitle,
+    IonCardHeader,
+    IonCardContent,
+    IonItem,
+    IonContent,
+    IonInput,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    CommonModule
+  ]
 })
 export class PostModalComponent extends UtilitiesMixin implements OnInit{
   @Input() postId : string |undefined;
@@ -30,7 +66,8 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
 
   private readonly topicService = inject(TopicService);
   private readonly modalCtrl = inject(ModalController);
-  
+  public uploadService = inject(UploadService);
+
   ngOnInit() {
     this.loadPost()
   }
@@ -58,7 +95,7 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
       const msg =  'Error fetching post: '+error
       this.presentToast(msg, 'danger')
     }
-    
+
   }
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
@@ -66,7 +103,7 @@ export class PostModalComponent extends UtilitiesMixin implements OnInit{
 
   confirm() {
     return this.modalCtrl.dismiss(this.postForm.value, 'confirm');
-  } 
+  }
 }
 addIcons({
   'checkmark-outline' : checkmarkOutline

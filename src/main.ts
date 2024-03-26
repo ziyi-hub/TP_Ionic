@@ -8,7 +8,8 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore} from '@angular/fire/firestore';
-import {getAuth, provideAuth} from '@angular/fire/auth'
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getStorage, provideStorage } from "@angular/fire/storage";
 
 if (environment.production) {
   enableProdMode();
@@ -24,7 +25,8 @@ bootstrapApplication(AppComponent, {
     ))),
     importProvidersFrom(
       provideFirestore(() => getFirestore()),
-      provideAuth(()=> getAuth())
+      provideAuth(()=> getAuth()),
+      provideStorage(() => getStorage()),
     ),
   ],
 });
