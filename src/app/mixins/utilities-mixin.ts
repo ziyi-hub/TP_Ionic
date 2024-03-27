@@ -91,7 +91,7 @@ loadUser(){
       if(!user) 
         this.router.navigateByUrl("/login");
       else
-        this.router.navigateByUrl("/home");
+        this.router.navigateByUrl("/tab/home");
       if(user && !user.emailVerified){
         this.authService.sendEmailVerification(user);
         this.authService.logOut();

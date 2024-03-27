@@ -50,7 +50,7 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
         this.authService.getConnectedUser().pipe(first()).subscribe(async (user) => {
           if (user && user.emailVerified) {
             this.presentToast("Login succeeded", 'success');
-            this.router.navigate(['/home']);
+            this.router.navigate(['/tab/home']);
           } else if (user && !user.emailVerified) {
             this.presentToast("Please verify your email before logging in", 'danger');
             await this.authService.logOut(); 

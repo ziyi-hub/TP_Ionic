@@ -9,11 +9,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'home',
-    loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
-    canActivate: [AuthGuard],
-  },
-  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
@@ -27,8 +22,35 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/signup/signup.page').then( m => m.SignupPage)
   },
   {
+    path: 'topic-detail/:id',
+    loadComponent: () => import('./pages/topic-detail/topic-detail.page').then((m) => m.TopicDetailPage),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'topic-detail/:topicId/post-detail/:id',
+    loadComponent: () => import('./pages/post-detail/post-detail.page').then( m => m.PostDetailPage),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'category-detail/:categoryId/recipe-detail/:id',
     loadComponent: () => import('./pages/recipe-detail/recipe-detail.page').then( m => m.RecipeDetailPage),
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'tab',
+    loadComponent: () => import('./components/tab/tab.page').then( m => m.TabPage),
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./settings/settings.page').then( m => m.SettingsPage),
+        canActivate: [AuthGuard]
+      },
+    ],
   },
 ];

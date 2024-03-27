@@ -1,6 +1,5 @@
-import { UUID } from 'angular2-uuid';
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, User, UserCredential, deleteUser } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, User, UserCredential, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsersService } from './users.service';
@@ -76,6 +75,10 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  resetPassword(email: string){
+    return sendPasswordResetEmail(this.auth, email);
   }
 
 }

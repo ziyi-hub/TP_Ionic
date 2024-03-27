@@ -3,20 +3,54 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CategoryService } from '../services/category.service';
 import { Category } from '../models/category';
 import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
-import { IonBackButton, IonButtons, ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { addOutline, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
-
-import { Observable, first, of } from "rxjs";
+import { addIcons } from 'ionicons';
+import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline, personCircleOutline } from 'ionicons/icons';
+import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
+import { Observable, first, of } from "rxjs";
+import { CommonModule } from '@angular/common';
+import {
+  IonBackButton,
+  IonButtons,
+  ModalController,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItemSliding,
+  IonIcon,
+  IonCardHeader,
+  IonCard,
+  IonCardContent,
+  IonItemOption,
+  IonItemOptions,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonRow,
+  IonCol,
+  IonMenu,
+  IonMenuButton,
+  IonMenuToggle,
+  IonToggle,
+  IonAvatar,
+} from '@ionic/angular/standalone';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [IonButton,
+  imports: [
+    CommonModule,
+    IonButton,
     IonFab,
     IonFabButton,
     IonHeader,
@@ -33,6 +67,19 @@ import { AsyncPipe } from "@angular/common";
     IonLabel,
     IonItem,
     AsyncPipe,
+    IonCardHeader,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonRow,
+    IonCol,
+    IonMenu,
+    IonMenuButton,
+    IonMenuToggle,
+    IonToggle,
+    TabPage,
+    IonAvatar,
   ],
 })
 
@@ -96,14 +143,9 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     });
     return await modal.present();
   }
+  
 
-  /**
-   * Redirect page
-   * @param categoryId
-   */
-  navigateToDetail(categoryId: string) {
-    this.router.navigate(['/category-detail', categoryId]);
-  }
+
   logout() {
     this.authService.logOut();
     this.loadUser();
@@ -140,8 +182,10 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           })
       }
     });
+
     return await modal.present();
   }
+
   /**
    * Suppression un category
    * @param categoryId
@@ -172,6 +216,15 @@ export class HomePage extends UtilitiesMixin implements OnInit {
         }
       });
   }
+    
+  /**
+   * Redirect page
+   * @param categoryId
+   */
+  navigateToDetail(categoryId: string) {
+    this.router.navigate(['/category-detail', categoryId]);
+  }
+
   closeIonSliding(ionItemSliding: IonItemSliding) {
     ionItemSliding.close()
   }
@@ -181,5 +234,9 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 addIcons({
   'add-outline': addOutline,
   'trash-outline': trashOutline,
-  'pencil-outline': pencilOutline
+  'pencil-outline': pencilOutline,
+  'person-circle': personCircle,
+  'settings-outline': settingsOutline,
+  'log-out-outline': logOutOutline,
+  'person-circle-outline': personCircleOutline,
 });

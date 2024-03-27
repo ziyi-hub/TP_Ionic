@@ -6,7 +6,7 @@ import { RecipeModalComponent } from "../../components/recipe-modal/recipe-modal
 import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../../models/category';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton } from '@ionic/angular/standalone';
+import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton, IonCardContent, IonCard } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
@@ -17,7 +17,7 @@ import { first, map } from 'rxjs';
   selector: 'app-category-detail',
   templateUrl: './category-detail.page.html',
   styleUrls: ['./category-detail.page.scss'],
-  imports: [IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports: [IonCard, IonCardContent, IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class CategoryDetailPage extends UtilitiesMixin implements OnInit {

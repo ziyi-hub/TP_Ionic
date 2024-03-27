@@ -45,16 +45,16 @@
     <ion-item>
       <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
     </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['password'].touched && this.regForm.controls['password'].invalid">
+    <ion-label color="danger" *ngIf="this.regForm.controls['password'].touched && this.regForm.controls['password'].invalid">
       Minimum 4 characters, at least 1 upper case letter, 1 lower case letter, 1 number and 1 special character
-    </div>
+    </ion-label>
 
     <ion-item class="ion-padding-top">
       <ion-input type="password" formControlName="confirmPassword" placeholder="confirm password"></ion-input>
     </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['confirmPassword'].touched && this.regForm.controls['confirmPassword'].invalid">
+    <ion-label color="danger" *ngIf="this.regForm.controls['confirmPassword'].touched && this.regForm.controls['confirmPassword'].invalid">
       Minimum 4 characters, at least 1 upper case letter, 1 lower case letter, 1 number and 1 special character
-    </div>
+    </ion-label>
 
     <ion-row>
       <ion-col>
