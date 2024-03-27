@@ -40,6 +40,9 @@ import {
   IonMenuToggle,
   IonToggle,
   IonAvatar,
+  IonGrid,
+  IonThumbnail,
+  IonText,
 } from '@ionic/angular/standalone';
 
 
@@ -80,6 +83,9 @@ import {
     IonToggle,
     TabPage,
     IonAvatar,
+    IonGrid,
+    IonThumbnail,
+    IonText,
   ],
 })
 
@@ -143,7 +149,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     });
     return await modal.present();
   }
-  
+
 
 
   logout() {
@@ -216,7 +222,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
         }
       });
   }
-    
+
   /**
    * Redirect page
    * @param categoryId

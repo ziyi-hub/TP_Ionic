@@ -1,122 +1,86 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Categories
-    </ion-title>
-    <ion-item slot="end">
-      Hola, {{this.username}}
-      <ion-button (click)="logout()">
-        Logout
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <h1 class="ion-padding-horizontal">DishShare</h1>
+    <p class="ion-padding-horizontal">Good morning {{this.username}}</p>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-avatar>
+          <img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        </ion-avatar>
       </ion-button>
-    </ion-item>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ion-list>
-    @for (category of categories$ | async; track category.id) {
-    <ion-item-sliding data-testid="categories" #ionItemSliding>
-      <ion-item-options side="start">
-        <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
-      </ion-item-options>
 
-      <ion-item (click)="navigateToDetail(category.id)">
-        <ion-label>{{ category.name }}</ion-label>
-      </ion-item>
+<ion-content color="light" class="ion-padding">
+  <ion-label class="ion-margin-top">
+    My categories
+  </ion-label>
 
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteCategory.bind(this), category.id, category.name);closeIonSliding(ionItemSliding)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-    }
-  </ion-list>
-  
-  <ion-item>
+  @for (category of categories$ | async; track category.id) {
+    <ion-list class="ion-margin-vertical ion-padding" lines="none">
+      <ion-item-sliding data-testid="categories" #ionItemSliding>
+        <ion-item-options side="start">
+          <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
+        </ion-item-options>
+
+        <ion-item (click)="navigateToDetail(category.id)">
+          <ion-avatar slot="start">
+            <!--<img src="{{category.imgUrl}}">-->
+            <img src="https://source.unsplash.com/100x100?macbook" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ category.name }}</h2>
+            <p>okkpppii</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteCategory.bind(this), category.id, category.name);closeIonSliding(ionItemSliding)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  }
+
+  <ion-label>
     Shared with me
-  </ion-item>
-  <ion-list>
-    @for (category of sharedCategories$ | async; track category.id) {
-    <ion-item-sliding data-testid="categories" #ionItemSliding>
-      <ion-item-options side="start">
-        <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
-      </ion-item-options>
+  </ion-label>
 
-      <ion-item (click)="navigateToDetail(category.id)">
-        <ion-label>{{ category.name }}</ion-label>
-      </ion-item>
+  @for (category of sharedCategories$ | async; track category.id) {
+    <ion-list class="ion-padding ion-margin-vertical" lines="none">
+      <ion-item-sliding data-testid="categories" #ionItemSliding>
+        <ion-item-options side="start">
+          <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
+        </ion-item-options>
 
-      <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteCategory.bind(this), category.id, category.name);closeIonSliding(ionItemSliding)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-    }
-  </ion-list>
+        <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)">
+          <ion-avatar slot="start">
+            <!--<img src="{{category.imgUrl}}">-->
+            <img src="https://source.unsplash.com/100x100?macbook" />
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ category.name }}</h2>
+            <p>okkpppi</p>
+          </ion-label>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteCategory.bind(this), category.id, category.name);closeIonSliding(ionItemSliding)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-list>
+  }
+
 </ion-content>
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
   <ion-fab-button data-testid="open-new-category-modal-btn" id="open-modal" expand="block" (click)="createCategory()">
     <ion-icon name="add-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>
-<!-- <div class="ion-page" id="main-content">
-  <ion-header [translucent]="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button></ion-menu-button>
-        </ion-buttons>
-        <p class="ion-padding-horizontal">Good morning</p>
-        <p class="ion-padding-horizontal">username</p>
-        <ion-buttons slot="end">
-          <ion-button>
-            <ion-avatar>
-              <img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-            </ion-avatar>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-  </ion-header>
-
-  <ion-content>
-    <ion-row class="ion-justify-content-between ion-align-items-center ion-padding-vertical">
-      @for (topic of topics$ | async; track topic.id) {
-        <ion-card style="background-size: cover; background-position: center; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1492683962492-deef0ec456c0?q=80&w=1156&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');" class="ion-text-center ion-align-items-center" color="light" (click)="navigateToDetail(topic.id)">
-          <ion-card-header>
-            <ion-card-title>{{ topic.name }}</ion-card-title>
-          </ion-card-header>
-        </ion-card>
-      } -->
-
-
-  <!--    @for (topic of topics$ | async; track topic.id) {-->
-  <!--    <ion-item-sliding data-testid="topics" #ionItemSliding>-->
-
-  <!--      <ion-item-options side="start">-->
-  <!--        <ion-item-option color="success" (click)="updateTopic(topic.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>-->
-  <!--      </ion-item-options>-->
-
-  <!--      <ion-card style="background-size: cover; background-position: center; background-repeat: no-repeat; background-image: url('https://images.unsplash.com/photo-1492683962492-deef0ec456c0?q=80&w=1156&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');" class="ion-text-center ion-align-items-center" color="light" (click)="navigateToDetail(topic.id)">-->
-  <!--        <ion-card-header>-->
-  <!--          <ion-card-title>{{ topic.name }}</ion-card-title>-->
-  <!--        </ion-card-header>-->
-  <!--      </ion-card>-->
-
-  <!--      <ion-item-options side="end">-->
-  <!--        <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteTopic.bind(this), topic.id, topic.name);closeIonSliding(ionItemSliding)">-->
-  <!--          <ion-icon name="trash-outline"></ion-icon>-->
-  <!--        </ion-item-option>-->
-  <!--      </ion-item-options>-->
-
-  <!--    </ion-item-sliding>-->
-  <!--    }-->
-    <!-- </ion-row>
-  </ion-content>
-
-
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-    <ion-fab-button data-testid="open-new-topic-modal-btn" id="open-modal" expand="block" (click)="createTopic()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-</div> -->

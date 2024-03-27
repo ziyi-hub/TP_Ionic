@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { first } from 'rxjs';
+import {UploadService} from "../../services/upload.service";
 @Component({
   standalone:true,
   selector: 'app-category-modal',
@@ -23,8 +24,13 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
   @Input() categoryId: string | undefined;
   private readonly CategoryService = inject(CategoryService);
   private readonly modalCtrl = inject(ModalController);
+  public uploadService = inject(UploadService);
+
   categoryForm = new FormGroup({
-    name : new FormControl('', [Validators.required]) });
+    name : new FormControl('', [Validators.required]),
+    imgUrl : new FormControl('', [Validators.required]),
+  });
+
   async ngOnInit(): Promise<void> {
     try {
       this.username = await this.getCurrentUserName();
@@ -41,9 +47,10 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
           next: (value: any) => {
             if (value) {
               this.categoryForm.setValue({
-                name: value!.name
+                name: value!.name,
+                imgUrl: value!.imgUrl,
               });
-            } 
+            }
           },
           error: (error: any) => {
             const msg = "Error fetching category: " + error;
@@ -59,12 +66,13 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
       this.presentToast(msg, "danger");
     }
   }
-  
+
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm() {
+  confirm($event: any) {
+    if(this.categoryId) this.uploadService.addRecipe(this.categoryId, $event);
     return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
   }
 }
