@@ -1,9 +1,11 @@
+import { sendPasswordResetEmail } from '@angular/fire/auth';
 import {Component, OnInit, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {IonicModule, LoadingController} from '@ionic/angular';
+import {IonicModule, LoadingController, ModalController} from '@ionic/angular';
 import {addIcons} from "ionicons";
 import {RouterModule} from '@angular/router';
+import { ResetPasswordModalComponent } from 'src/app/components/reset-password-modal/reset-password-modal.component';
 
 import {
   lockClosedOutline,
@@ -35,7 +37,7 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
     ]]
   })
-
+  private readonly modalController = inject(ModalController)
   constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
     super();
   }
@@ -64,7 +66,24 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
     } else {
         this.presentToast("Login failed", 'danger');
     }
-  }  
+  }
+  async resetPassword() {
+    const modal = await this.modalController.create({
+      component: ResetPasswordModalComponent,
+    });
+    modal.onWillDismiss().then((data) => {
+      if (!!data && data.data) {
+        this.authService.resetPassword(data.data.email)
+          .then(() => {   
+              this.presentToast("Email reset link successfully sent.", 'success');
+          })
+          .catch((err) => {
+            this.presentToast("An error occured, try again." + err, 'danger');
+          });
+      }
+    });
+    return await modal.present();
+  } 
 }
 
 addIcons({

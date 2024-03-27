@@ -88,19 +88,14 @@ export class SignupPage extends UtilitiesMixin {
       if (!this.regForm?.valid) {
         throw new Error('Form is invalid.');
       }
-
       const { email, password, confirmPassword, username, lastName, firstName } = this.regForm.value;
-
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match.');
       }
-
       if (!username) {
         throw new Error('Username is required.');
       }
-
       const account = await this.authService.createUser(email, password);
-      await this.authService.sendEmailVerification(account.user);
       await this.authService.logOut();
       const userValue : User = {
         username: username,
@@ -108,7 +103,7 @@ export class SignupPage extends UtilitiesMixin {
         lastName: lastName
       };
       await this.usersService.addUser(userValue, account.user.uid)
-      this.presentToast('Registration successfull.', 'success');
+      this.presentToast('Registration successfull, please validate your email address.', 'success');
       this.router.navigate(['/login']);
     } catch (error) {
       this.presentToast(error+"", 'danger');

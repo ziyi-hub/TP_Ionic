@@ -21,10 +21,10 @@
     <ion-row class="ion-justify-content-between ion-align-items-center ion-padding-vertical">
       <ion-row class="ion-align-items-center">
         <ion-checkbox class="ion-padding-end"/>
-        <p>Remember me</p>
+        <!-- <p>Remember me</p> -->
       </ion-row>
 
-      <ion-label>
+      <ion-label (click)="resetPassword()" >
         <a>Forgot password?</a>
       </ion-label>
     </ion-row>

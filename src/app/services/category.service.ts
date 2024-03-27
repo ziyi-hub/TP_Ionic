@@ -18,7 +18,6 @@ export class CategoryService {
    * @returns Observable array of categories
    **/
   getPrivateCategories(username : string): Observable<Category[]> {
-
     return collectionData(query(this.categoryCollection, where("owner", "==", username)), { idField: 'id' }) as Observable<Category[]>
   }
 
