@@ -110,7 +110,7 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
             this.recipe.readers = [...(this.recipe.readers || []), username] as string[];
             category.readers = [...(category.readers || []), username] as string[];
           }
-          this.categoryService.updateCategory(category, this.username).then((value)=>{
+          this.categoryService.updateCategory(category).then((value)=>{
             if(value)
               this.presentToast('recipe successfully shared', 'success')
           });

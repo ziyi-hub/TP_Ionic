@@ -5,7 +5,7 @@ import { Category } from '../models/category';
 import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
 import { UUID } from 'angular2-uuid';
 import { addIcons } from 'ionicons';
-import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline, personCircleOutline } from 'ionicons/icons';
+import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline, personCircleOutline, eyeOutline } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
 import { Observable, first, of } from "rxjs";
@@ -185,14 +185,12 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             readers: oldCategory.readers,
             editors: oldCategory.editors
           };
-  
-          await this.categoryService.updateCategory(updatedCategory, this.username);
-          const message = `${updatedCategory.name} is successfully updated.`;
-  
-          if (this.username) {
+          if((oldCategory.editors && oldCategory.editors.includes(this.username) )|| oldCategory.owner == this.username){
+            await this.categoryService.updateCategory(updatedCategory);
+            const message = `${updatedCategory.name} is successfully updated.`;
             this.loadCategories(this.username);
-          }
-          this.presentToast(message, 'success');
+            this.presentToast(message, 'success');
+          }  
         }
       }
     } catch (error) {
@@ -254,4 +252,5 @@ addIcons({
   'settings-outline': settingsOutline,
   'log-out-outline': logOutOutline,
   'person-circle-outline': personCircleOutline,
+  'eye-outline': eyeOutline
 });
