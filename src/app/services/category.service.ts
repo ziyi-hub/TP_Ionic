@@ -123,39 +123,22 @@ export class CategoryService {
   /**
    * Delete a category from Firestore.
    * @param categoryId The ID of the category to delete
+   * @param username The current username
    * @returns Promise that resolves with a boolean indicating success
    * @throws Error if the category ID is not provided
    */
   async deleteCategory(categoryId: string, username: string): Promise<boolean> {
     if (!categoryId) throw new Error('Category id is required');
-    const categoryDocRef = doc(collection(this.firestore, 'categories'), categoryId);
     const recipes = this.getRecipesByCategoryId(categoryId, username).pipe(first()).toPromise()
     recipes.then(async (recipes)=>{
       if(recipes)
         recipes.map(async (recipe)=>{
           await this.deleteRecipe(recipe.id, categoryId)
         })
-      await deleteDoc(categoryDocRef);
+      await deleteDoc(doc(this.categoryCollection, categoryId));
     })
     return true;
   }
-
-  // async deleteCategory(categoryId: string, username:string): Promise<boolean> {
-  //   const recipes = this.getRecipesByCategoryId(categoryId, username)
-
-  //   // Delete all recipes under this category
-  //   const deleteRecipesPromises = recipesSnapshot.docs.map(async (recipeDoc) => {
-  //     console.log("in4 "+recipeDoc.ref)
-  //     // await deleteDoc(recipeDoc.ref);
-  //   });
-  
-  //   await Promise.all(deleteRecipesPromises);
-  
-  //   // Delete the category itself
-  //   // await deleteDoc(categoryDocRef);
-  
-  //   return true;
-  // }
 
   /**
    * Add a new recipe to a category in Firestore.
