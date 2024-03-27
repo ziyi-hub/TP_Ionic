@@ -123,7 +123,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
       this.categoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
         next: (value: any) => {
           if (value && value.name) {
-            this.categoryService.deleteRecipe(recipeId, this.category!.id, username)
+            this.categoryService.deleteRecipe(recipeId, this.category!.id)
               .then((isDeleted: any) => {
                 if (isDeleted === true) {
                   const message = value.name + " is succesfully deleted.";

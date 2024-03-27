@@ -187,9 +187,8 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           };
           if((oldCategory.editors && oldCategory.editors.includes(this.username) )|| oldCategory.owner == this.username){
             await this.categoryService.updateCategory(updatedCategory);
-            const message = `${updatedCategory.name} is successfully updated.`;
             this.loadCategories(this.username);
-            this.presentToast(message, 'success');
+            this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
           }  
         }
       }
@@ -207,13 +206,13 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     if (this.username)
       this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe({
         next: (value) => {
-          if (value && value.name) {
-            this.categoryService.deleteCategory(categoryId)
+          if (value && value.name && this.username) {
+            this.categoryService.deleteCategory(categoryId, this.username)
               .then((isDeleted) => {
-                if (isDeleted === true && this.username) {
-                  const message = value.name + " is succesfully deleted.";
+                console.log(isDeleted)
+                if (isDeleted == true && this.username) {
+                  this.presentToast(`${value.name} is succesfully deleted.`, 'success')
                   this.loadCategories(this.username)
-                  this.presentToast(message, 'success')
                 }
               })
               .catch((err) => {
