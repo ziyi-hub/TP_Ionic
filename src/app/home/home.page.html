@@ -78,7 +78,12 @@
           <ion-label>
             <h2>{{ category.name }}</h2>
             <p>okkpppi</p>
-            <ion-text color="tertiary"><ion-icon name="eye-outline"></ion-icon> shared with read-only permissions</ion-text>
+            <ion-row class="ion-align-items-center">
+              <ion-text color="warning">Read-only&nbsp;</ion-text>
+              <ion-icon color="warning" class="ion-text-center" name="eye-outline"> </ion-icon>
+            </ion-row>
+            
+            
           </ion-label>
         </ion-item>
     </ng-template>
