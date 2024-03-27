@@ -1,6 +1,7 @@
 export interface Recipe {
   id: string;
   name: string;
+  imgUrl: string;
   serving:number;
   duration:string;
   owner : string;

@@ -1,14 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { Recipe } from '../../models/recipe';
 import { CategoryService } from '../../services/category.service';
 import { Component, OnInit, inject } from '@angular/core';
 import { RecipeModalComponent } from "../../components/recipe-modal/recipe-modal.component";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Category } from '../../models/category';
 import { ReactiveFormsModule } from '@angular/forms';
 import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton, IonCardContent, IonCard } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
+import { addOutline, caretBack, pencilOutline, shareSocialOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 import { first, map } from 'rxjs';
 
@@ -17,7 +18,7 @@ import { first, map } from 'rxjs';
   selector: 'app-category-detail',
   templateUrl: './category-detail.page.html',
   styleUrls: ['./category-detail.page.scss'],
-  imports: [IonCard, IonCardContent, IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports: [CommonModule, IonCard, IonCardContent, IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
@@ -94,6 +95,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           name: data.data.name,
           duration: data.data.duration,
           serving: data.data.serving,
+          imgUrl : data.data.imgUrl, 
           owner : this.username,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
@@ -161,6 +163,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           duration: data.data.duration,
           serving: data.data.serving,
           owner: data.data.owner,
+          imgUrl : data.data.imgUrl, 
           steps: data.data.steps,
           ingredients: data.data.ingredients,
           tags: data.data.tags,
@@ -190,5 +193,6 @@ addIcons({
   'add-outline': addOutline,
   'trash-outline': trashOutline,
   'pencil-outline': pencilOutline,
-  'caret-back': caretBack
+  'caret-back': caretBack,
+  'share-social-outline': shareSocialOutline,
 });

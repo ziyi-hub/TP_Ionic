@@ -145,6 +145,7 @@ export class CategoryService {
     const recipeValue = {
       name: recipe.name,
       duration: recipe.duration,
+      imgUrl : recipe.imgUrl,
       serving: recipe.serving,
       owner : recipe.owner,
       steps: recipe.steps,
@@ -173,6 +174,7 @@ export class CategoryService {
       name: updatedRecipe.name,
       duration: updatedRecipe.duration,
       serving: updatedRecipe.serving,
+      imgUrl : updatedRecipe.imgUrl,
       owner: updatedRecipe.owner,
       steps: updatedRecipe.steps,
       ingredients: updatedRecipe.ingredients,

@@ -1,4 +1,4 @@
-<ion-header>
+<!-- <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tab/home"></ion-back-button>
@@ -40,7 +40,7 @@
         </ion-item-options>
       </ion-item-sliding>
     }
-  </ion-list>
+  </ion-list> -->
 
 <!-- <ion-content color="light">
   <ion-card *ngFor="let recipe of recipes">
@@ -84,8 +84,43 @@
 <!--  </ion-list>-->
 <!--</ion-content>-->
 
-<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+<!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end">
   <ion-fab-button id="open-modal" data-testid="open-new-recipe-modal-btn" expand="block" (click)="createRecipe()">
+    <ion-icon name="add-outline"></ion-icon>
+  </ion-fab-button>
+</ion-fab> -->
+
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tab/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+<!--      {{ this.topic?.name }}-->
+      Soup
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+  <ion-card *ngFor="let recipe of recipes" (click)="showRecipe(this.category!.id, recipe.id)">
+    <ion-card-content class="bg-img-style" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
+    <ion-item detail lines="none" color="primary">
+      <ion-label>
+        <h1>{{recipe.name}}</h1>
+      </ion-label>
+    </ion-item>
+  </ion-card>
+</ion-content>
+
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button id="open-modal" data-testid="open-new-post-modal-btn" expand="block" (click)="createRecipe()">
     <ion-icon name="add-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>
