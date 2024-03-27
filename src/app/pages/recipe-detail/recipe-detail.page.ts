@@ -15,7 +15,7 @@ import { addIcons } from 'ionicons';
 import { caretBack } from 'ionicons/icons';
 import { first } from 'rxjs';
 import { User } from 'src/app/models/user';
-import { user } from '@angular/fire/auth';
+import { Category } from 'src/app/models/category';
 
 
 @Component({
@@ -77,21 +77,32 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
         });
   }
   shareRecipe(){
-    if (this.categoryId && this.recipe && this.userForm.valid) {
+    if (this.categoryId && this.recipe && this.userForm.valid && this.username) {
       const { role, username } = this.userForm.value;
-      
-      if (username) { // Ensure username is not empty
-        if (role === "editors") {
-          this.recipe.editors = [...(this.recipe.editors || []), username] as string[];
-        } else if (role === "readers") {
-          this.recipe.readers = [...(this.recipe.readers || []), username] as string[];
+      let category : Category | undefined;
+      this.categoryService.getCategoryById(this.categoryId, this.username).pipe(first()).subscribe((value)=>{
+      if(value){
+        category = value
+        if (username && this.recipe && this.categoryId) { 
+          if (role === "editors" ) {
+            this.recipe.editors = [...(this.recipe.editors || []), username] as string[];
+            category.editors = [...(category.editors || []), username] as string[];
+            
+          } else if (role === "readers") {
+            this.recipe.readers = [...(this.recipe.readers || []), username] as string[];
+            category.readers = [...(category.readers || []), username] as string[];
+          }
+          this.categoryService.updateCategory(category).then((value)=>{
+            if(value)
+              this.presentToast('recipe successfully shared', 'success')
+          });
+          this.categoryService.updateRecipe(this.recipe, this.categoryId).then((value)=>{
+            if(value)
+              this.presentToast('recipe successfully shared', 'success')
+          });
         }
-        console.log(this.recipe);
-        this.categoryService.updateRecipe(this.recipe, this.categoryId).then((value)=>{
-          if(value)
-            this.presentToast('recipe successfully shared', 'success')
-        });
       }
+    })
     }
     
     

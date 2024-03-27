@@ -11,6 +11,7 @@ import {
   chevronForward,
 } from "ionicons/icons";
 import {UtilitiesMixin} from "../../mixins/utilities-mixin";
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -42,27 +43,28 @@ export class LoginPage extends UtilitiesMixin implements OnInit{
     this.loadUser()
   }
 
-  async login(){
-    // const loading = await this.loadingCtrl.create();
-    // await loading.present();
-    if(this.loginForm?.valid){
-      await this.authService.signIn(this.loginForm.value.email, this.loginForm.value.password)
-        .then(() => {
-          // loading.dismiss();
-          this.presentToast("Login succeeded", 'success');
-          this.router.navigate(['/home']);
-          
-        })
-        .catch((err) => {
-          // loading.dismiss();
-          this.presentToast(err + " Login failed", 'danger');
-          
-        })
-    }else{
-      // loading.dismiss();
-      this.presentToast("Invalid credentials", 'danger');
+  async login() {
+    if (this.loginForm?.valid) {
+      try {
+        await this.authService.signIn(this.loginForm.value.email, this.loginForm.value.password);
+        this.authService.getConnectedUser().pipe(first()).subscribe(async (user) => {
+          if (user && user.emailVerified) {
+            this.presentToast("Login succeeded", 'success');
+            this.router.navigate(['/home']);
+          } else if (user && !user.emailVerified) {
+            this.presentToast("Please verify your email before logging in", 'danger');
+            await this.authService.logOut(); 
+          } else {
+            this.presentToast("Login failed", 'danger');
+          }
+        });
+      } catch (err) {
+        this.presentToast("Login failed", 'danger');
+      }
+    } else {
+        this.presentToast("Login failed", 'danger');
     }
-  }
+  }  
 }
 
 addIcons({

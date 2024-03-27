@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, DocumentData, serverTimestamp, query, where } from '@angular/fire/firestore';
-import { Observable, map, BehaviorSubject, switchMap, first, catchError } from 'rxjs';
+import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, DocumentData, serverTimestamp, query, where, or } from '@angular/fire/firestore';
+import { Observable, first, map, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
 
@@ -9,34 +9,49 @@ import { Recipe } from '../models/recipe';
 })
 
 export class CategoryService {
+  
   private readonly firestore = inject(Firestore);
   private readonly categoryCollection = collection(this.firestore, 'categories');
+  
   /**
-   * Retrieve all categories and populate the BehaviorSubject with the data.
+   * Retrieve all private categories 
    * @returns Observable array of categories
    **/
-  getAllCategories(username : string): Observable<Category[]> {
+  getPrivateCategories(username : string): Observable<Category[]> {
+
     return collectionData(query(this.categoryCollection, where("owner", "==", username)), { idField: 'id' }) as Observable<Category[]>
   }
+
   /**
-   * Retrieve a category by its identifier.
+   * Retrieve all shared categories 
+   * @returns Observable array of categories
+   **/
+  getSharedCategories(username : string): Observable<Category[]> {
+    return collectionData(query(this.categoryCollection, or(where("editors", "array-contains", username), where("readers", "array-contains", username))), { idField: 'id' }) as Observable<Category[]>
+  }
+  
+  /**
+   * Retrieve a category (owned and shared) by its identifier. 
    * @param categoryId Category ID
    * @returns Observable of the category with the specified ID
    */
   getCategoryById(categoryId: string, username : string): Observable<Category | undefined> {
-    return this.getAllCategories(username).pipe(
+    return (collectionData(query(this.categoryCollection, or(where("owner", "==", username), where("editors", "array-contains", username), where("readers", "array-contains", username))), { idField: 'id' }) as Observable<Category[]>
+    ).pipe(
       map(categories => categories.find(category => category.id === categoryId))
     );
   }
 
   /**
-   * Retrieve all recipes of a category and populate the BehaviorSubject with the data.
+   * Retrieve all recipes of a category.
    * @param categoryId Category ID
    * @returns Observable array of recipes for the specified category
    */
-  getRecipesByCategoryId(categoryId: string): Observable<Recipe[] | undefined> {
-   return collectionData(collection(this.firestore, 'categories/' + categoryId + '/recipes'), { idField: 'id' }) as Observable<Recipe[]>;
+  getRecipesByCategoryId(categoryId: string, username : string): Observable<Recipe[] | undefined> {
+   const recipeCollection = collection(this.firestore, 'categories/' + categoryId + '/recipes');
+   return collectionData(query(recipeCollection, or(where("editors", "array-contains", username), where("readers", "array-contains", username), where("owner", "==", username))), { idField: 'id' }) as Observable<Recipe[]>;
   }
+
 
   /**
    * Retrieve a recipe by its ID.
@@ -48,7 +63,7 @@ export class CategoryService {
     return this.getCategoryById(categoryId, username).pipe(
       switchMap((category) => {
         if (category) {
-          return this.getRecipesByCategoryId(categoryId).pipe(
+          return this.getRecipesByCategoryId(categoryId, username).pipe(
             map(recipes => recipes!.find(recipe => recipe.id === recipeId))
           );
         } else {
@@ -57,7 +72,9 @@ export class CategoryService {
       })
     );
   }
+  getConnectedUser(){
 
+  }
   /**
    * Add a new category to Firestore.
    * @param category The category to add
@@ -68,8 +85,10 @@ export class CategoryService {
     if (!category.name) throw new Error('Category name is required');
     const categoryValue = {
       name: category.name,
-      imgUrl: category.imgUrl,
+      imgUrl: category.imgUrl || '',
       owner: category.owner,
+      readers: category.readers || [],
+      editors: category.editors || [],
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
@@ -90,6 +109,8 @@ export class CategoryService {
       name: categoryToUpdate.name,
       imgUrl: categoryToUpdate.imgUrl || '',
       owner: categoryToUpdate.owner,
+      readers: categoryToUpdate.readers || [],
+      editors: categoryToUpdate.editors || [],
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };

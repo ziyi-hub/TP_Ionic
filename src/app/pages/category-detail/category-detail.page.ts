@@ -10,7 +10,7 @@ import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabBu
 import { addIcons } from 'ionicons';
 import { addOutline, caretBack, pencilOutline, trashOutline } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
-import { first, map, catchError } from 'rxjs';
+import { first, map } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -50,14 +50,17 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
       if (this.username)
         this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe(
           category => {
-            if (category) {
+            if (category && this.username) {
               this.category = category;
-              this.categoryService.getRecipesByCategoryId(categoryId).pipe(
+              
+              this.categoryService.getRecipesByCategoryId(categoryId, this.username).pipe(
                 map((recipes: any) => recipes.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)))
               ).subscribe({
                 next: (recipes: any) => {
-                  if (recipes)
+                  if (recipes){
                     this.recipes = recipes
+                  }
+                    
                 },
                 error: (error: any) => {
                   this.presentToast(error, 'danger');

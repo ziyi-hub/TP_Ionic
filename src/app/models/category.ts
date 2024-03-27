@@ -5,6 +5,8 @@ export interface Category {
   name: string;
   imgUrl : string;
   recipes?: Recipe[];
+  readers? : string[];
+  editors? : string[];
   owner : string;
   createdAt?: Date;
   updatedAt?: Date;

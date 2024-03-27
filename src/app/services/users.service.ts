@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import {Firestore, collection, collectionData, deleteDoc, doc,updateDoc, setDoc, addDoc} from '@angular/fire/firestore';
-import { Observable, map, BehaviorSubject, first, catchError, of } from 'rxjs';
+import {Firestore, collection, collectionData, deleteDoc, doc,updateDoc, setDoc} from '@angular/fire/firestore';
+import { Observable, map } from 'rxjs';
 import  { User } from '../models/user';
 import { serverTimestamp } from 'firebase/firestore';
 
@@ -9,7 +9,6 @@ import { serverTimestamp } from 'firebase/firestore';
 })
 
 export class UsersService {
-  // private bsyUser$: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   private readonly firestore = inject(Firestore);
   
   /**
@@ -51,7 +50,6 @@ async addUser(user: User, docId: string): Promise<User> {
     updatedAt : serverTimestamp(),
   };
   const userDocRef = doc(this.firestore, 'users', docId);
-  
   try {
       await setDoc(userDocRef, userValue);
       console.log("User added successfully");
@@ -94,6 +92,5 @@ async deleteUser(userId: string): Promise<boolean> {
   await deleteDoc(userDocRef);
   return true;
 }
-
 
 }

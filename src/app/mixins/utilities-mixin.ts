@@ -67,16 +67,16 @@ export class UtilitiesMixin {
 }
 async getCurrentUserName(): Promise<string | undefined> {
   try {
-    const user = await this.authService.connectedUser$.pipe(first()).toPromise();
+    const user = await this.authService.getConnectedUser().pipe(first()).toPromise();
     
     if (user) {
       const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
       if (value) {
         this.username = value.username;
-        return value.username; // Return the username
+        return value.username;
       } 
     }
-    return undefined; // Return undefined if no user or value is found
+    return undefined; 
   } catch (error) {
     console.log('Error retrieving username:', error);
     throw error;
@@ -86,7 +86,7 @@ async getCurrentUserName(): Promise<string | undefined> {
 
 
 loadUser(){
-  this.authService.connectedUser$.subscribe(
+  this.authService.getConnectedUser().subscribe(
     user => {
       if(!user) 
         this.router.navigateByUrl("/login");
