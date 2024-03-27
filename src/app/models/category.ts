@@ -7,7 +7,7 @@ export interface Category {
   recipes?: Recipe[];
   readers? : string[];
   editors? : string[];
-  owner : string;
+  owner? : string;
   createdAt?: Date;
   updatedAt?: Date;
 }

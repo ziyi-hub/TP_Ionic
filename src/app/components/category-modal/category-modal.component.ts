@@ -4,14 +4,15 @@ import { IonBackButton,IonHeader, IonToolbar, IonItem, ModalController, IonButto
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {UtilitiesMixin} from 'src/app/mixins/utilities-mixin'
+import { CommonModule } from '@angular/common';
+import { first } from 'rxjs'
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { first } from 'rxjs';
+;
 @Component({
   standalone:true,
   selector: 'app-category-modal',

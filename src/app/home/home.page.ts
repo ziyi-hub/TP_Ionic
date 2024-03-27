@@ -85,7 +85,7 @@ import {
 
 export class HomePage extends UtilitiesMixin implements OnInit {
 
-  private readonly CategoryService = inject(CategoryService);
+  private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined;
@@ -101,11 +101,11 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   loadCategories(username: string) {
     try {
-      const subscription = this.CategoryService.getPrivateCategories(username).subscribe((categories: any[]) => {
+      const subscription = this.categoryService.getPrivateCategories(username).subscribe((categories: any[]) => {
         this.categories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         subscription.unsubscribe();
       });
-      const sharedSubscription = this.CategoryService.getSharedCategories(username).subscribe((categories: any[]) => {
+      const sharedSubscription = this.categoryService.getSharedCategories(username).subscribe((categories: any[]) => {
         this.sharedCategories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         sharedSubscription.unsubscribe();
       });
@@ -128,7 +128,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           imgUrl: data.data.imgUrl || '',
           owner: this.username
         };
-        this.CategoryService.addCategory(newCategory)
+        this.categoryService.addCategory(newCategory)
           .then((categoryAdded) => {
             if (this.username) {
               const message = categoryAdded.name + " is successfully created."
@@ -155,36 +155,45 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    * @param categoryId
    */
   async updateCategory(categoryId: string) {
-    const modal = await this.modalController.create({
-      component: CategoryModalComponent,
-      componentProps: {
-        categoryId: categoryId
+    try {
+      const modal = await this.modalController.create({
+        component: CategoryModalComponent,
+        componentProps: {
+          categoryId: categoryId
+        }
+      });
+  
+      await modal.present();
+  
+      const { data } = await modal.onWillDismiss();
+      
+      if (data && data.name && this.username) {
+        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).toPromise();
+  
+        if (oldCategory) {
+          const updatedCategory = {
+            id: categoryId,
+            name: data.name,
+            imgUrl: data.imgUrl || oldCategory.imgUrl,
+            owner: oldCategory.owner,
+            readers: oldCategory.readers,
+            editors: oldCategory.editors
+          };
+  
+          await this.categoryService.updateCategory(updatedCategory, this.username);
+          const message = `${updatedCategory.name} is successfully updated.`;
+  
+          if (this.username) {
+            this.loadCategories(this.username);
+          }
+          this.presentToast(message, 'success');
+        }
       }
-    });
-
-    modal.onWillDismiss().then((data) => {
-      if (!!data && data.data && this.username) {
-        const updatedCategory = {
-          id: categoryId,
-          name: data.data.name,
-          imgUrl: data.data.imgUrl || '',
-          owner: this.username
-        };
-        this.CategoryService.updateCategory(updatedCategory)
-          .then((categoryUpdated) => {
-            const message = categoryUpdated.name + " is successfully updated."
-            if (this.username)
-              this.loadCategories(this.username)
-            this.presentToast(message, 'success');
-          })
-          .catch((err) => {
-            this.presentToast(err, 'danger');
-          })
-      }
-    });
-
-    return await modal.present();
+    } catch (error) {
+      this.presentToast(error+"", 'danger');
+    }
   }
+  
 
   /**
    * Suppression un category
@@ -192,10 +201,10 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    */
   async deleteCategory(categoryId: string) {
     if (this.username)
-      this.CategoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe({
+      this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe({
         next: (value) => {
           if (value && value.name) {
-            this.CategoryService.deleteCategory(categoryId)
+            this.categoryService.deleteCategory(categoryId)
               .then((isDeleted) => {
                 if (isDeleted === true && this.username) {
                   const message = value.name + " is succesfully deleted.";

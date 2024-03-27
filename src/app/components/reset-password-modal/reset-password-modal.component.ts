@@ -1,5 +1,4 @@
-import { CategoryService } from '../../services/category.service';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { IonBackButton,IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
@@ -11,7 +10,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { first } from 'rxjs';
 @Component({
   standalone:true,
   selector: 'app-reset-password-modal',
@@ -21,7 +19,6 @@ import { first } from 'rxjs';
 })
 export class ResetPasswordModalComponent extends UtilitiesMixin implements OnInit {
   @Input() categoryId: string | undefined;
-  private readonly CategoryService = inject(CategoryService);
   private readonly modalCtrl = inject(ModalController);
   resetPasswordForm = new FormGroup({
     email : new FormControl('', [Validators.required]) });

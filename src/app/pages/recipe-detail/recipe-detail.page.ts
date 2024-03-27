@@ -101,7 +101,7 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
       this.categoryService.getCategoryById(this.categoryId, this.username).pipe(first()).subscribe((value)=>{
       if(value){
         category = value
-        if (username && this.recipe && this.categoryId) { 
+        if (username && this.recipe && this.categoryId && this.username) { 
           if (role === "editors" ) {
             this.recipe.editors = [...(this.recipe.editors || []), username] as string[];
             category.editors = [...(category.editors || []), username] as string[];
@@ -110,7 +110,7 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
             this.recipe.readers = [...(this.recipe.readers || []), username] as string[];
             category.readers = [...(category.readers || []), username] as string[];
           }
-          this.categoryService.updateCategory(category).then((value)=>{
+          this.categoryService.updateCategory(category, this.username).then((value)=>{
             if(value)
               this.presentToast('recipe successfully shared', 'success')
           });

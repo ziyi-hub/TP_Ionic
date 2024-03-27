@@ -102,14 +102,15 @@ export class CategoryService {
    * @returns Promise that resolves with the updated category
    * @throws Error if the category ID is not provided
    */
-  async updateCategory(categoryToUpdate: Category): Promise<Category> {
+  async updateCategory(categoryToUpdate: Category, username: string): Promise<Category> {
     if (!categoryToUpdate.id) throw new Error('Category id is required');
+    
     const categoryValue = {
       name: categoryToUpdate.name,
       imgUrl: categoryToUpdate.imgUrl || '',
       owner: categoryToUpdate.owner,
-      readers: categoryToUpdate.readers || [],
-      editors: categoryToUpdate.editors || [],
+      readers: categoryToUpdate.readers,
+      editors: categoryToUpdate.editors,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };
