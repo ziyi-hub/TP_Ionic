@@ -10,15 +10,38 @@
       <ion-title>Add new Category</ion-title>
     </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-category-modal-btn" (click)="confirm()" [strong]="true" [disabled]="categoryForm.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button type="submit" data-testid="confirm-new-category-modal-btn" [strong]="true" [disabled]="categoryForm.errors?.['required']">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
-  <form [formGroup]="categoryForm">
+  <form [formGroup]="categoryForm" (submit)="confirm($event)">
     <ion-item>
       <ion-input data-testid="category-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Category name is required" ></ion-input>
     </ion-item>
-    
+
+    <ion-item>
+      <ion-input type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>
+    </ion-item>
   </form>
+
+<!--  <ion-card>-->
+<!--    <ion-card-header>-->
+<!--      <ion-card-subtitle>Add new recipe</ion-card-subtitle>-->
+<!--    </ion-card-header>-->
+
+<!--    <ion-card-content>-->
+<!--      <form (submit)="uploadService.addRecipe('22333', $event)">-->
+<!--        <ion-item>-->
+<!--          <ion-input type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>-->
+<!--        </ion-item>-->
+
+<!--        <ion-button type="submit">Add</ion-button>-->
+<!--      </form>-->
+<!--    </ion-card-content>-->
+<!--  </ion-card>-->
+
 </ion-content>

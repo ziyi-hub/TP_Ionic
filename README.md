@@ -28,4 +28,6 @@
 - ouvert navigateur localhost:4200
 
 ## A faire ##
+- ionic cap build android
+- chrome://inspect/#devices
 
