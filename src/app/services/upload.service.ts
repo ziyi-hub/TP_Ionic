@@ -17,21 +17,7 @@ export class UploadService {
     this.selectedFile = $event.target.files;
   }
 
-  async addRecipe(categorieId: string, event: Event) {
-    // this.topicService.addPost({id: "", name: "", description: ""}, "IcxRYNDSoIHg9mDLAMaR")
-    //   .then(async () => {
-    //     const imageUrl = await this.uploadFile(categorieId, this.selectedFile)
-    //     console.log("Image URL:", imageUrl);
-    //     // this.topicService.updatePost({id: "", name: "", description: "", imageUrl: imageUrl}, "topicId") // update image
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   })
-    this.uploadFile(categorieId, this.selectedFile)
-    event.preventDefault();
-  }
-
-  uploadFile(id: string, file: any) {
+  uploadFile(id: string | undefined, file: any, event: Event) {
     return new Promise((resolve, reject) => {
       if(file && file.length) {
         try {

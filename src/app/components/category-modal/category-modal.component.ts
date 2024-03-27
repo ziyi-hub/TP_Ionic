@@ -1,6 +1,6 @@
 import { CategoryService } from '../../services/category.service';
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { IonBackButton,IonHeader, IonToolbar, IonItem, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
+import { IonBackButton,IonHeader, IonToolbar, IonCard, IonItem, IonCardContent, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {UtilitiesMixin} from 'src/app/mixins/utilities-mixin'
@@ -19,7 +19,7 @@ import {
   selector: 'app-category-modal',
   templateUrl: './category-modal.component.html',
   styleUrls: ['./category-modal.component.scss'],
-  imports:[ReactiveFormsModule,CommonModule, IonBackButton, IonHeader, IonToolbar, IonItem, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
+  imports:[ReactiveFormsModule,CommonModule, IonBackButton, IonHeader, IonToolbar, IonCard, IonItem, IonCardContent, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
 })
 export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
   @Input() categoryId: string | undefined;
@@ -29,7 +29,7 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   categoryForm = new FormGroup({
     name : new FormControl('', [Validators.required]),
-    imgUrl : new FormControl('', [Validators.required]),
+    imgUrl : new FormControl(''),
   });
 
   async ngOnInit(): Promise<void> {
@@ -72,8 +72,9 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm($event: any) {
-    if(this.categoryId) this.uploadService.addRecipe(this.categoryId, $event);
+  confirm(id: string | undefined, file: any, event: Event) {
+    event.preventDefault();
+    this.uploadService.uploadFile(id, file, event);
     return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
   }
 }
