@@ -28,7 +28,7 @@
     @for (recipe of recipes; track recipe?.id) {
       <ion-item-sliding #recipesItem data-testid="recipes">
         <ion-item-options side="start">
-          <ion-item-option color="success" (click)="editRecipe(recipe.id);closeIonSliding(recipesItem)">
+          <ion-item-option color="success" (click)="updateRecipe(recipe.id);closeIonSliding(recipesItem)">
             <ion-icon name="pencil-outline"></ion-icon>
           </ion-item-option>
         </ion-item-options>
@@ -104,10 +104,11 @@
 
 <ion-content color="light">
   <ng-container *ngIf="recipes.length > 0; else otherContent">
-    <ion-card *ngFor="let recipe of recipes">
-      <ion-button (click)="presentActionSheet(recipe)">
+    <ion-card *ngFor="let recipe of recipes" class="card-with-button">
+      <ion-button class="button-right-top" (click)="presentActionSheet(recipe)">
         <ion-icon name="ellipsis-vertical-outline"></ion-icon>
       </ion-button>
+
       <ion-action-sheet trigger="open-action-sheet" header="Actions" [buttons]="actionSheetButtons"></ion-action-sheet>
 
       <ion-card-content (click)="showRecipe(category!.id, recipe.id)" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>

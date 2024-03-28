@@ -58,8 +58,8 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
   segmentValue: string = 'ingredients';
   async ngOnInit() {
     try {
-      this.username = await this.getCurrentUserName();
-      if (this.username){
+      this.user = await this.getCurrentUser();
+      if (this.user){
         this.getCurrentRecipe()
         this.getUsers()
       }
@@ -74,8 +74,8 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
       this.categoryId = params['categoryId'];
       const recipeId = params['id'];
       
-      if(this.username && recipeId)
-        this.categoryService.getRecipe(this.categoryId!, recipeId, this.username).pipe(first()).subscribe(
+      if(this.user && recipeId)
+        this.categoryService.getRecipe(this.categoryId!, recipeId, this.user.username).pipe(first()).subscribe(
           recipe => {
             if(recipe){
               this.recipe = recipe;
@@ -86,7 +86,7 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
 
   }
   getUsers(){
-    if(this.username)
+    if(this.user)
       this.usersService.getAllUsers().pipe(first()).subscribe(
         users => {
           if(users){
@@ -95,13 +95,13 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
         });
   }
   shareRecipe(){
-    if (this.categoryId && this.recipe && this.userForm.valid && this.username) {
+    if (this.categoryId && this.recipe && this.userForm.valid && this.user) {
       const { role, username } = this.userForm.value;
       let category : Category | undefined;
-      this.categoryService.getCategoryById(this.categoryId, this.username).pipe(first()).subscribe((value)=>{
+      this.categoryService.getCategoryById(this.categoryId, this.user.username).pipe(first()).subscribe((value)=>{
       if(value){
         category = value
-        if (username && this.recipe && this.categoryId && this.username) { 
+        if (username && this.recipe && this.categoryId && this.user) { 
           if (role === "editors" ) {
             this.recipe.editors = [...(this.recipe.editors || []), username] as string[];
             category.editors = [...(category.editors || []), username] as string[];

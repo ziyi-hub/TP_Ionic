@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, DocumentData, serverTimestamp, query, where, or } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, query, where, or } from '@angular/fire/firestore';
 import { Observable, first, map, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
@@ -71,9 +71,6 @@ export class CategoryService {
       })
     );
   }
-  getConnectedUser(){
-
-  }
   /**
    * Add a new category to Firestore.
    * @param category The category to add
@@ -122,13 +119,20 @@ export class CategoryService {
   /**
    * Delete a category from Firestore.
    * @param categoryId The ID of the category to delete
+   * @param username The current username
    * @returns Promise that resolves with a boolean indicating success
    * @throws Error if the category ID is not provided
    */
-  async deleteCategory(categoryId: string): Promise<boolean> {
+  async deleteCategory(categoryId: string, username: string): Promise<boolean> {
     if (!categoryId) throw new Error('Category id is required');
-    const categoryDocRef = doc(collection(this.firestore, 'categories'), categoryId);
-    await deleteDoc(categoryDocRef);
+    const recipes = this.getRecipesByCategoryId(categoryId, username).pipe(first()).toPromise()
+    recipes.then(async (recipes)=>{
+      if(recipes)
+        recipes.map(async (recipe)=>{
+          await this.deleteRecipe(recipe.id, categoryId)
+        })
+      await deleteDoc(doc(this.categoryCollection, categoryId));
+    })
     return true;
   }
 
@@ -176,7 +180,7 @@ export class CategoryService {
       serving: updatedRecipe.serving,
       imgUrl : updatedRecipe.imgUrl,
       owner: updatedRecipe.owner,
-      steps: updatedRecipe.steps,
+      steps: updatedRecipe.steps, 
       ingredients: updatedRecipe.ingredients,
       tags: updatedRecipe.tags,
       readers: updatedRecipe.readers,
@@ -195,7 +199,7 @@ export class CategoryService {
     * @returns Promise that resolves with a boolean indicating succe s s 
     * @throws Error if the recipe ID or category ID is not provided
   */
-  async deleteRecipe(recipeId: string, categoryId: string, username : string): Promise<boolean> {
+  async deleteRecipe(recipeId: string, categoryId: string): Promise<boolean> {
     if (!recipeId || !categoryId) throw new Error('Recipe id and category id are required');
     const recipeDocRef = doc(collection(this.firestore, `categories/${categoryId}/recipes`), recipeId);
     await deleteDoc(recipeDocRef);

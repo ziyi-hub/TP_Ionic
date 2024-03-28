@@ -41,8 +41,8 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   numbers: number[] = Array.from({length: 21}, (_, i) => i); 
   async ngOnInit() {
     try {
-      this.username = await this.getCurrentUserName();
-      if(this.username)
+      this.user = await this.getCurrentUser();
+      if(this.user)
         this.loadRecipe()
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
@@ -50,19 +50,19 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   }
   loadRecipe(){
     try {
-      if (this.recipeId && this.categoryId && this.username) {
-        this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.username).pipe(first()).subscribe({
+      if (this.recipeId && this.categoryId && this.user) {
+        this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.user.username).pipe(first()).subscribe({
           next: (value: any) => {
-            if (value && value.description && this.username) {
+            if (value && value.description) {
               this.recipeForm.setValue({
-                name: value!.name,
-                serving: value!.serving,
-                duration: value!.duration,
-                steps: value!.steps,
-                ingredients: value!.ingredients,
-                tags: value!.tags,
-                readers: value!.readers,
-                editors: value!.editors
+                name: value.name,
+                serving: value.serving,
+                duration: value.duration,
+                steps: value.steps,
+                ingredients: value.ingredients,
+                tags: value.tags,
+                readers: value.readers,
+                editors: value.editors
               });
             }
           },
