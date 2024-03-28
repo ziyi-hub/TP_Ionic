@@ -98,7 +98,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Delete clicked');
-            // this.presentAlertDelete(this.deleteRecipe.bind(this, recipe.id), recipe.id, recipe.name);
+            this.presentAlertDelete(this.deleteRecipe.bind(recipe.id, recipe.name), recipe.id, recipe.name)
           }
         },
         {
