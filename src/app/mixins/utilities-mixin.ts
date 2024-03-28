@@ -11,14 +11,14 @@ import { Router } from '@angular/router';
   template: ''
 })
 export class UtilitiesMixin {
-  
+
   private readonly toastController =  inject(ToastController);
   private readonly alertController =  inject(AlertController);
   username : string | undefined;
   readonly usersService = inject(UsersService);
   readonly authService = inject(AuthService)
   readonly router = inject(Router);
-  
+
   /**
    * show toast
    * @param message
@@ -68,15 +68,15 @@ export class UtilitiesMixin {
 async getCurrentUserName(): Promise<string | undefined> {
   try {
     const user = await this.authService.getConnectedUser().pipe(first()).toPromise();
-    
+
     if (user) {
       const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
       if (value) {
         this.username = value.username;
         return value.username;
-      } 
+      }
     }
-    return undefined; 
+    return undefined;
   } catch (error) {
     console.log('Error retrieving username:', error);
     throw error;
@@ -88,7 +88,7 @@ async getCurrentUserName(): Promise<string | undefined> {
 loadUser(){
   this.authService.getConnectedUser().subscribe(
     user => {
-      if(!user) 
+      if(!user)
         this.router.navigateByUrl("/login");
       else
         this.router.navigateByUrl("/tab/home");

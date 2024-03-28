@@ -7,9 +7,41 @@ import { RecipeModalComponent } from "../../components/recipe-modal/recipe-modal
 import { ActivatedRoute } from '@angular/router';
 import { Category } from '../../models/category';
 import { ReactiveFormsModule } from '@angular/forms';
-import { IonBackButton, IonSelect, IonSelectOption, IonButtons, IonFab, IonFabButton, ModalController, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem, IonButton, IonCardContent, IonCard } from '@ionic/angular/standalone';
+import {
+  IonBackButton,
+  IonSelect,
+  IonSelectOption,
+  IonFabList,
+  IonActionSheet,
+  IonButtons,
+  IonFab,
+  IonFabButton,
+  ModalController,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItemSliding,
+  IonIcon,
+  IonItemOption,
+  IonItemOptions,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonCardContent,
+  IonCard,
+  ActionSheetController
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, caretBack, pencilOutline, shareSocialOutline, trashOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  caretBack,
+  ellipsisVerticalOutline,
+  pencilOutline,
+  shareSocialOutline,
+  trashOutline
+} from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 import { first, map } from 'rxjs';
 
@@ -18,7 +50,7 @@ import { first, map } from 'rxjs';
   selector: 'app-category-detail',
   templateUrl: './category-detail.page.html',
   styleUrls: ['./category-detail.page.scss'],
-  imports: [CommonModule, IonCard, IonCardContent, IonButton, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports: [CommonModule, IonCard, IonCardContent, IonButton, IonFabList, IonActionSheet, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
@@ -27,6 +59,64 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   private readonly route = inject(ActivatedRoute);
+
+  constructor(public actionSheetController: ActionSheetController) {
+    super();
+  }
+
+  public actionSheetButtons = [
+    {
+      text: 'Delete',
+      role: 'destructive',
+      data: {
+        action: 'delete',
+      },
+    },
+    {
+      text: 'Share',
+      data: {
+        action: 'share',
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'cancel',
+      data: {
+        action: 'cancel',
+      },
+    },
+  ];
+
+  async presentActionSheet(recipe: Recipe) {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Actions',
+      buttons: [
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => {
+            console.log('Delete clicked');
+            // this.presentAlertDelete(this.deleteRecipe.bind(this, recipe.id), recipe.id, recipe.name);
+          }
+        },
+        {
+          text: 'Edit',
+          handler: () => {
+            console.log('Edit clicked');
+            this.editRecipe(recipe.id);
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
 
   /**
    * Charger les categories lors de l'initialisation de la page
@@ -53,7 +143,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           category => {
             if (category && this.username) {
               this.category = category;
-              
+
               this.categoryService.getRecipesByCategoryId(categoryId, this.username).pipe(
                 map((recipes: any) => recipes.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name)))
               ).subscribe({
@@ -61,7 +151,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
                   if (recipes){
                     this.recipes = recipes
                   }
-                    
+
                 },
                 error: (error: any) => {
                   this.presentToast(error, 'danger');
@@ -95,7 +185,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           name: data.data.name,
           duration: data.data.duration,
           serving: data.data.serving,
-          imgUrl : data.data.imgUrl, 
+          imgUrl : data.data.imgUrl,
           owner : this.username,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
@@ -163,7 +253,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           duration: data.data.duration,
           serving: data.data.serving,
           owner: data.data.owner,
-          imgUrl : data.data.imgUrl, 
+          imgUrl : data.data.imgUrl,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
           tags: data.data.tags,
@@ -183,7 +273,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     });
     return await modal.present();
   }
-  
+
   closeIonSliding(ionItemSliding: IonItemSliding) {
     ionItemSliding.close()
   }
@@ -195,4 +285,5 @@ addIcons({
   'pencil-outline': pencilOutline,
   'caret-back': caretBack,
   'share-social-outline': shareSocialOutline,
+  'ellipsis-vertical-outline': ellipsisVerticalOutline,
 });

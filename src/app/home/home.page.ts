@@ -5,7 +5,17 @@ import { Category } from '../models/category';
 import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
 import { UUID } from 'angular2-uuid';
 import { addIcons } from 'ionicons';
-import { addOutline, logOutOutline, pencilOutline, personCircle, settingsOutline, trashOutline, personCircleOutline, eyeOutline } from 'ionicons/icons';
+import {
+  addOutline,
+  logOutOutline,
+  pencilOutline,
+  personCircle,
+  settingsOutline,
+  trashOutline,
+  personCircleOutline,
+  eyeOutline,
+  addCircle
+} from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
 import { Observable, first, of } from "rxjs";
@@ -168,14 +178,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           categoryId: categoryId
         }
       });
-  
+
       await modal.present();
-  
+
       const { data } = await modal.onWillDismiss();
-      
+
       if (data && data.name && this.username) {
         const oldCategory = await this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).toPromise();
-  
+
         if (oldCategory) {
           const updatedCategory = {
             id: categoryId,
@@ -190,14 +200,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             const message = `${updatedCategory.name} is successfully updated.`;
             this.loadCategories(this.username);
             this.presentToast(message, 'success');
-          }  
+          }
         }
       }
     } catch (error) {
       this.presentToast(error+"", 'danger');
     }
   }
-  
+
 
   /**
    * Suppression un category
@@ -252,5 +262,6 @@ addIcons({
   'settings-outline': settingsOutline,
   'log-out-outline': logOutOutline,
   'person-circle-outline': personCircleOutline,
-  'eye-outline': eyeOutline
+  'eye-outline': eyeOutline,
+  'add-circle': addCircle,
 });

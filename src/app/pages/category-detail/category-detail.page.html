@@ -13,6 +13,7 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
@@ -22,6 +23,7 @@
       <ion-title size="large">{{this.category?.name}}</ion-title>
     </ion-toolbar>
   </ion-header>
+
   <ion-list>
     @for (recipe of recipes; track recipe?.id) {
       <ion-item-sliding #recipesItem data-testid="recipes">
@@ -84,20 +86,13 @@
 <!--  </ion-list>-->
 <!--</ion-content>-->
 
-<!-- <ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button id="open-modal" data-testid="open-new-recipe-modal-btn" expand="block" (click)="createRecipe()">
-    <ion-icon name="add-outline"></ion-icon>
-  </ion-fab-button>
-</ion-fab> -->
-
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tab/home"></ion-back-button>
     </ion-buttons>
     <ion-title>
-<!--      {{ this.topic?.name }}-->
-      Soup
+      {{ this.category?.name }}
     </ion-title>
     <ion-buttons slot="end">
       <ion-button>
@@ -108,16 +103,30 @@
 </ion-header>
 
 <ion-content color="light">
-  <ion-card *ngFor="let recipe of recipes" (click)="showRecipe(this.category!.id, recipe.id)">
-    <ion-card-content class="bg-img-style" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
-    <ion-item detail lines="none" color="primary">
-      <ion-label>
-        <h1>{{recipe.name}}</h1>
+  <ng-container *ngIf="recipes.length > 0; else otherContent">
+    <ion-card *ngFor="let recipe of recipes">
+      <ion-button (click)="presentActionSheet(recipe)">
+        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      </ion-button>
+      <ion-action-sheet trigger="open-action-sheet" header="Actions" [buttons]="actionSheetButtons"></ion-action-sheet>
+
+      <ion-card-content (click)="showRecipe(category!.id, recipe.id)" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
+      <ion-item detail lines="none" color="primary" (click)="showRecipe(category!.id, recipe.id)">
+        <ion-label>
+          <h1>{{recipe.name}}</h1>
+        </ion-label>
+      </ion-item>
+    </ion-card>
+  </ng-container>
+
+  <ng-template class="ion-wrap" #otherContent>
+    <ion-item>
+      <ion-label color="medium" class="ion-padding ion-text-center">
+        No recipes yet!
       </ion-label>
     </ion-item>
-  </ion-card>
+  </ng-template>
 </ion-content>
-
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
   <ion-fab-button id="open-modal" data-testid="open-new-post-modal-btn" expand="block" (click)="createRecipe()">
