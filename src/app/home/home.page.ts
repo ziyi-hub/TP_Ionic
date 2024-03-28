@@ -97,9 +97,9 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   sharedCategories$: Observable<Category[]> | undefined;
   async ngOnInit() {
     try {
-      this.username = await this.getCurrentUserName();
-      if (this.username)
-        this.loadCategories(this.username)
+      this.user = await this.getCurrentUser();
+      if (this.user )
+        this.loadCategories(this.user.username)
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
@@ -107,11 +107,11 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   loadCategories(username: string) {
     try {
-      const subscription = this.categoryService.getPrivateCategories(username).subscribe((categories: any[]) => {
+      const subscription = this.categoryService.getPrivateCategories(username).subscribe((categories: Category[]) => {
         this.categories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         subscription.unsubscribe();
       });
-      const sharedSubscription = this.categoryService.getSharedCategories(username).subscribe((categories: any[]) => {
+      const sharedSubscription = this.categoryService.getSharedCategories(username).subscribe((categories: Category[]) => {
         this.sharedCategories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         sharedSubscription.unsubscribe();
       });
@@ -127,19 +127,19 @@ export class HomePage extends UtilitiesMixin implements OnInit {
       component: CategoryModalComponent,
     });
     modal.onWillDismiss().then((data) => {
-      if (!!data && data.data && this.username) {
+      if (!!data && data.data && this.user) {
         const newCategory = {
           id: UUID.UUID(),
           name: data.data.name,
           imgUrl: data.data.imgUrl || '',
-          owner: this.username
+          owner: this.user.username
         };
         this.categoryService.addCategory(newCategory)
           .then((categoryAdded) => {
-            if (this.username) {
+            if (this.user) {
               const message = categoryAdded.name + " is successfully created."
               this.presentToast(message, 'success');
-              this.loadCategories(this.username)
+              this.loadCategories(this.user.username)
             }
           })
           .catch((err) => {
@@ -152,8 +152,8 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
 
 
-  logout() {
-    this.authService.logOut();
+  async logout() {
+    await this.authService.logOut();
     this.loadUser();
   }
   /**
@@ -168,14 +168,13 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           categoryId: categoryId
         }
       });
-  
+
       await modal.present();
-  
+
       const { data } = await modal.onWillDismiss();
-      
-      if (data && data.name && this.username) {
-        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).toPromise();
-  
+
+      if (data && data.name && this.user) {
+        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.user.username).pipe(first()).toPromise();
         if (oldCategory) {
           const updatedCategory = {
             id: categoryId,
@@ -185,34 +184,39 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             readers: oldCategory.readers,
             editors: oldCategory.editors
           };
-          if((oldCategory.editors && oldCategory.editors.includes(this.username) )|| oldCategory.owner == this.username){
-            await this.categoryService.updateCategory(updatedCategory);
-            this.loadCategories(this.username);
-            this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
-          }  
+          if ((oldCategory.editors && oldCategory.editors.includes(this.user.username)) || oldCategory.owner == this.user.username) {
+            await this.categoryService.updateCategory(updatedCategory).then(() => {
+              if (this.user) {
+                this.loadCategories(this.user.username);
+                this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
+              }
+            }).catch(() => {
+              this.presentToast(`Failed to update ${oldCategory.name}.`, 'danger');
+            });
+          }
         }
       }
     } catch (error) {
-      this.presentToast(error+"", 'danger');
+      this.presentToast(error + "", 'danger');
     }
   }
-  
+
 
   /**
    * Suppression un category
    * @param categoryId
    */
   async deleteCategory(categoryId: string) {
-    if (this.username)
-      this.categoryService.getCategoryById(categoryId, this.username).pipe(first()).subscribe({
+    if (this.user)
+      this.categoryService.getCategoryById(categoryId, this.user.username).pipe(first()).subscribe({
         next: (value) => {
-          if (value && value.name && this.username) {
-            this.categoryService.deleteCategory(categoryId, this.username)
+          if (value && value.name && this.user) {
+            this.categoryService.deleteCategory(categoryId, this.user.username)
               .then((isDeleted) => {
                 console.log(isDeleted)
-                if (isDeleted == true && this.username) {
+                if (isDeleted == true && this.user) {
                   this.presentToast(`${value.name} is succesfully deleted.`, 'success')
-                  this.loadCategories(this.username)
+                  this.loadCategories(this.user.username)
                 }
               })
               .catch((err) => {

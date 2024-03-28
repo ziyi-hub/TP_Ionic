@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, DocumentData, serverTimestamp, query, where, or, getDocs, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, query, where, or } from '@angular/fire/firestore';
 import { Observable, first, map, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
-import { forEach } from 'cypress/types/lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -71,9 +70,6 @@ export class CategoryService {
         }
       })
     );
-  }
-  getConnectedUser(){
-
   }
   /**
    * Add a new category to Firestore.
@@ -184,7 +180,7 @@ export class CategoryService {
       serving: updatedRecipe.serving,
       imgUrl : updatedRecipe.imgUrl,
       owner: updatedRecipe.owner,
-      steps: updatedRecipe.steps,
+      steps: updatedRecipe.steps, 
       ingredients: updatedRecipe.ingredients,
       tags: updatedRecipe.tags,
       readers: updatedRecipe.readers,

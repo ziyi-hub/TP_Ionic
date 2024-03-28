@@ -23,8 +23,8 @@ export class SettingsPage{
 
   constructor(private authService: AuthService) {}
 
-  logout() {
-    this.authService.logOut();
+  async logout() {
+    await this.authService.logOut();
   }
 
 }

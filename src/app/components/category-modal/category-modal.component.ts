@@ -34,8 +34,8 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      this.username = await this.getCurrentUserName();
-      if(this.username)
+      this.user = await this.getCurrentUser();
+      if(this.user)
         this.loadCategory()
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
@@ -43,8 +43,8 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
   }
   loadCategory() {
     try {
-      if (this.categoryId && this.username) {
-        this.CategoryService.getCategoryById(this.categoryId, this.username).pipe(first()).subscribe({
+      if (this.categoryId && this.user) {
+        this.CategoryService.getCategoryById(this.categoryId, this.user.username).pipe(first()).subscribe({
           next: (value: any) => {
             if (value) {
               this.categoryForm.setValue({
