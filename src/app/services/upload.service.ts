@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {getStorage, ref, uploadBytes} from "firebase/storage";
-import {FirebaseStorage} from "@angular/fire/storage";
+import {FirebaseStorage, getDownloadURL} from "@angular/fire/storage";
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,13 @@ export class UploadService {
   async getUploadedImageURL(fileName: string) {
     try {
       const storageRef = ref(this.storage, `${this.basePath}/${fileName}`);
-      console.log(storageRef);
+      getDownloadURL(storageRef)
+        .then((url) => {
+          console.log(url);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.error("Error getting download URL:", error);
       throw error;

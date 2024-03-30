@@ -10,7 +10,7 @@
       <ion-title>Add new recipe</ion-title>
     </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm()" [strong]="true" [disabled]="recipeForm.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.recipeId, this.uploadService.selectedFile, $event)" [strong]="true" [disabled]="recipeForm.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -28,4 +28,17 @@
       <ion-input data-testid="duration" labelPlacement="stacked"  label="Duration"  required formControlName="duration" errorText="Duration is required" ></ion-input>
     </ion-item>
   </form>
+
+  <ion-card class="ion-no-margin ion-margin-top">
+    <ion-card-subtitle class="ion-padding">
+      Upload image
+    </ion-card-subtitle>
+    <ion-card-content>
+      <form>
+        <ion-item>
+          <ion-input type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>
+        </ion-item>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

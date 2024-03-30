@@ -102,9 +102,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="light">
+<ion-content color="light" class="ion-padding">
   <ng-container *ngIf="recipes.length > 0; else otherContent">
-    <ion-card *ngFor="let recipe of recipes" class="card-with-button">
+    <ion-card *ngFor="let recipe of recipes" class="ion-no-margin ion-margin-top">
       <ion-button class="button-right-top" (click)="presentActionSheet(recipe)">
         <ion-icon name="ellipsis-vertical-outline"></ion-icon>
       </ion-button>

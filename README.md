@@ -16,6 +16,7 @@
 ## Build ##
 - ionic build ionic capacitor add ios
 - ionic capacitor build ios
+- ionic cap run ios --livereload --external
 
 ## Link utils ##
 - [Icons](https://ionic.io/ionicons?_gl=1*1l3uj4i*_ga*MTk2NTIyNzk5LjE3MDYxMDExOTM.*_ga_REH9TJF6KF*MTcwNjQ3ODk2OC42LjEuMTcwNjQ3OTE5NC4wLjAuMA..)
