@@ -36,9 +36,11 @@
     <ion-card-content>
       <form>
         <ion-item>
-          <ion-input type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>
+          <ion-input accept="image/*" type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>
         </ion-item>
       </form>
     </ion-card-content>
   </ion-card>
+
+  <img src="" />
 </ion-content>

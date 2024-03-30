@@ -44,7 +44,6 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   numbers: number[] = Array.from({length: 21}, (_, i) => i);
   async ngOnInit() {
     try {
-      await this.uploadService.getUploadedImageURL("ki.jpg");
       this.user = await this.getCurrentUser();
       if(this.user)
         this.loadRecipe()
@@ -90,7 +89,7 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
 
   confirm(id: string | undefined, file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file, event);
+    this.uploadService.uploadFile(id, file);
     return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
   }
 }

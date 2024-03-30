@@ -74,7 +74,7 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   confirm(id: string | undefined, file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file, event);
+    this.uploadService.uploadFile(id, file);
     return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
   }
 }
