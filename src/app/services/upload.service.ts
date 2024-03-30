@@ -32,11 +32,12 @@ export class UploadService {
           const storageRef = ref(this.storage, `${this.basePath}/${file[0].name}`);
           uploadBytesResumable(storageRef, file[0])
             .then(async() => {
-              const imgUrl = await this.getUploadedImageURL(file[0].name)
-              console.log(imgUrl)
+              const imgUrl = await this.getUploadedImageURL(file[0].name);
+              resolve(imgUrl);
+              console.log(imgUrl);
             })
             .catch(err => {
-              console.log(err)
+              console.log(err);
             })
         } catch (error) {
           reject(error);
