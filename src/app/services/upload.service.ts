@@ -30,8 +30,14 @@ export class UploadService {
       if(file && file.length) {
         try {
           const storageRef = ref(this.storage, `${this.basePath}/${file[0].name}`);
-          uploadBytesResumable(storageRef, file[0]);
-          console.log('Uploaded a blob or file!');
+          uploadBytesResumable(storageRef, file[0])
+            .then(async() => {
+              const imgUrl = await this.getUploadedImageURL(file[0].name)
+              console.log(imgUrl)
+            })
+            .catch(err => {
+              console.log(err)
+            })
         } catch (error) {
           reject(error);
         }
