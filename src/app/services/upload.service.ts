@@ -34,16 +34,15 @@ export class UploadService {
             .then(async() => {
               const imgUrl = await this.getUploadedImageURL(file[0].name);
               resolve(imgUrl);
-              console.log(imgUrl);
             })
             .catch(err => {
-              console.log(err);
+              reject(err);
             })
         } catch (error) {
           reject(error);
         }
       } else {
-        reject("No file selected");
+        resolve(null);
       }
     });
   }

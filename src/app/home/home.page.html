@@ -29,8 +29,8 @@
 
         <ion-item (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <!--<img src="{{category.imgUrl}}">-->
-            <img src="https://source.unsplash.com/100x100?macbook" />
+            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
+            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>
@@ -60,8 +60,8 @@
 
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <!--<img src="{{category.imgUrl}}">-->
-            <img src="https://source.unsplash.com/100x100?macbook" />
+            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
+            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>
@@ -72,8 +72,8 @@
       <ng-template #otherContent>
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)" >
           <ion-avatar slot="start">
-            <!--<img src="{{category.imgUrl}}">-->
-            <img src="https://source.unsplash.com/100x100?macbook" />
+            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
+            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>

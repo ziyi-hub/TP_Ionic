@@ -41,6 +41,7 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
   }
+
   loadCategory() {
     try {
       if (this.categoryId && this.user) {
@@ -74,8 +75,14 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   confirm(id: string | undefined, file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file);
-    return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
+    this.uploadService.uploadFile(id, file)
+      .then((res: any) => {
+        if(res) this.categoryForm.value.imgUrl = res
+        return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 addIcons({

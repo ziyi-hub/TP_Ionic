@@ -138,6 +138,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     });
     modal.onWillDismiss().then((data) => {
       if (!!data && data.data && this.user) {
+        console.log(data.data)
         const newCategory = {
           id: UUID.UUID(),
           name: data.data.name,
