@@ -1,10 +1,7 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import {addIcons} from "ionicons";
 import {homeOutline, searchOutline, settingsOutline} from "ionicons/icons";
-import { RouterModule } from "@angular/router";
+import { IonTabButton, IonTabBar, IonTabs, IonIcon, IonLabel} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-custom-tab',
@@ -12,16 +9,15 @@ import { RouterModule } from "@angular/router";
   styleUrls: ['./tab.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    RouterModule,
+    IonTabButton,
+    IonTabBar, 
+    IonTabs,
+    IonIcon, 
+    IonLabel
   ]
 })
 export class TabPage {
-
   constructor() { }
-
 }
 
 addIcons({

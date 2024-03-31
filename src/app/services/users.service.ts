@@ -46,18 +46,17 @@ async addUser(user: User, docId: string): Promise<User> {
     username: user.username,
     firstName : user.firstName,
     lastName: user.lastName,
+    imgUrl : user.imgUrl,
     createdAt : serverTimestamp(),
     updatedAt : serverTimestamp(),
   };
   const userDocRef = doc(this.firestore, 'users', docId);
   try {
       await setDoc(userDocRef, userValue);
-      console.log("User added successfully");
   } catch (error) {
       console.error("Error adding user:", error);
       throw error;
   }
-  
   return { ...user, id: docId }; 
 }
 
@@ -74,6 +73,7 @@ async updateUser(userToUpdate: User): Promise<User> {
     username: userToUpdate.username,
     firstName : userToUpdate.firstName,
     lastName: userToUpdate.lastName,
+    imgUrl : userToUpdate.imgUrl,
     updatedAt : serverTimestamp(), 
   };
   await updateDoc(userDocRef, userValue);

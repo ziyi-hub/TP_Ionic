@@ -85,17 +85,21 @@ async getCurrentUser(): Promise<User | undefined> {
 
 
 
-loadUser(){
+async loadUser(){  
   this.authService.getConnectedUser().subscribe(
     async user => {
       if(!user) 
         this.router.navigateByUrl("/login");
-      else
-        this.router.navigateByUrl("/tab/home");
-      if(user && !user.emailVerified){
-        this.authService.sendEmailVerification(user);
-        await this.authService.logOut();
+      else if(user && !user.emailVerified){
+        this.router.navigateByUrl("/login");
+      }else if(user){
+        const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
+        if (value) {
+          this.user = value;
+          this.router.navigateByUrl("/tab/home");
+        }
       }
+      
     }
   )
 }

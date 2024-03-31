@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, User, UserCredential, deleteUser, sendPasswordResetEmail } from '@angular/fire/auth';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Auth, User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, UserCredential, deleteUser, sendPasswordResetEmail, signInWithCredential, user, GoogleAuthProvider, onAuthStateChanged, AuthCredential } from '@angular/fire/auth';
+import { Observable, BehaviorSubject, first } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsersService } from './users.service';
-
+import { GoogleAuth, User as UserCapacitor} from '@codetrix-studio/capacitor-google-auth';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,7 +13,6 @@ export class AuthService {
   private readonly router  = inject(Router);
   private readonly usersService = inject(UsersService);
   private connectedUserSubject : BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-
   constructor() {
     this.initAuthStateListener();
   }
@@ -45,7 +44,6 @@ export class AuthService {
       throw error;
     }
   }
-
   public async logOut(): Promise<void> {
     try {
       await signOut(this.auth);
@@ -54,9 +52,18 @@ export class AuthService {
       throw error;
     }
   }
+  public async signInWithGoogle(user : UserCapacitor): Promise<UserCredential> {
+    const credential = GoogleAuthProvider.credential(user.authentication.idToken);
+    return await signInWithCredential(this.auth, credential);
+  }
+
+
+  public async signUpWithGoogle(): Promise<UserCapacitor| null> {
+    return await GoogleAuth.signIn();
+  }
 
   public async isAuthenticated(): Promise<boolean> {
-    const user = await this.auth.currentUser;
+    const user = this.auth.currentUser;
     return !!user;
   }
 

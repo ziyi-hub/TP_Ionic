@@ -6,7 +6,10 @@ export interface Recipe {
   duration:string;
   owner : string;
   steps?: string[];
-  ingredients? : string[];
+  ingredients? : [{
+    name: string,
+    volume : string
+  }];
   tags? : string[];
   readers? : string[];
   editors? : string[];

@@ -108,7 +108,6 @@ export class CategoryService {
       owner: categoryToUpdate.owner,
       readers: categoryToUpdate.readers,
       editors: categoryToUpdate.editors,
-      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     };
     const categoryDocRef = doc(collection(this.firestore, 'categories'), categoryToUpdate.id);
@@ -185,7 +184,6 @@ export class CategoryService {
       tags: updatedRecipe.tags,
       readers: updatedRecipe.readers,
       editors: updatedRecipe.editors,
-      createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
     await updateDoc(recipeDocRef, recipeValue);
