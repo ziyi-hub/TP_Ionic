@@ -10,14 +10,17 @@
       <ion-title>Add new recipe</ion-title>
     </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.recipeId, this.uploadService.selectedFile, $event)" [strong]="true" [disabled]="recipeForm.errors?.['required']"><ion-icon name="checkmark-outline"></ion-icon></ion-button>
+      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.recipeId, this.uploadService.selectedFile, $event)" [strong]="true" [disabled]="recipeForm.errors?.['required']">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
   <form [formGroup]="recipeForm">
     <ion-item>
-      <ion-input data-testid="recipe-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Name is required" ></ion-input>
+      <ion-input data-testid="recipe-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Recipe name is required" ></ion-input>
     </ion-item>
     <ion-item>
       <ion-select label="Serving" labelPlacement="stacked" required formControlName="serving" errorText="Serving is required">
@@ -41,6 +44,4 @@
       </form>
     </ion-card-content>
   </ion-card>
-
-  <img src="" />
 </ion-content>

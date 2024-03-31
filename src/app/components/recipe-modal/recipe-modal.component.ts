@@ -34,7 +34,8 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     ingredients : new FormControl([], [Validators.required]),
     tags : new FormControl([], [Validators.required]),
     readers : new FormControl([], [Validators.required]),
-    editors : new FormControl([], [Validators.required])
+    editors : new FormControl([], [Validators.required]),
+    imgUrl: new FormControl(''),
   });
 
   private readonly CategoryService = inject(CategoryService);
@@ -51,12 +52,13 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
   }
+
   loadRecipe(){
     try {
       if (this.recipeId && this.categoryId && this.user) {
         this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.user.username).pipe(first()).subscribe({
           next: (value: any) => {
-            if (value && value.description) {
+            if (value) {
               this.recipeForm.setValue({
                 name: value.name,
                 serving: value.serving,
@@ -65,7 +67,8 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
                 ingredients: value.ingredients,
                 tags: value.tags,
                 readers: value.readers,
-                editors: value.editors
+                editors: value.editors,
+                imgUrl: value!.imgUrl,
               });
             }
           },
@@ -89,8 +92,15 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
 
   confirm(id: string | undefined, file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file);
-    return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
+    this.uploadService.uploadFile(id, file)
+      .then((res: any) => {
+        if(res) this.recipeForm.value.imgUrl = res
+        console.log(this.recipeForm.value);
+        return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 addIcons({

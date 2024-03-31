@@ -158,6 +158,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     }
     );
   }
+
   showRecipe(categoryId: string, recipeId: string) {
     this.router.navigate(['/category-detail/', categoryId, 'recipe-detail', recipeId]);
   }
