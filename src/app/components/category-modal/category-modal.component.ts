@@ -1,6 +1,6 @@
 import { CategoryService } from '../../services/category.service';
 import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
-import { IonBackButton,IonHeader, IonToolbar, IonCard, IonItem, IonCardContent, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
+import { IonBackButton,IonHeader, IonCardSubtitle, IonToolbar, IonCard, IonItem, IonCardContent, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {UtilitiesMixin} from 'src/app/mixins/utilities-mixin'
@@ -19,7 +19,7 @@ import {
   selector: 'app-category-modal',
   templateUrl: './category-modal.component.html',
   styleUrls: ['./category-modal.component.scss'],
-  imports:[ReactiveFormsModule,CommonModule, IonBackButton, IonHeader, IonToolbar, IonCard, IonItem, IonCardContent, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
+  imports:[ReactiveFormsModule,CommonModule, IonBackButton, IonCardSubtitle, IonHeader, IonToolbar, IonCard, IonItem, IonCardContent, IonButton, IonTitle, IonButtons, IonContent, IonInput, IonIcon]
 })
 export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
   @Input() categoryId: string | undefined;
@@ -41,6 +41,7 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
   }
+
   loadCategory() {
     try {
       if (this.categoryId && this.user) {
@@ -74,8 +75,14 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   confirm(id: string | undefined, file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file, event);
-    return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
+    this.uploadService.uploadFile(id, file)
+      .then((res: any) => {
+        if(res) this.categoryForm.value.imgUrl = res
+        return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 }
 addIcons({

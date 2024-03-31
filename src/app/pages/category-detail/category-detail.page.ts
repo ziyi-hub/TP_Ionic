@@ -98,7 +98,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Delete clicked');
-            // this.presentAlertDelete(this.deleteRecipe.bind(this, recipe.id), recipe.id, recipe.name);
+            this.presentAlertDelete(() => this.deleteRecipe(recipe.id, recipe.name), recipe.id, recipe.name);
           }
         },
         {
@@ -170,6 +170,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     modal.onWillDismiss().then((data) => {
 
       if (!!data && data.data && this.category && this.user) {
+        console.log(data.data);
         const recipeValue = {
           id: UUID.UUID(),
           name: data.data.name,

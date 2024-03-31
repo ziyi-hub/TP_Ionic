@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { IonBackButton, IonSelect, IonSelectOption, IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
+import { IonBackButton, IonSelect, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {
@@ -13,13 +13,14 @@ import { Recipe } from 'src/app/models/recipe';
 import { CategoryService } from 'src/app/services/category.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { first } from 'rxjs';
+import {UploadService} from "../../services/upload.service";
 
 @Component({
   standalone:true,
   selector: 'app-recipe-modal',
   templateUrl: './recipe-modal.component.html',
   styleUrls: ['./recipe-modal.component.scss'],
-  imports : [ReactiveFormsModule,IonSelect, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
+  imports : [ReactiveFormsModule, IonSelect, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
 export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   @Input() recipeId : string |undefined;
@@ -38,7 +39,9 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
 
   private readonly CategoryService = inject(CategoryService);
   private readonly modalCtrl = inject(ModalController);
-  numbers: number[] = Array.from({length: 21}, (_, i) => i); 
+  public uploadService = inject(UploadService);
+
+  numbers: number[] = Array.from({length: 21}, (_, i) => i);
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
@@ -78,15 +81,17 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
       const msg =  'Error fetching recipe: '+error
       this.presentToast(msg, 'danger')
     }
-    
+
   }
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm() {
+  confirm(id: string | undefined, file: any, event: Event) {
+    event.preventDefault();
+    this.uploadService.uploadFile(id, file);
     return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
-  } 
+  }
 }
 addIcons({
   'checkmark-outline' : checkmarkOutline
