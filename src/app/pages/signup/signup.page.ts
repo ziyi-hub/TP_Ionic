@@ -57,38 +57,12 @@ export class SignupPage extends UtilitiesMixin {
     return this.regForm?.controls;
   }
 
-  // async signUp(){
-  //   // const loading = await this.loadingCtrl.create();
-  //   // await loading.present();
-  //   if(this.regForm?.valid && this.regForm.value.password === this.regForm.value.confirmPassword && this.regForm.value.username){
-  //     this.authService.createUser(this.regForm.value.email, this.regForm.value.password)
-  //       .then((account) => {
-  //         this.usersService.addUser({id: account.user.uid , username : this.regForm.value.username},account.user.uid).then(()=>{
-  //         this.authService.sendEmailVerification(account.user);
-  //         this.authService.logOut();
-  //         this.presentToast("Registration successful.", 'success');
-  //         this.router.navigate(['/login']);
-  //         // loading.dismiss();
-  //         })
-  //         .catch((err) => {
-  //           this.presentToast(err, 'danger');
-  //           // loading.dismiss();
-  //         })
-
-  //       })
-  //       .catch((err) => {
-  //         this.presentToast(err, 'danger');
-  //         // loading.dismiss();
-  //       })
-  //   }
-  // }
-
   async signUp() {
     try {
       if (!this.regForm?.valid) {
         throw new Error('Form is invalid.');
       }
-      const { email, password, confirmPassword, username, lastName, firstName } = this.regForm.value;
+      const { email, password, confirmPassword, username, lastName, firstName,imgUrl } = this.regForm.value;
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match.');
       }
@@ -100,7 +74,8 @@ export class SignupPage extends UtilitiesMixin {
       const userValue : User = {
         username: username,
         firstName: firstName,
-        lastName: lastName
+        lastName: lastName,
+        imgUrl : imgUrl
       };
       await this.usersService.addUser(userValue, account.user.uid)
       this.presentToast('Registration successfull, please validate your email address.', 'success');

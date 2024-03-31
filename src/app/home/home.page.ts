@@ -39,7 +39,7 @@ import {
   IonItemOption,
   IonItemOptions,
   IonLabel,
-  IonItem,
+  IonItem, 
   IonButton,
   IonCardTitle,
   IonCardSubtitle,
@@ -104,14 +104,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   categories$: Observable<Category[]> | undefined;
-  sharedCategories$: Observable<Category[]> | undefined;
+  sharedCategories$: Observable<Category[]> | undefined; 
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
-      if (this.user )
-        this.loadCategories(this.user.username)
+      if (this.user)
+        this.loadCategories(this.user.username);
     } catch (error) {
-      this.presentToast("Failed to retrieve logged-in user.", "danger")
+      this.presentToast("Failed to retrieve logged-in user.", "danger");
     }
   }
 
@@ -165,7 +165,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   async logout() {
     await this.authService.logOut();
-    this.loadUser();
+    await this.loadUser();
   }
   /**
    * Mise à jour un category

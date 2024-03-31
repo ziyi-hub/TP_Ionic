@@ -1,6 +1,4 @@
-
-<ion-content [fullscreen]="true">
-
+<ion-content>
   <ion-header [translucent]="true">
     <ion-toolbar>
       <ion-title>
@@ -8,29 +6,21 @@
       </ion-title>
     </ion-toolbar>
   </ion-header>
-
   <form [formGroup]="loginForm" class="ion-padding" novalidate>
     <ion-item class="ion-padding-vertical">
       <ion-input formControlName="email" placeholder="email"></ion-input>
     </ion-item>
-
     <ion-item>
       <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
     </ion-item>
 
     <ion-row class="ion-justify-content-between ion-align-items-center ion-padding-vertical">
-      <ion-row class="ion-align-items-center">
-        <ion-checkbox class="ion-padding-end"/>
-        <!-- <p>Remember me</p> -->
-      </ion-row>
-
-      <ion-label (click)="resetPassword()" >
-        <a>Forgot password?</a>
-      </ion-label>
+      <ion-label id="open-custom-dialog" expand="block"><a>Forgot password?</a></ion-label>
     </ion-row>
 
-    <ion-button (click)="login()" expand="block" class="ion-padding-vertical">Sign in</ion-button>
-    <ion-button fill="outline" expand="block">Sign in with Google</ion-button>
+    <ion-button (click)="login()" expand="block" class="ion-padding-vertical" [disabled]="loginForm.invalid">Sign
+      in</ion-button>
+    <ion-button (click)="loginWithGoogle()" fill="outline" expand="block">Sign in with Google</ion-button>
 
     <ion-row>
       <ion-col>
@@ -41,4 +31,25 @@
       </ion-col>
     </ion-row>
   </form>
+
+  <ion-modal id="example-modal" #resetModal trigger="open-custom-dialog" [enterAnimation]="enterAnimation"
+    [leaveAnimation]="leaveAnimation">
+    <ng-template class="ion-padding">
+      <h5 class="ion-text-center border-bottom">Forgot your password?</h5>
+      <form [formGroup]="resetPasswordForm">
+        <ion-item>
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          <ion-input data-testid="email" formControlName="email" type="email" required clearInput
+            placeholder="Enter your email"></ion-input>
+        </ion-item>
+
+        <div class="ion-text-center ion-margin-top">
+          <ion-button (click)="resetModal.dismiss()" color="medium" size="small">Cancel</ion-button>
+          <ion-button size="small" (click)="resetPassword();resetModal.dismiss()"
+            [disabled]="resetPasswordForm.invalid">Confirm</ion-button>
+        </div>
+      </form>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

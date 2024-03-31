@@ -1,4 +1,4 @@
-# TP_Ionic #
+# DishShare #
 
 ## Créez un service ##
 -  ionic g service services/category
