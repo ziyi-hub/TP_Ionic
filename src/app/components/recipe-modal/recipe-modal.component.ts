@@ -19,6 +19,7 @@ import {
   ModalController,
   IonLabel,
   IonRow,
+  IonCol,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {checkmarkOutline, closeOutline} from 'ionicons/icons';
@@ -42,7 +43,7 @@ import {UploadService} from "../../services/upload.service";
   selector: 'app-recipe-modal',
   templateUrl: './recipe-modal.component.html',
   styleUrls: ['./recipe-modal.component.scss'],
-  imports : [ReactiveFormsModule, IonSelect, IonRow, IonLabel, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
+  imports : [ReactiveFormsModule, IonCol, IonSelect, IonRow, IonLabel, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
 export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   @Input() recipeId : string |undefined;

@@ -45,67 +45,59 @@
     </ion-card-content>
   </ion-card>
 
-
-  <ion-label>
-    <h2>Ingredient</h2>
-  </ion-label>
   <form [formGroup]="ingredientsForm">
     <ion-row>
-      <ng-container formArrayName="ingredients">
+      <ion-col formArrayName="ingredients">
         <ng-container *ngFor="let ingredientGroup of ingredients.controls; let i = index">
           <ion-row [formGroupName]="i">
-            <ion-label>Name</ion-label>
-            <ion-input placeholder="name" formControlName="name"></ion-input>
-            <ion-label>Volume</ion-label>
-            <ion-input placeholder="volume" formControlName="volume"></ion-input>
-            <ion-button (click)="removeIngredient(i)">
-              <ion-icon name="close-outline"></ion-icon>
-            </ion-button>
+            <ion-col>
+              <ion-label>Name</ion-label>
+              <ion-input placeholder="Type name of ingredient" formControlName="name"></ion-input>
+            </ion-col>
+            <ion-col>
+              <ion-label>Volume</ion-label>
+              <ion-input placeholder="Type volume of ingredient" formControlName="volume"></ion-input>
+            </ion-col>
+            <ion-icon (click)="removeIngredient(i)" color="danger" size="large" name="close-outline"></ion-icon>
           </ion-row>
         </ng-container>
-      </ng-container>
+      </ion-col>
     </ion-row>
-    <ion-button (click)="addIngredient()">Add Ingredient</ion-button>
+    <ion-button expand="block" (click)="addIngredient()">Add Ingredient</ion-button>
   </form>
 
-  <ion-label>
-    <h2>Steps</h2>
-  </ion-label>
   <form [formGroup]="stepsForm">
     <ion-row>
-      <ng-container formArrayName="steps">
+      <ion-col formArrayName="steps">
         <ng-container *ngFor="let stepGroup of steps.controls; let i = index">
           <ion-row [formGroupName]="i">
-            <ion-label>Description</ion-label>
-            <ion-input placeholder="description" formControlName="description"></ion-input>
-            <ion-button (click)="removeStep(i)">
-              <ion-icon name="close-outline"></ion-icon>
-            </ion-button>
+            <ion-col>
+              <ion-label>Description</ion-label>
+              <ion-input placeholder="Type description of step" formControlName="description"></ion-input>
+            </ion-col>
+            <ion-icon (click)="removeStep(i)" color="danger" size="large" name="close-outline"></ion-icon>
           </ion-row>
         </ng-container>
-      </ng-container>
+      </ion-col>
     </ion-row>
-    <ion-button (click)="addStep()">Add Step</ion-button>
+    <ion-button expand="block" (click)="addStep()">Add Step</ion-button>
   </form>
 
-  <ion-label>
-    <h2>Tags</h2>
-  </ion-label>
   <form [formGroup]="tagsForm">
     <ion-row>
-      <ng-container formArrayName="tags">
+      <ion-col formArrayName="tags">
         <ng-container *ngFor="let tagGroup of tags.controls; let i = index">
           <ion-row [formGroupName]="i">
-            <ion-label>Name</ion-label>
-            <ion-input placeholder="name" formControlName="name"></ion-input>
-            <ion-button (click)="removeTag(i)">
-              <ion-icon name="close-outline"></ion-icon>
-            </ion-button>
+            <ion-col>
+              <ion-label>Tag</ion-label>
+              <ion-input placeholder="Type tag" formControlName="name"></ion-input>
+            </ion-col>
+            <ion-icon (click)="removeTag(i)" color="danger" size="large" name="close-outline"></ion-icon>
           </ion-row>
         </ng-container>
-      </ng-container>
+      </ion-col>
     </ion-row>
-    <ion-button (click)="addTag()">Add Tag</ion-button>
+    <ion-button expand="block" (click)="addTag()">Add Tag</ion-button>
   </form>
 
 </ion-content>

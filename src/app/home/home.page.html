@@ -17,7 +17,7 @@
     </ion-buttons>
   </ion-toolbar>
   <ion-toolbar *ngIf="searchService.showSearchBar$ | async">
-    <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Animated"></ion-searchbar>
+    <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Search name"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
