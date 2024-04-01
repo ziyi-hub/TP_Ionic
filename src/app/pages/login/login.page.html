@@ -14,8 +14,13 @@
       <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
     </ion-item>
 
-    <ion-row class="ion-justify-content-between ion-align-items-center ion-padding-vertical">
-      <ion-label id="open-custom-dialog" expand="block"><a>Forgot password?</a></ion-label>
+    <ion-row class="ion-padding-vertical ion-justify-content-between">
+      <ion-col size="auto" class="ion-text-left"></ion-col>
+      <ion-col size="auto" class="ion-text-right">
+        <ion-label id="open-custom-dialog" expand="block" color="primary">
+          Forgot password?
+        </ion-label>
+      </ion-col>
     </ion-row>
 
     <ion-button (click)="login()" expand="block" class="ion-padding-vertical" [disabled]="loginForm.invalid">Sign
