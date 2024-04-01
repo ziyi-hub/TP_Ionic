@@ -19,13 +19,14 @@ import {
   IonCard,
   IonCardSubtitle, 
   IonCardContent,
-  IonInput
+  IonInput,
+  LoadingController
 } from '@ionic/angular/standalone';
 import { RouterModule } from "@angular/router";
 import { UtilitiesMixin } from "../../mixins/utilities-mixin";
 import { User } from 'src/app/models/user';
 import { UploadService } from 'src/app/services/upload.service';
-import { LoadingController } from '@ionic/angular';
+
 
 @Component({
   selector: 'app-signup',
@@ -57,13 +58,11 @@ export class SignupPage extends UtilitiesMixin {
     ]],
     password: ['', [
       Validators.required,
-      Validators.required,
       Validators.minLength(4),
       Validators.maxLength(50),
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
     ]],
     confirmPassword: ['', [
-      Validators.required,
       Validators.required,
       Validators.minLength(4),
       Validators.maxLength(50),
@@ -74,7 +73,7 @@ export class SignupPage extends UtilitiesMixin {
     return this.regForm?.controls;
   }
 
-  async signUp(imgUrl : string) {
+  async signUp(imgUrl? : string) {
     try {
       if (!this.regForm?.valid) {
         throw new Error('Form is invalid.');
@@ -101,28 +100,45 @@ export class SignupPage extends UtilitiesMixin {
   }
   async addFile(file: any, event: Event) {
     event.preventDefault();
+    
     const loading = await this.loadingController.create({
       message: 'Loading ...'
     });
-    await loading.present();
+    
     try {
-      const imgUrl= await this.uploadService.uploadFile(file)
-      if(imgUrl){
-        await this.signUp(imgUrl).then(()=>{
-          this.presentToast('Registration successfull, please validate your email address.', 'success');
-        }).catch(()=>{
-          this.presentToast("Failed to register user", 'danger');
-        });
-      }else{
-        this.presentToast("Failed to register user", 'danger');
+      await loading.present();
+      let imgUrl: string | null = null;
+  
+      if (file) {
+        imgUrl = await this.uploadService.uploadFile(file);
       }
-      await loading.dismiss();
+      await this.signUpDefault(imgUrl);
+      this.presentToast('Registration successful. Please validate your email address.', 'success');
       this.regForm.reset();
-    } catch {
+    } catch (error) {
+      console.error('Registration failed:', error);
+      this.presentToast('Failed to register user', 'danger');
+    } finally {
       await loading.dismiss();
-      this.presentToast("Failed to register user", 'danger');
     }
+  
     this.router.navigate(['/login']);
+  }
+ 
+  private async signUpDefault(imgUrl?: string | null) {
+    if (imgUrl) {
+      await this.signUpWithImage(imgUrl);
+    } else {
+      await this.signUpWithoutImage();
+    }
+  }
+  
+  private async signUpWithImage(imgUrl: string) {
+    await this.signUp(imgUrl);
+  }
+  
+  private async signUpWithoutImage() {
+    await this.signUp();
   }
 
 }

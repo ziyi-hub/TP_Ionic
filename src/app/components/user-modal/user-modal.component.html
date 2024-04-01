@@ -1,0 +1,58 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tab/settings" (click)="cancel()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      User Details
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.uploadService.selectedFile, $event)"
+        [strong]="true" [disabled]="userDetailsForm.errors?.['required']">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <form [formGroup]="userDetailsForm" class="custom-padding" novalidate>
+    <ion-item  class="ion-padding-top">
+      <ion-label > <small>Profile photo</small> </ion-label>
+    </ion-item>
+    <ion-item>
+        <form>
+          <ion-item>
+            <ion-input type="file" name="imgUrl" (change)="uploadService.chooseFile($event)"></ion-input>
+          </ion-item>
+        </form>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input label="Given Name" labelPlacement="stacked" formControlName="firstName" placeholder="Given Name"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.userDetailsForm.controls['firstName'].touched && this.userDetailsForm.controls['firstName'].invalid">
+        A given name is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input label="Family Name" labelPlacement="stacked" formControlName="lastName" placeholder="Family Name"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.userDetailsForm.controls['lastName'].touched && this.userDetailsForm.controls['lastName'].invalid">
+        A family name is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input label="Username" labelPlacement="stacked" formControlName="username" placeholder="Username"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.userDetailsForm.controls['username'].touched && this.userDetailsForm.controls['username'].invalid">
+        A username is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input label="Email" labelPlacement="stacked" formControlName="email" placeholder="Email"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.userDetailsForm.controls['email'].touched && this.userDetailsForm.controls['email'].invalid">
+        A valid email is required
+      </div>
+    </ion-item>
+  </form>
+</ion-content>

@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { Auth, User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, UserCredential, deleteUser, sendPasswordResetEmail, signInWithCredential, user, GoogleAuthProvider, onAuthStateChanged, AuthCredential } from '@angular/fire/auth';
-import { Observable, BehaviorSubject, first } from 'rxjs';
+import { Auth, updateEmail, User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, signOut, UserCredential, deleteUser, sendPasswordResetEmail, signInWithCredential, user, GoogleAuthProvider, onAuthStateChanged, AuthCredential } from '@angular/fire/auth';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { UsersService } from './users.service';
 import { GoogleAuth, User as UserCapacitor} from '@codetrix-studio/capacitor-google-auth';
+import { updatePassword } from 'firebase/auth';
 @Injectable({
   providedIn: 'root'
 })
@@ -75,13 +76,20 @@ export class AuthService {
     }
   }
 
-  public async deleteAccount(user:User) : Promise<void>{
+  public async deleteAccount(user:User) : Promise<boolean>{
     try {
       const userToDelete = await this.usersService.deleteUser(user.uid)
       if (userToDelete) await deleteUser(user);
+      return true
     } catch (error) {
       throw error;
     }
+  }
+  public async updateEmail(user:User, newEmail:string) : Promise<void>{
+    await updateEmail(user, newEmail)
+  }
+  public async updatePassword(user:User, newPassword:string) : Promise<void>{
+    await updatePassword(user, newPassword)
   }
 
   public async resetPassword(email: string) : Promise<void>{

@@ -4,46 +4,55 @@
       <ion-back-button defaultHref="/tab/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Settings</ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="create" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content color="light">
+<ion-content color="light" *ngIf="this.user">
 
   <ion-card class="ion-text-center">
+    <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet()">
+      <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+    </ion-button>
     <ion-row>
-      <ion-col class="content-col">
+      <ion-col class="content-col ion-padding">
         <ion-thumbnail class="user-image">
-          <img class="rounded-full" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" />
+          <img class="rounded-full" [src]="user.imgUrl" alt="User Image" />
         </ion-thumbnail>
-
-        <ion-text color="dark">
-          <h2 class="ion-text-center">Ziyi Wang</h2>
-        </ion-text>
+        <ion-label (click)="updateUser()">
+          <p>Change photo</p>
+        </ion-label>
       </ion-col>
     </ion-row>
   </ion-card>
 
   <ion-list [inset]="true">
     <ion-item>
-      <ion-label position="stacked">Phone</ion-label>
-      <ion-input color="primary" readonly="true">0638948234</ion-input>
+      <ion-label>
+        <h3>Given Name</h3>
+        {{this.user.firstName}}
+      </ion-label>
     </ion-item>
     <ion-item>
-      <ion-label position="stacked">Email</ion-label>
-      <ion-input color="primary" readonly="true">ziyi.wang&#64;gmail.com</ion-input>
+      <ion-label>
+        <h3>Last Name</h3>
+        {{this.user.lastName}}
+      </ion-label>
     </ion-item>
     <ion-item>
-      <ion-toggle>Dark Mode</ion-toggle>
+      <ion-label>
+        <h3>Email</h3>
+        {{this.user.email}}
+      </ion-label>
     </ion-item>
-    <ion-item (click)="logout()" routerDirection="forward">
-      <ion-icon name="log-out-outline" slot="start"></ion-icon>
-      Logout
-    </ion-item>
+   
+      <ion-item lines="none"   *ngIf="this.user && this.user.id && this.user.firstName" (click)="presentAlertDelete(this.deleteUser.bind(this), this.user.id, this.user.firstName)" routerDirection="forward">
+        <ion-label color="danger"> Delete Account</ion-label>
+      </ion-item>
+      <ion-item (click)="logout()" routerDirection="forward">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Logout
+      </ion-item>
+    
   </ion-list>
 
 </ion-content>

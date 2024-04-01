@@ -13,7 +13,8 @@ import {
   trashOutline,
   personCircleOutline,
   eyeOutline,
-  addCircle
+  addCircle,
+  ellipsisVertical
 } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
@@ -104,6 +105,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly modalController = inject(ModalController);
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined; 
+  actionSheetController: any;
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
@@ -254,7 +256,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   closeIonSliding(ionItemSliding: IonItemSliding) {
     ionItemSliding.close()
   }
-
 }
 
 addIcons({
@@ -266,4 +267,5 @@ addIcons({
   'person-circle-outline': personCircleOutline,
   'eye-outline': eyeOutline,
   'add-circle': addCircle,
+  'ellipsis-vertical' : ellipsisVertical
 });

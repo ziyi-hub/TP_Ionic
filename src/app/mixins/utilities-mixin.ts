@@ -36,12 +36,12 @@ export class UtilitiesMixin {
   /**
    * show a confirm alert before delete
    * @param deleteCallback
-   * @param categoryId
-   * @param categoryName
+   * @param id
+   * @param name
    */
-  async presentAlertDelete(deleteCallback: (categoryId: string) => void, categoryId: string, categoryName: string) {
+  async presentAlertDelete(deleteCallback: (id: string) => void, id: string, name: string) {
     const alert = await this.alertController.create({
-      header: 'Are you sure you want to delete ' + categoryName + "?",
+      header: 'Are you sure you want to delete ' + name + "?",
       subHeader: '',
       message: '',
       buttons: [
@@ -56,7 +56,7 @@ export class UtilitiesMixin {
           text: 'OK',
           role: 'confirm',
           handler: () => {
-            deleteCallback(categoryId);
+            deleteCallback(id);
           },
         },
       ],
@@ -70,9 +70,9 @@ async getCurrentUser(): Promise<User | undefined> {
 
     if (user) {
       const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
-      if (value) {
-        this.user = value;
-        return value;
+      if (value && user.email) {
+        this.user = { ...value, email: user.email };
+        return this.user;
       }
     }
     return undefined;
@@ -81,9 +81,6 @@ async getCurrentUser(): Promise<User | undefined> {
     throw error;
   }
 }
-
-
-
 async loadUser(){  
   this.authService.getConnectedUser().subscribe(
     async user => {

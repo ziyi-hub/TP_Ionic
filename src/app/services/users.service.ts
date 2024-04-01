@@ -46,7 +46,7 @@ async addUser(user: User, docId: string): Promise<User> {
     username: user.username,
     firstName : user.firstName,
     lastName: user.lastName,
-    imgUrl : user.imgUrl,
+    imgUrl : user.imgUrl || "",
     createdAt : serverTimestamp(),
     updatedAt : serverTimestamp(),
   };
@@ -73,7 +73,7 @@ async updateUser(userToUpdate: User): Promise<User> {
     username: userToUpdate.username,
     firstName : userToUpdate.firstName,
     lastName: userToUpdate.lastName,
-    imgUrl : userToUpdate.imgUrl,
+    imgUrl : userToUpdate.imgUrl ,
     updatedAt : serverTimestamp(), 
   };
   await updateDoc(userDocRef, userValue);

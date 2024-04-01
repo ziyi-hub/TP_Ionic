@@ -32,8 +32,7 @@
     </ion-row>
   </form>
 
-  <ion-modal id="example-modal" #resetModal trigger="open-custom-dialog" [enterAnimation]="enterAnimation"
-    [leaveAnimation]="leaveAnimation">
+  <ion-modal id="example-modal" #resetModal trigger="open-custom-dialog">
     <ng-template class="ion-padding">
       <h5 class="ion-text-center border-bottom">Forgot your password?</h5>
       <form [formGroup]="resetPasswordForm">
@@ -44,8 +43,8 @@
         </ion-item>
 
         <div class="ion-text-center ion-margin-top">
-          <ion-button (click)="resetModal.dismiss()" color="medium" size="small">Cancel</ion-button>
-          <ion-button size="small" (click)="resetPassword();resetModal.dismiss()"
+          <ion-button fill="clear" (click)="resetModal.dismiss()" color="medium" size="small">Cancel</ion-button>
+          <ion-button fill="clear" size="small" (click)="resetPassword();resetModal.dismiss()"
             [disabled]="resetPasswordForm.invalid">Confirm</ion-button>
         </div>
       </form>

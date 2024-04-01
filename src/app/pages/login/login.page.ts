@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AnimationController, LoadingController } from '@ionic/angular';
+import { AnimationController, LoadingController } from '@ionic/angular/standalone';
 import { IonInput, IonTitle, IonButton, IonCol, IonButtons, IonContent, IonHeader, IonToolbar, IonIcon, IonItem, IonRow, IonModal, IonList, IonLabel, IonText } from '@ionic/angular/standalone'
 import { addIcons } from "ionicons";
 import { RouterModule } from '@angular/router';
@@ -138,33 +138,6 @@ export class LoginPage extends UtilitiesMixin implements OnInit {
     }
     this.resetPasswordForm.reset();
   }
-  enterAnimation = (baseEl: HTMLElement) => {
-    const root = baseEl.shadowRoot;
-
-    const backdropAnimation = this.animationCtrl
-      .create()
-      .addElement(root!.querySelector('ion-backdrop')!)
-      .fromTo('opacity', '0.01', 'var(--backdrop-opacity)');
-
-    const wrapperAnimation = this.animationCtrl
-      .create()
-      .addElement(root!.querySelector('.modal-wrapper')!)
-      .keyframes([
-        { offset: 0, opacity: '0', transform: 'scale(0)' },
-        { offset: 1, opacity: '0.99', transform: 'scale(1)' },
-      ]);
-
-    return this.animationCtrl
-      .create()
-      .addElement(baseEl)
-      .easing('ease-out')
-      .duration(500)
-      .addAnimation([backdropAnimation, wrapperAnimation]);
-  };
-
-  leaveAnimation = (baseEl: HTMLElement) => {
-    return this.enterAnimation(baseEl).direction('reverse');
-  };
 }
 
 addIcons({
