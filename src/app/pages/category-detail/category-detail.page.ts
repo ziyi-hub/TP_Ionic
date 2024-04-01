@@ -109,7 +109,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           role: 'destructive',
           handler: () => {
             console.log('Delete clicked');
-            this.presentAlertDelete(() => this.deleteRecipe(recipe.id, recipe.name), recipe.id, recipe.name);
+            this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, this.user!.username), recipe.id, recipe.name);
           }
         },
         {
@@ -207,7 +207,10 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     if (recipeId) {
       this.categoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
         next: (value: Recipe | undefined) => {
+          console.log(value);
           if (value && this.user && value.owner === this.user.username) {
+            console.log(recipeId);
+            console.log(this.category!.id);
             this.categoryService.deleteRecipe(recipeId, this.category!.id)
               .then((isDeleted: boolean) => {
                 if (isDeleted === true) {
