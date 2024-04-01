@@ -161,9 +161,9 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm(id: string | undefined, file: any, event: Event) {
+  confirm(file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file)
+    this.uploadService.uploadFile(file)
       .then((res: any) => {
         if(res) this.recipeForm.value.imgUrl = res
         if(this.ingredients.value) this.recipeForm.value.ingredients = this.ingredients.value

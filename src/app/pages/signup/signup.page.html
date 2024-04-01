@@ -1,73 +1,74 @@
 <ion-content [fullscreen]="true">
-
   <ion-header [translucent]="true">
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-back-button defaultHref="/login"></ion-back-button>
       </ion-buttons>
       <ion-title>
-        <h1>SignUp</h1>
+        SignUp
       </ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-img
-    src="../../assets/img/login.png"
-    alt="The Wisconsin State Capitol building in Madison, WI at night"
-  ></ion-img>
-
-  <form [formGroup]="regForm" class="ion-padding" novalidate>
-    <ion-item class="ion-padding-vertical">
-      <ion-input formControlName="firstName" placeholder="firstName"></ion-input>
-    </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['firstName'].touched && this.regForm.controls['firstName'].invalid">
-      A firstname is required
-    </div>
-
-    <ion-item class="ion-padding-vertical">
-      <ion-input formControlName="lastName" placeholder="lastName"></ion-input>
-    </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['lastName'].touched && this.regForm.controls['lastName'].invalid">
-      A lastname is required
-    </div>
-
-    <ion-item class="ion-padding-vertical">
-      <ion-input formControlName="username" placeholder="username"></ion-input>
-    </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['username'].touched && this.regForm.controls['username'].invalid">
-      A username is required
-    </div>
-
-    <ion-item class="ion-padding-vertical">
-      <ion-input formControlName="email" placeholder="email"></ion-input>
-    </ion-item>
-    <div class="text-danger" *ngIf="this.regForm.controls['email'].touched && this.regForm.controls['email'].invalid">
-      The email is invalid
-    </div>
-    
-    <ion-item>
-      <ion-input type="password" formControlName="password" placeholder="password"></ion-input>
-    </ion-item>
-    <ion-label color="danger" *ngIf="this.regForm.controls['password'].touched && this.regForm.controls['password'].invalid">
-      Minimum 4 characters, at least 1 upper case letter, 1 lower case letter, 1 number and 1 special character
-    </ion-label>
-
+  <ion-img src="../../assets/img/login.jpg"
+    alt="designed By Freepik"></ion-img>
+  <form [formGroup]="regForm" class="custom-padding" novalidate>
     <ion-item class="ion-padding-top">
-      <ion-input type="password" formControlName="confirmPassword" placeholder="confirm password"></ion-input>
+      <ion-input formControlName="firstName" placeholder="Given Name"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.regForm.controls['firstName'].touched && this.regForm.controls['firstName'].invalid">
+        A given name is required
+      </div>
     </ion-item>
-    <ion-label color="danger" *ngIf="this.regForm.controls['confirmPassword'].touched && this.regForm.controls['confirmPassword'].invalid">
-      Minimum 4 characters, at least 1 upper case letter, 1 lower case letter, 1 number and 1 special character
-    </ion-label>
-
-    <ion-row>
-      <ion-col>
-        <p class="ion-text-center">
-          Already a member?
-          <a [routerLink]="['/login']">&nbsp;Sign in</a>
-        </p>
-      </ion-col>
-    </ion-row>
-
-    <ion-button (click)="signUp()" expand="block">&nbsp;Sign in</ion-button>
+    <ion-item class="ion-padding-top">
+      <ion-input formControlName="lastName" placeholder="Family Name"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.regForm.controls['lastName'].touched && this.regForm.controls['lastName'].invalid">
+        A family name is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input formControlName="username" placeholder="Username"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.regForm.controls['username'].touched && this.regForm.controls['username'].invalid">
+        A username is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input formControlName="email" placeholder="Email"></ion-input>
+      <div class="text-danger" *ngIf="this.regForm.controls['email'].touched && this.regForm.controls['email'].invalid">
+        A valid email is required
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input type="password" formControlName="password" placeholder="Password"></ion-input>
+      <ion-label color="danger"
+        *ngIf="this.regForm.controls['password'].touched && this.regForm.controls['password'].invalid">
+        Minimum 4 characters, at least 1 upper case letter, 1 lower case letter, 1 number and 1 special character
+      </ion-label>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-input type="password" formControlName="confirmPassword" placeholder="Confirm Password"></ion-input>
+      <div class="text-danger"
+        *ngIf="this.regForm.controls['confirmPassword'].touched && this.regForm.controls['confirmPassword'].invalid && this.regForm.controls['confirmPassword'].dirty">
+        Passwords must match
+      </div>
+    </ion-item>
+    <ion-item class="ion-padding-top">
+      <ion-label>Profile photo</ion-label>
+        <form>
+          <ion-item>
+            <ion-input type="file" name="imgUrl" (change)="uploadService.chooseFile($event)"></ion-input>
+          </ion-item>
+        </form>
+    </ion-item>
+    <ion-button (click)="addFile(this.uploadService.selectedFile, $event)" expand="block">Sign up</ion-button>
   </form>
+  <ion-row>
+    <ion-col class="ion-text-center">
+      <p>
+        Already a member? <a [routerLink]="['/login']">Sign in</a>
+      </p>
+    </ion-col>
+  </ion-row>
 </ion-content>

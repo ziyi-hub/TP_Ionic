@@ -38,7 +38,7 @@
       <ion-title>Add new Category</ion-title>
     </ng-template>
     <ion-buttons slot="end">
-      <ion-button (click)="confirm(this.categoryId, this.uploadService.selectedFile, $event)" data-testid="confirm-new-category-modal-btn" [strong]="true" [disabled]="categoryForm.errors?.['required']">
+      <ion-button (click)="confirm(this.uploadService.selectedFile, $event)" data-testid="confirm-new-category-modal-btn" [strong]="true" [disabled]="categoryForm.errors?.['required']">
         <ion-icon name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

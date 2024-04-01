@@ -5,7 +5,9 @@ export interface Recipe {
   serving:number;
   duration:string;
   owner : string;
-  steps?: string[];
+  steps?: [{
+    description: string
+  }];
   ingredients? : [{
     name: string,
     volume : string

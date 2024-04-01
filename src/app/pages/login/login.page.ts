@@ -136,6 +136,7 @@ export class LoginPage extends UtilitiesMixin implements OnInit {
           this.router.navigateByUrl("/login")
         });
     }
+    this.resetPasswordForm.reset();
   }
   enterAnimation = (baseEl: HTMLElement) => {
     const root = baseEl.shadowRoot;

@@ -25,11 +25,11 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
   @Input() categoryId: string | undefined;
   private readonly CategoryService = inject(CategoryService);
   private readonly modalCtrl = inject(ModalController);
-  public uploadService = inject(UploadService);
+  readonly uploadService = inject(UploadService);
 
   categoryForm = new FormGroup({
     name : new FormControl('', [Validators.required]),
-    imgUrl : new FormControl(''),
+    imgUrl : new FormControl(''), 
   });
 
   async ngOnInit(): Promise<void> {
@@ -73,12 +73,12 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
     return this.modalCtrl.dismiss(null, 'cancel');
   }
 
-  confirm(id: string | undefined, file: any, event: Event) {
+  confirm(file: any, event: Event) {
     event.preventDefault();
-    this.uploadService.uploadFile(id, file)
+    this.uploadService.uploadFile(file)
       .then((res: any) => {
-        if(res) this.categoryForm.value.imgUrl = res
-        return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
+        if(res) 
+          this.categoryForm.value.imgUrl = res
       })
       .catch((err) => {
         console.log(err)

@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import {LoadingController } from '@ionic/angular';
 import { addIcons } from "ionicons";
 import { chevronForward, lockClosedOutline, personOutline } from "ionicons/icons";
 import {
@@ -16,21 +15,29 @@ import {
   IonButton,
   IonRow,
   IonCol, 
-  IonImg
+  IonImg,
+  IonCard,
+  IonCardSubtitle, 
+  IonCardContent,
+  IonInput
 } from '@ionic/angular/standalone';
 import { RouterModule } from "@angular/router";
 import { UtilitiesMixin } from "../../mixins/utilities-mixin";
 import { User } from 'src/app/models/user';
+import { UploadService } from 'src/app/services/upload.service';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
   standalone: true,
-  imports: [IonImg, CommonModule,RouterModule, ReactiveFormsModule, FormsModule, IonRow, IonCol,IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
+  imports: [IonInput, IonCard,
+    IonCardSubtitle, 
+    IonCardContent, IonImg, CommonModule,RouterModule, ReactiveFormsModule, FormsModule, IonRow, IonCol,IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
 })
 export class SignupPage extends UtilitiesMixin {
-
+  private readonly formBuilder = inject(FormBuilder)
+  readonly uploadService = inject(UploadService)
   regForm: FormGroup = this.formBuilder.group({
     email: ['', [
       Validators.required,
@@ -61,21 +68,16 @@ export class SignupPage extends UtilitiesMixin {
       Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[.,#';^_")(+=@$!%*?/&<>-])[A-Za-z\d.,#';^_")(+=@$!%*?/&<>-]{4,}$/),
     ]],
   })
-
-  constructor(public formBuilder: FormBuilder, public loadingCtrl: LoadingController) {
-    super();
-  }
-
   get errorControl() {
     return this.regForm?.controls;
   }
 
-  async signUp() {
+  async signUp(imgUrl : string) {
     try {
       if (!this.regForm?.valid) {
         throw new Error('Form is invalid.');
       }
-      const { email, password, confirmPassword, username, lastName, firstName,imgUrl } = this.regForm.value;
+      const { email, password, confirmPassword, username, lastName, firstName } = this.regForm.value;
       if (password !== confirmPassword) {
         throw new Error('Passwords do not match.');
       }
@@ -91,11 +93,24 @@ export class SignupPage extends UtilitiesMixin {
         imgUrl : imgUrl
       };
       await this.usersService.addUser(userValue, account.user.uid)
-      this.presentToast('Registration successfull, please validate your email address.', 'success');
-      this.router.navigate(['/login']);
     } catch (error) {
       this.presentToast(error+"", 'danger');
     }
+  }
+  async addFile(file: any, event: Event) {
+    event.preventDefault();
+    const imgUrl= await this.uploadService.uploadFile(file)
+    if(imgUrl){
+      await this.signUp(imgUrl).then(()=>{
+        this.presentToast('Registration successfull, please validate your email address.', 'success');
+      }).catch(()=>{
+        this.presentToast("Failed to register user", 'danger');
+      });
+    }else{
+      this.presentToast("Failed to register user", 'danger');
+    }
+    this.regForm.reset();
+    this.router.navigate(['/login']);
   }
 
 }

@@ -10,7 +10,7 @@
       <ion-title>Add new recipe</ion-title>
     </ng-template>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.recipeId, this.uploadService.selectedFile, $event)" [strong]="true" [disabled]="recipeForm.errors?.['required']">
+      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.uploadService.selectedFile, $event)" [strong]="true" [disabled]="recipeForm.errors?.['required']">
         <ion-icon name="checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

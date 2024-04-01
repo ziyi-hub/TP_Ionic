@@ -22,10 +22,9 @@ export class UploadService {
 
   /**
    * Upload image
-   * @param id
    * @param file
    */
-  async uploadFile(id: string | undefined, file: any) {
+  async uploadFile(file: any) : Promise<string | null>{
     return new Promise((resolve, reject) => {
       if(file && file.length) {
         try {
@@ -54,7 +53,7 @@ export class UploadService {
    * console.log(imgUrl);
    * @param fileName
    */
-  async getUploadedImageURL(fileName: string) {
+  async getUploadedImageURL(fileName: string) : Promise<string> {
     try {
       const storageRef = ref(this.storage, `${this.basePath}/${fileName}`);
       return getDownloadURL(storageRef)

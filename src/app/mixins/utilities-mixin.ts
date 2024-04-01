@@ -1,10 +1,9 @@
 import { AuthService } from './../services/auth.service';
 import { Component, inject } from "@angular/core";
 import { ToastController, AlertController } from "@ionic/angular/standalone";
-import {Observable, Subscription, first, switchMap } from "rxjs";
+import {first } from "rxjs";
 import { User } from "../models/user";
 import { UsersService } from '../services/users.service';
-import { user } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 
 @Component({
@@ -88,16 +87,14 @@ async getCurrentUser(): Promise<User | undefined> {
 async loadUser(){  
   this.authService.getConnectedUser().subscribe(
     async user => {
-      if(!user)
-        this.router.navigateByUrl("/login");
-      else if(user && !user.emailVerified){
-        this.router.navigateByUrl("/login");
-      }else if(user){
+      if(user && user.emailVerified){
         const value = await this.usersService.getUserById(user.uid).pipe(first()).toPromise();
         if (value) {
           this.user = value;
           this.router.navigateByUrl("/tab/home");
         }
+      }else{
+        this.router.navigateByUrl("/login");
       }
       
     }
