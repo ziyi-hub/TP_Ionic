@@ -57,6 +57,7 @@ import {
   IonText,
 } from '@ionic/angular/standalone';
 import {UploadService} from "../services/upload.service";
+import {SearchService} from "../services/search.service";
 
 
 @Component({
@@ -112,6 +113,11 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined;
+
+  constructor(public searchService: SearchService) {
+    super();
+  }
+
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();

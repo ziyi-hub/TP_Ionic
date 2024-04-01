@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {addIcons} from "ionicons";
 import {homeOutline, searchOutline, settingsOutline} from "ionicons/icons";
 import { IonTabButton, IonTabBar, IonTabs, IonIcon, IonLabel} from '@ionic/angular/standalone';
+import {SearchService} from "../../services/search.service";
 
 @Component({
   selector: 'app-custom-tab',
@@ -10,14 +11,20 @@ import { IonTabButton, IonTabBar, IonTabs, IonIcon, IonLabel} from '@ionic/angul
   standalone: true,
   imports: [
     IonTabButton,
-    IonTabBar, 
+    IonTabBar,
     IonTabs,
-    IonIcon, 
+    IonIcon,
     IonLabel
   ]
 })
 export class TabPage {
-  constructor() { }
+  showSearchBar: boolean = false;
+
+  constructor(private searchService: SearchService) { }
+
+  toggleSearchBar() {
+    this.searchService.toggleSearchBar();
+  }
 }
 
 addIcons({

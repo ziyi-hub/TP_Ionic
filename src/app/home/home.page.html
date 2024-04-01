@@ -16,7 +16,7 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar>
+  <ion-toolbar *ngIf="searchService.showSearchBar$ | async">
     <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Animated"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
@@ -105,7 +105,7 @@
   <div class="ion-wrap" *ngIf="(categories$ | async)?.length == 0 && (sharedCategories$ | async)?.length == 0">
     <ion-item>
       <ion-label color="medium" class="ion-padding ion-text-center">
-        No categories yet!
+        No categories found!
       </ion-label>
     </ion-item>
   </div>
