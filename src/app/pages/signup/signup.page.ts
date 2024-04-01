@@ -25,6 +25,7 @@ import { RouterModule } from "@angular/router";
 import { UtilitiesMixin } from "../../mixins/utilities-mixin";
 import { User } from 'src/app/models/user';
 import { UploadService } from 'src/app/services/upload.service';
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-signup',
@@ -38,6 +39,7 @@ import { UploadService } from 'src/app/services/upload.service';
 export class SignupPage extends UtilitiesMixin {
   private readonly formBuilder = inject(FormBuilder)
   readonly uploadService = inject(UploadService)
+  private readonly loadingController = inject(LoadingController)
   regForm: FormGroup = this.formBuilder.group({
     email: ['', [
       Validators.required,
@@ -99,17 +101,27 @@ export class SignupPage extends UtilitiesMixin {
   }
   async addFile(file: any, event: Event) {
     event.preventDefault();
-    const imgUrl= await this.uploadService.uploadFile(file)
-    if(imgUrl){
-      await this.signUp(imgUrl).then(()=>{
-        this.presentToast('Registration successfull, please validate your email address.', 'success');
-      }).catch(()=>{
+    const loading = await this.loadingController.create({
+      message: 'Loading ...'
+    });
+    await loading.present();
+    try {
+      const imgUrl= await this.uploadService.uploadFile(file)
+      if(imgUrl){
+        await this.signUp(imgUrl).then(()=>{
+          this.presentToast('Registration successfull, please validate your email address.', 'success');
+        }).catch(()=>{
+          this.presentToast("Failed to register user", 'danger');
+        });
+      }else{
         this.presentToast("Failed to register user", 'danger');
-      });
-    }else{
+      }
+      await loading.dismiss();
+      this.regForm.reset();
+    } catch {
+      await loading.dismiss();
       this.presentToast("Failed to register user", 'danger');
     }
-    this.regForm.reset();
     this.router.navigate(['/login']);
   }
 
