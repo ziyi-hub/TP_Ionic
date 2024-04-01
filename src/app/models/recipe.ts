@@ -4,15 +4,17 @@ export interface Recipe {
   imgUrl: string;
   serving:number;
   duration:string;
-  owner : string;
+  owner: string;
   steps?: [{
-    description: string
+    description: string,
   }];
-  ingredients? : [{
+  ingredients?: [{
     name: string,
-    volume : string
+    volume: string
   }];
-  tags? : string[];
+  tags?: [{
+    name: string,
+  }];
   readers? : string[];
   editors? : string[];
   createdAt? : Date;

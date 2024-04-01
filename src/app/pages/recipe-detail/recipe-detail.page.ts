@@ -11,6 +11,7 @@ import {
   IonBackButton,
   IonButtons,
   IonFab,
+  IonGrid,
   IonFabButton,
   IonHeader,
   IonToolbar,
@@ -21,7 +22,7 @@ import {
   IonItem,
   IonButton,
   IonRow,
-  IonCol, 
+  IonCol,
   IonCheckbox,
   IonSegment,
   IonSegmentButton,
@@ -41,12 +42,12 @@ import { Category } from 'src/app/models/category';
   templateUrl: './recipe-detail.page.html',
   styleUrls: ['./recipe-detail.page.scss'],
   standalone: true,
-  imports: [IonList, CommonModule, IonRow, IonCol, IonCheckbox, IonSegment, IonSegmentButton, IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonLabel, IonItem]
+  imports: [IonList, CommonModule, IonRow, IonGrid, IonCol, IonCheckbox, IonSegment, IonSegmentButton, IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonLabel, IonItem]
 
 })
 export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
-  
-  
+
+
   private readonly route = inject(ActivatedRoute);
   private readonly categoryService = inject(CategoryService);
   recipe : Recipe  | undefined ;
@@ -55,8 +56,8 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
   userForm = new FormGroup({
     username : new FormControl('', [Validators.required]) ,
     role : new FormControl('', [Validators.required]) ,
-  }); 
-  roles: string[] =['editors','readers']; 
+  });
+  roles: string[] =['editors','readers'];
   steps: string[] = [
     "Check for a free puppy",
     "Check for a free puppy",
@@ -75,7 +76,14 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
     { name: "Salt", volume: "As required" },
   ];
 
+  tags: { name: string }[] = [
+    { name: "Salade" },
+    { name: "Western" },
+    { name: "Sea food" },
+  ];
+
   segmentValue: string = 'ingredients';
+
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
@@ -83,17 +91,20 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
         this.getCurrentRecipe()
         this.getUsers()
       }
-      
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
-    
   }
+
+  segmentChanged(event: any) {
+    this.segmentValue = event.detail.value;
+  }
+
   getCurrentRecipe(){
     this.route.params.pipe(first()).subscribe(params => {
       this.categoryId = params['categoryId'];
       const recipeId = params['id'];
-      
+
       if(this.user && recipeId)
         this.categoryService.getRecipe(this.categoryId!, recipeId, this.user.username).pipe(first()).subscribe(
           recipe => {
@@ -121,11 +132,11 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
       this.categoryService.getCategoryById(this.categoryId, this.user.username).pipe(first()).subscribe((value)=>{
       if(value){
         category = value
-        if (username && this.recipe && this.categoryId && this.user) { 
+        if (username && this.recipe && this.categoryId && this.user) {
           if (role === "editors" ) {
             this.recipe.editors = [...(this.recipe.editors || []), username] as string[];
             category.editors = [...(category.editors || []), username] as string[];
-            
+
           } else if (role === "readers") {
             this.recipe.readers = [...(this.recipe.readers || []), username] as string[];
             category.readers = [...(category.readers || []), username] as string[];
@@ -142,8 +153,8 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
       }
     })
     }
-    
-    
+
+
   }
 }
 

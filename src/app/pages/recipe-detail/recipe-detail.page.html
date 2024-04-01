@@ -49,7 +49,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tab/home"></ion-back-button>
+      <ion-back-button [defaultHref]="'/category-detail/' + this.categoryId"></ion-back-button>
     </ion-buttons>
     <ion-title>Plat</ion-title>
     <ion-buttons slot="end">
@@ -61,42 +61,36 @@
 </ion-header>
 
 <ion-content color="light">
-  <div class="ion-text-center ion-align-items-center ion-padding bg-img-style" style="background-image: url('https://images.unsplash.com/photo-1492683962492-deef0ec456c0?q=80&w=1156&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
-    <div class="ion-padding-vertical bg-black-trans">
-      <h3>Nom de repas</h3>
-      <p>producer</p>
-    </div>
-  </div>
+  <ion-grid class="ion-text-center ion-align-items-center ion-padding bg-img-style" style="background-image: url({{ recipe?.imgUrl }});">
+    <ion-row class="ion-padding-vertical bg-black-trans">
+      <ion-col>
+        <h3>{{ recipe?.name }}</h3>
+        <p>Producer: {{ user?.username }}</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
   <ion-row class="ion-padding">
     <ion-col>
-      <ion-label class="ion-text-nowrap">
-        Soup with <b>Dimsus</b> and <b>Vegetables</b>
+      <ion-label>
+        {{ recipe?.duration }}
       </ion-label>
       <br/><br/>
 
       <ion-label>
-        <b>30</b> Minutes
+        {{ recipe?.serving }} serving
       </ion-label>
       <br/><br/>
 
-      <ion-label>
-        <b>4</b> serving
-      </ion-label>
-      <br/><br/>
-
-      <ion-label color="primary">
-        #Western
+      <ion-label color="primary" *ngFor="let tag of recipe?.tags">
+        #{{ tag.name }}
       </ion-label>
 
-      <ion-label color="primary">
-        #Salade
-      </ion-label>
     </ion-col>
   </ion-row>
 
   <ion-row class="ion-padding-horizontal">
-    <ion-segment color="tertiary" value="ingredients">
+    <ion-segment color="tertiary" (ionChange)="segmentChanged($event)">
       <ion-segment-button value="ingredients">
         <ion-label>Ingredients</ion-label>
       </ion-segment-button>
@@ -107,14 +101,14 @@
   </ion-row>
 
   <ion-list [inset]="true" *ngIf="segmentValue === 'steps'">
-    <ion-row *ngFor="let step of steps" class="ion-justify-content-between ion-align-items-center ion-padding">
+    <ion-row *ngFor="let step of recipe?.steps" class="ion-justify-content-between ion-align-items-center ion-padding">
       <ion-checkbox></ion-checkbox>
-      <label>{{step}}</label>
+      <label>{{step.description}}</label>
     </ion-row>
   </ion-list>
 
   <ion-list [inset]="true" *ngIf="segmentValue === 'ingredients'">
-    <ion-row *ngFor="let ingredient of ingredients" class="ion-justify-content-between ion-align-items-center ion-padding">
+    <ion-row *ngFor="let ingredient of recipe?.ingredients" class="ion-justify-content-between ion-align-items-center ion-padding">
       <ion-row class="ion-align-items-center">
         <ion-checkbox></ion-checkbox>
         <label class="ion-padding-horizontal">{{ingredient.name}}</label>
