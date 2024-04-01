@@ -54,13 +54,15 @@
       <ion-row>
         <ng-container formArrayName="ingredients">
           <ng-container *ngFor="let ingredientGroup of ingredients.controls; let i = index">
-            <div [formGroupName]="i">
+            <ion-row [formGroupName]="i">
               <ion-label>Name</ion-label>
               <ion-input placeholder="name" formControlName="name"></ion-input>
               <ion-label>Volume</ion-label>
               <ion-input placeholder="volume" formControlName="volume"></ion-input>
-              <span class="remove" (click)="removeIngredient(i)">x</span>
-            </div>
+              <ion-button (click)="removeIngredient(i)">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-row>
           </ng-container>
         </ng-container>
       </ion-row>
@@ -68,6 +70,26 @@
     </form>
   </ion-content>
 
-
+  <ion-content>
+    <ion-label>
+      <h2>Steps</h2>
+    </ion-label>
+    <form [formGroup]="stepsForm">
+      <ion-row>
+        <ng-container formArrayName="steps">
+          <ng-container *ngFor="let stepGroup of steps.controls; let i = index">
+            <ion-row [formGroupName]="i">
+              <ion-label>Description</ion-label>
+              <ion-input placeholder="description" formControlName="desc"></ion-input>
+              <ion-button (click)="removeStep(i)">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            </ion-row>
+          </ng-container>
+        </ng-container>
+      </ion-row>
+      <ion-button (click)="addStep()">Add Step</ion-button>
+    </form>
+  </ion-content>
 
 </ion-content>
