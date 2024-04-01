@@ -8,7 +8,7 @@
     <ion-buttons slot="end">
       <ion-button>
         <ion-avatar>
-          <img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+          <ion-img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" ></ion-img>
         </ion-avatar>
       </ion-button>
     </ion-buttons>
@@ -30,9 +30,9 @@
 
         <ion-item (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>
@@ -63,9 +63,9 @@
 
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>
@@ -77,9 +77,9 @@
       <ng-template #otherContent>
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)" >
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>

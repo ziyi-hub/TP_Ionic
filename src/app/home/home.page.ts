@@ -38,12 +38,13 @@ import {
   IonItemOption,
   IonItemOptions,
   IonLabel,
-  IonItem, 
+  IonItem,
   IonButton,
   IonCardTitle,
   IonCardSubtitle,
   IonRow,
   IonCol,
+  IonImg,
   IonMenu,
   IonMenuButton,
   IonMenuToggle,
@@ -72,6 +73,7 @@ import {
     IonList,
     IonItemSliding,
     IonIcon,
+    IonImg,
     IonBackButton,
     IonButtons,
     IonItemOption,
@@ -103,7 +105,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   categories$: Observable<Category[]> | undefined;
-  sharedCategories$: Observable<Category[]> | undefined; 
+  sharedCategories$: Observable<Category[]> | undefined;
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
