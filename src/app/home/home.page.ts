@@ -168,7 +168,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     });
     modal.onWillDismiss().then((data) => {
       if (!!data && data.data && this.user) {
-        console.log(data.data)
         const newCategory = {
           id: UUID.UUID(),
           name: data.data.name,
@@ -254,7 +253,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           if (value && value.name && this.user) {
             this.categoryService.deleteCategory(categoryId, this.user.username)
               .then(async (isDeleted) => {
-                console.log(isDeleted)
                 if (isDeleted == true && this.user) {
                   if (value.imgUrl) {
                     const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);

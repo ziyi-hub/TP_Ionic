@@ -188,9 +188,6 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
           },
           error: (error: any) => {
             this.presentToast(error, 'danger');
-          },
-          complete: () => {
-            console.log('Observable terminé');
           }
         });
       }

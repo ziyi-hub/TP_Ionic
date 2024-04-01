@@ -47,12 +47,5 @@
         A username is required
       </div>
     </ion-item>
-    <ion-item class="ion-padding-top">
-      <ion-input label="Email" labelPlacement="stacked" formControlName="email" placeholder="Email"></ion-input>
-      <div class="text-danger"
-        *ngIf="this.userDetailsForm.controls['email'].touched && this.userDetailsForm.controls['email'].invalid">
-        A valid email is required
-      </div>
-    </ion-item>
   </form>
 </ion-content>

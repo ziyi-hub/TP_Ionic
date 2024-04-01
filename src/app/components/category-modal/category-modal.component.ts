@@ -57,9 +57,6 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
           error: (error: any) => {
             const msg = "Error fetching category: " + error;
             this.presentToast(msg, "danger");
-          },
-          complete: () => {
-            console.log('Observable terminé');
           }
         });
       }

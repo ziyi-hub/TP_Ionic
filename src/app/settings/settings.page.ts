@@ -61,9 +61,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
       });
   
       await modal.present();
-  
       const { data } = await modal.onWillDismiss();
-      console.log(data)
       if (data && this.user && this.user.id) {
         const userToUpdate: UserFirebase = {
           id: this.user.id,
@@ -72,14 +70,13 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
           username: data.username,
           imgUrl: data.imgUrl || this.user.imgUrl,
         };
-  
-        // Update email if it's changed
-        const currentAccount = await this.authService.getConnectedUser().pipe(first()).toPromise();
-        if (currentAccount && this.user.email !== data.email) {
-          await this.authService.updateEmail(currentAccount, data.email);
-          await this.authService.sendEmailVerification(currentAccount);
-          await this.logout()
-        }
+        // // Update email if it's changed
+        // const currentAccount = await this.authService.getConnectedUser().pipe(first()).toPromise();
+        // if (currentAccount && this.user.email !== data.email) {
+        //   await this.authService.updateEmail(currentAccount, data.email);
+        //   await this.authService.sendEmailVerification(currentAccount);
+        //   await this.logout()
+        // }
   
         // Update user details
         await this.usersService.updateUser(userToUpdate);

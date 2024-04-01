@@ -175,7 +175,6 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     modal.onWillDismiss().then((data) => {
 
       if (!!data && data.data && this.category && this.user) {
-        console.log(data.data);
         const recipeValue = {
           id: UUID.UUID(),
           name: data.data.name,
