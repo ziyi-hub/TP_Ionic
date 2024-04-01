@@ -6,7 +6,6 @@ import { CategoryModalComponent } from '../components/category-modal/category-mo
 import { UUID } from 'angular2-uuid';
 import { addIcons } from 'ionicons';
 import {
-  addOutline,
   logOutOutline,
   pencilOutline,
   personCircle,
@@ -259,7 +258,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 }
 
 addIcons({
-  'add-outline': addOutline,
   'trash-outline': trashOutline,
   'pencil-outline': pencilOutline,
   'person-circle': personCircle,

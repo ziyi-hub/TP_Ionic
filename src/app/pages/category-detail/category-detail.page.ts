@@ -36,9 +36,9 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
-  addOutline,
+  addCircle,
   caretBack,
-  ellipsisVerticalOutline,
+  ellipsisVertical,
   pencilOutline,
   shareSocialOutline,
   trashOutline
@@ -91,8 +91,19 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
 
   async presentActionSheet(recipe: Recipe) {
     const actionSheet = await this.actionSheetController.create({
-      header: 'Actions',
       buttons: [
+        {
+          text: 'Edit',
+          handler: () => {
+            this.updateRecipe(recipe.id);
+          }
+        },
+        {
+          text: 'Share',
+          handler: () => {
+            this.shareRecipe();
+          }
+        },
         {
           text: 'Delete',
           role: 'destructive',
@@ -102,17 +113,9 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           }
         },
         {
-          text: 'Edit',
-          handler: () => {
-            console.log('Edit clicked');
-            this.updateRecipe(recipe.id);
-          }
-        },
-        {
           text: 'Cancel',
           role: 'cancel',
           handler: () => {
-            console.log('Cancel clicked');
           }
         }
       ]
@@ -225,7 +228,9 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
       this.presentToast('Invalid id', 'danger');
     }
   }
-
+  shareRecipe() {
+    console.log('in')
+  }
   async updateRecipe(recipeId: string) {
     const modal = await this.modalController.create({
       component: RecipeModalComponent,
@@ -274,10 +279,10 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
 }
 
 addIcons({
-  'add-outline': addOutline,
+  'add-circle': addCircle,
   'trash-outline': trashOutline,
   'pencil-outline': pencilOutline,
   'caret-back': caretBack,
   'share-social-outline': shareSocialOutline,
-  'ellipsis-vertical-outline': ellipsisVerticalOutline,
+  'ellipsis-vertical': ellipsisVertical,
 });

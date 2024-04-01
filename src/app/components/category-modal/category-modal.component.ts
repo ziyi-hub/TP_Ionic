@@ -1,5 +1,5 @@
 import { CategoryService } from '../../services/category.service';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { IonBackButton,IonHeader, IonCardSubtitle, IonToolbar, IonCard, IonItem, IonCardContent, ModalController, IonButton, IonTitle,  IonButtons, IonContent, IonInput, IonIcon} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';

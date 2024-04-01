@@ -105,16 +105,16 @@
 <ion-content color="light" class="ion-padding">
   <ng-container *ngIf="recipes.length > 0; else otherContent">
     <ion-card *ngFor="let recipe of recipes" class="ion-no-margin ion-margin-top">
-      <ion-button class="button-right-top" (click)="presentActionSheet(recipe)">
-        <ion-icon name="ellipsis-vertical-outline"></ion-icon>
+      <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)">
+        <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
-
       <ion-action-sheet trigger="open-action-sheet" header="Actions" [buttons]="actionSheetButtons"></ion-action-sheet>
 
-      <ion-card-content *ngIf="recipe.imgUrl" (click)="showRecipe(category!.id, recipe.id)" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
-      <ion-card-content *ngIf="!recipe.imgUrl" (click)="showRecipe(category!.id, recipe.id)" style="background-image: url(../../../assets/img/photo_default.png);"></ion-card-content>
-
-      <ion-item detail lines="none" color="primary" (click)="showRecipe(category!.id, recipe.id)">
+      <ion-card-content *ngIf="recipe.imgUrl; else defaultImg" (click)="showRecipe(category!.id, recipe.id)" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
+      <ng-template #defaultImg>
+        <ion-card-content (click)="showRecipe(category!.id, recipe.id)" style="background-image: url(../../../assets/img/photo_default.png);"></ion-card-content>
+      </ng-template>
+        <ion-item detail lines="none" color="primary" (click)="showRecipe(category!.id, recipe.id)">
         <ion-label>
           <h1>{{recipe.name}}</h1>
         </ion-label>
@@ -133,7 +133,7 @@
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
   <ion-fab-button id="open-modal" data-testid="open-new-post-modal-btn" expand="block" (click)="createRecipe()">
-    <ion-icon name="add-outline"></ion-icon>
+    <ion-icon name="add-circle"></ion-icon>
   </ion-fab-button>
 </ion-fab>
 

@@ -1,11 +1,24 @@
-import { UsersService } from './../../services/users.service';
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, LoadingController } from '@ionic/angular';
+import {LoadingController } from '@ionic/angular';
 import { addIcons } from "ionicons";
 import { chevronForward, lockClosedOutline, personOutline } from "ionicons/icons";
-import { Router, RouterModule } from "@angular/router";
+import {
+  IonBackButton,
+  IonButtons,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonRow,
+  IonCol, 
+  IonImg
+} from '@ionic/angular/standalone';
+import { RouterModule } from "@angular/router";
 import { UtilitiesMixin } from "../../mixins/utilities-mixin";
 import { User } from 'src/app/models/user';
 
@@ -14,7 +27,7 @@ import { User } from 'src/app/models/user';
   templateUrl: './signup.page.html',
   styleUrls: ['./signup.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule, ReactiveFormsModule]
+  imports: [IonImg, CommonModule,RouterModule, ReactiveFormsModule, FormsModule, IonRow, IonCol,IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
 })
 export class SignupPage extends UtilitiesMixin {
 

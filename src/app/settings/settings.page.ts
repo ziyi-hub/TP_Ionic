@@ -1,7 +1,28 @@
 import {Component} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonBackButton,
+  IonButtons,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonRow,
+  IonCol, 
+  IonImg,
+  IonIcon,
+  IonToggle,
+  IonInput, 
+  IonList,
+  IonText,
+  IonThumbnail,
+  IonCard, 
+
+} from '@ionic/angular/standalone';
 import {AuthService} from "../services/auth.service";
 import { TabPage } from '../components/tab/tab.page';
 import {addIcons} from "ionicons";
@@ -12,12 +33,7 @@ import {logOutOutline} from "ionicons/icons";
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    TabPage
-  ]
+  imports: [IonThumbnail,IonCard, IonToggle,IonInput, IonList,IonText,IonIcon, TabPage,IonImg, CommonModule, FormsModule, IonRow, IonCol,IonButton, FormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
 })
 export class SettingsPage{
 

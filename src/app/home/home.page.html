@@ -16,11 +16,12 @@
 </ion-header>
 
 <ion-content color="light" class="ion-padding">
-  <ion-label class="ion-margin-top">
+
+  <ion-label class="ion-margin-top" *ngIf="(categories$ | async)?.length != 0">
     My categories
   </ion-label>
-
   @for (category of categories$ | async; track category.id) {
+
     <ion-list class="ion-margin-vertical ion-padding" lines="none">
       <ion-item-sliding data-testid="categories" #ionItemSliding>
         <ion-item-options side="start">
@@ -29,8 +30,10 @@
 
         <ion-item (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
-            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
+            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ng-template #defaultImg>
+              <img src="../../assets/img/photo_default.png">
+            </ng-template>
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>
@@ -47,7 +50,7 @@
     </ion-list>
   }
 
-  <ion-label>
+  <ion-label *ngIf="(sharedCategories$ | async)?.length != 0">
     Shared with me
   </ion-label>
 
@@ -60,8 +63,10 @@
 
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
-            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
+            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ng-template #defaultImg>
+              <img src="../../assets/img/photo_default.png">
+            </ng-template>
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>
@@ -72,8 +77,10 @@
       <ng-template #otherContent>
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)" >
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl" src="{{category.imgUrl}}">
-            <img *ngIf="!category.imgUrl" src="../../assets/img/photo_default.png">
+            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ng-template #defaultImg>
+              <img src="../../assets/img/photo_default.png">
+            </ng-template>
           </ion-avatar>
           <ion-label>
             <h2>{{ category.name }}</h2>
@@ -89,7 +96,13 @@
     </ng-template>
     </ion-list>
   }
-
+  <div class="ion-wrap" *ngIf="(categories$ | async)?.length == 0 && (sharedCategories$ | async)?.length == 0">
+    <ion-item>
+      <ion-label color="medium" class="ion-padding ion-text-center">
+        No categories yet!
+      </ion-label>
+    </ion-item>
+  </div>
 </ion-content>
 <ion-fab slot="fixed" vertical="bottom" horizontal="end">
   <ion-fab-button data-testid="open-new-category-modal-btn" id="open-modal" (click)="createCategory()">

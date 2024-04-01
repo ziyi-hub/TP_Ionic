@@ -7,7 +7,26 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import {
+  IonBackButton,
+  IonButtons,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonIcon,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonRow,
+  IonCol, 
+  IonCheckbox,
+  IonSegment,
+  IonSegmentButton,
+  IonList
+} from '@ionic/angular/standalone';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { ActivatedRoute } from '@angular/router';
 import { Recipe } from 'src/app/models/recipe';
@@ -22,7 +41,8 @@ import { Category } from 'src/app/models/category';
   templateUrl: './recipe-detail.page.html',
   styleUrls: ['./recipe-detail.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule]
+  imports: [IonList, CommonModule, IonRow, IonCol, IonCheckbox, IonSegment, IonSegmentButton, IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonLabel, IonItem]
+
 })
 export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
   
