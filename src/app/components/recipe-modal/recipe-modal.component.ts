@@ -21,7 +21,7 @@ import {
   IonRow,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { checkmarkOutline } from 'ionicons/icons';
+import {checkmarkOutline, closeOutline} from 'ionicons/icons';
 import {
   FormArray,
   FormBuilder,
@@ -67,16 +67,24 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   numbers: number[] = Array.from({length: 21}, (_, i) => i);
 
   ingredientsForm: FormGroup;
+  stepsForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder) {
     super();
     this.ingredientsForm = this.formBuilder.group({
       ingredients: this.formBuilder.array([])
     });
+    this.stepsForm = this.formBuilder.group({
+      steps: this.formBuilder.array([])
+    });
   }
 
   get ingredients() {
     return this.ingredientsForm.get('ingredients') as FormArray;
+  }
+
+  get steps() {
+    return this.stepsForm.get('steps') as FormArray;
   }
 
   addIngredient() {
@@ -85,12 +93,25 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
       volume: ['', [Validators.required]]
     });
     this.ingredients.push(ingredient);
-    console.log(this.ingredients.value);
+    // console.log(this.ingredients.value);
+  }
+
+  addStep() {
+    const step = this.formBuilder.group({
+      desc: ['', [Validators.required]],
+    });
+    this.steps.push(step);
+    // console.log(this.steps.value);
   }
 
   removeIngredient(index: number) {
     this.ingredients.removeAt(index);
-    console.log(this.ingredients.value);
+    // console.log(this.ingredients.value);
+  }
+
+  removeStep(index: number) {
+    this.steps.removeAt(index);
+    // console.log(this.steps.value);
   }
 
   async ngOnInit() {
@@ -145,7 +166,8 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     this.uploadService.uploadFile(id, file)
       .then((res: any) => {
         if(res) this.recipeForm.value.imgUrl = res
-        console.log(this.recipeForm.value);
+        if(this.ingredients.value) this.recipeForm.value.ingredients = this.ingredients.value
+        if(this.steps.value) this.recipeForm.value.steps = this.steps.value
         return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
       })
       .catch((err) => {
@@ -154,6 +176,7 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   }
 }
 addIcons({
-  'checkmark-outline' : checkmarkOutline
+  'checkmark-outline' : checkmarkOutline,
+  'close-outline': closeOutline,
 });
 
