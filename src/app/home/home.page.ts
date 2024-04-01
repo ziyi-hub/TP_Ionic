@@ -18,9 +18,10 @@ import {
 } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
-import { Observable, first, of } from "rxjs";
+import {Observable, first, of, map, pipe} from "rxjs";
 import { CommonModule } from '@angular/common';
 import {
+  IonSearchbar,
   IonBackButton,
   IonButtons,
   ModalController,
@@ -39,12 +40,13 @@ import {
   IonItemOption,
   IonItemOptions,
   IonLabel,
-  IonItem, 
+  IonItem,
   IonButton,
   IonCardTitle,
   IonCardSubtitle,
   IonRow,
   IonCol,
+  IonImg,
   IonMenu,
   IonMenuButton,
   IonMenuToggle,
@@ -54,6 +56,7 @@ import {
   IonThumbnail,
   IonText,
 } from '@ionic/angular/standalone';
+import {UploadService} from "../services/upload.service";
 
 
 @Component({
@@ -63,6 +66,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    IonSearchbar,
     IonButton,
     IonFab,
     IonFabButton,
@@ -73,6 +77,7 @@ import {
     IonList,
     IonItemSliding,
     IonIcon,
+    IonImg,
     IonBackButton,
     IonButtons,
     IonItemOption,
@@ -103,9 +108,10 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
+  private readonly uploadService = inject(UploadService);
+
   categories$: Observable<Category[]> | undefined;
-  sharedCategories$: Observable<Category[]> | undefined; 
-  actionSheetController: any;
+  sharedCategories$: Observable<Category[]> | undefined;
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
@@ -131,6 +137,29 @@ export class HomePage extends UtilitiesMixin implements OnInit {
       this.presentToast(msg, 'danger')
     }
 
+  }
+
+  handleInput(event: any) {
+    const query = event.target.value.toLowerCase();
+
+    if (!query) {
+      if (this.user) {
+        this.loadCategories(this.user.username);
+      }
+      return;
+    }
+
+    if (this.categories$) {
+      this.categories$ = this.categories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
+
+    if (this.sharedCategories$) {
+      this.sharedCategories$ = this.sharedCategories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
   }
 
   async createCategory() {
@@ -224,9 +253,13 @@ export class HomePage extends UtilitiesMixin implements OnInit {
         next: (value) => {
           if (value && value.name && this.user) {
             this.categoryService.deleteCategory(categoryId, this.user.username)
-              .then((isDeleted) => {
+              .then(async (isDeleted) => {
                 console.log(isDeleted)
                 if (isDeleted == true && this.user) {
+                  if (value.imgUrl) {
+                    const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);
+                    await this.uploadService.deleteImageByFullPath(imagePath)
+                  }
                   this.presentToast(`${value.name} is succesfully deleted.`, 'success')
                   this.loadCategories(this.user.username)
                 }

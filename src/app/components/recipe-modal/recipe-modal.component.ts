@@ -115,7 +115,6 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
       name: ['', [Validators.required]],
     });
     this.tags.push(tag);
-    console.log(this.tags.value);
   }
 
   removeIngredient(index: number) {
@@ -140,7 +139,32 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     }
   }
 
-  loadRecipe(){
+  loadIngredients(value: any) {
+    this.ingredientsForm.setControl('ingredients', this.formBuilder.array(value.ingredients.map((ingredient: any) =>
+      this.formBuilder.group({
+        name: [ingredient.name, [Validators.required]],
+        volume: [ingredient.volume, [Validators.required]]
+      })
+    )));
+  }
+
+  loadSteps(value: any) {
+    this.stepsForm.setControl('steps', this.formBuilder.array(value.steps.map((step: any) =>
+      this.formBuilder.group({
+        description: [step.description, [Validators.required]],
+      })
+    )));
+  }
+
+  loadTags(value: any) {
+    this.tagsForm.setControl('tags', this.formBuilder.array(value.tags.map((step: any) =>
+      this.formBuilder.group({
+        name: [step.name, [Validators.required]],
+      })
+    )));
+  }
+
+  loadRecipe() {
     try {
       if (this.recipeId && this.categoryId && this.user) {
         this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.user.username).pipe(first()).subscribe({
@@ -155,8 +179,11 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
                 tags: value.tags,
                 readers: value.readers,
                 editors: value.editors,
-                imgUrl: value!.imgUrl,
+                imgUrl: value.imgUrl,
               });
+              this.loadIngredients(value);
+              this.loadSteps(value);
+              this.loadTags(value);
             }
           },
           error: (error: any) => {
@@ -168,11 +195,11 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
         });
       }
     } catch (error) {
-      const msg =  'Error fetching recipe: '+error
-      this.presentToast(msg, 'danger')
+      const msg = 'Error fetching recipe: ' + error;
+      this.presentToast(msg, 'danger');
     }
-
   }
+
   cancel() {
     return this.modalCtrl.dismiss(null, 'cancel');
   }

@@ -4,7 +4,20 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <h1 class="ion-padding-horizontal">DishShare</h1>
-    <!-- <p class="ion-padding-horizontal" *ngIf="this.user">Good morning {{this.user.username}}</p> -->
+    <p class="ion-padding-horizontal" *ngIf="this.user">Good morning {{this.user.username}}</p>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-avatar>
+          <ion-img *ngIf="user?.imgUrl; else defaultImg" src="{{user?.imgUrl}}"></ion-img>
+          <ng-template #defaultImg>
+            <ion-img src="https://ionicframework.com/docs/img/demos/avatar.svg" class="rounded-full" alt="avatar"></ion-img>
+          </ng-template>
+        </ion-avatar>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Animated"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
@@ -23,9 +36,9 @@
 
         <ion-item (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>
@@ -56,9 +69,9 @@
 
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)">
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>
@@ -70,9 +83,9 @@
       <ng-template #otherContent>
         <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)" >
           <ion-avatar slot="start">
-            <img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}">
+            <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
             <ng-template #defaultImg>
-              <img src="../../assets/img/photo_default.png">
+              <ion-img src="../../assets/img/photo_default.png"></ion-img>
             </ng-template>
           </ion-avatar>
           <ion-label>
