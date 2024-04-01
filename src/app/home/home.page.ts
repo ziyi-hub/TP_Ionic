@@ -17,9 +17,10 @@ import {
 } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
-import { Observable, first, of } from "rxjs";
+import {Observable, first, of, map, pipe} from "rxjs";
 import { CommonModule } from '@angular/common';
 import {
+  IonSearchbar,
   IonBackButton,
   IonButtons,
   ModalController,
@@ -63,6 +64,7 @@ import {
   standalone: true,
   imports: [
     CommonModule,
+    IonSearchbar,
     IonButton,
     IonFab,
     IonFabButton,
@@ -131,6 +133,29 @@ export class HomePage extends UtilitiesMixin implements OnInit {
       this.presentToast(msg, 'danger')
     }
 
+  }
+
+  handleInput(event: any) {
+    const query = event.target.value.toLowerCase();
+
+    if (!query) {
+      if (this.user) {
+        this.loadCategories(this.user.username);
+      }
+      return;
+    }
+
+    if (this.categories$) {
+      this.categories$ = this.categories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
+
+    if (this.sharedCategories$) {
+      this.sharedCategories$ = this.sharedCategories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
   }
 
   async createCategory() {

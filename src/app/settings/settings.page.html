@@ -32,8 +32,8 @@
 
   <ion-list [inset]="true">
     <ion-item>
-      <ion-label position="stacked">Phone</ion-label>
-      <ion-input color="primary" readonly="true">0638948234</ion-input>
+      <ion-label position="stacked">Id</ion-label>
+      <ion-input color="primary" readonly="true">{{user?.id}}</ion-input>
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Email</ion-label>
@@ -42,11 +42,15 @@
 <!--    <ion-item>-->
 <!--      <ion-toggle>Dark Mode</ion-toggle>-->
 <!--    </ion-item>-->
+    <ion-item routerDirection="forward">
+      <ion-icon name="refresh-outline"></ion-icon>
+      Reset Password
+    </ion-item>
     <ion-item (click)="logout()" routerDirection="forward">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
       Logout
     </ion-item>
-    <ion-item color="danger" (click)="logout()" routerDirection="forward">
+    <ion-item color="danger" routerDirection="forward">
       <ion-icon name="trash-outline" slot="start"></ion-icon>
       Delete account
     </ion-item>

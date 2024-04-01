@@ -16,6 +16,9 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Animated"></ion-searchbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content color="light" class="ion-padding">

@@ -25,7 +25,7 @@ import {
 } from '@ionic/angular/standalone';
 import { TabPage } from '../components/tab/tab.page';
 import {addIcons} from "ionicons";
-import {logOutOutline, trashOutline} from "ionicons/icons";
+import {logOutOutline, refreshOutline, trashOutline} from "ionicons/icons";
 import {Recipe} from "../models/recipe";
 import {User} from "../models/user";
 import {UtilitiesMixin} from "../mixins/utilities-mixin";
@@ -63,5 +63,6 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
 addIcons({
   'log-out-outline': logOutOutline,
   'trash-outline' : trashOutline,
+  'refresh-outline': refreshOutline,
 });
 
