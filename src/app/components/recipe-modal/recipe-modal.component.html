@@ -44,4 +44,30 @@
       </form>
     </ion-card-content>
   </ion-card>
+
+
+  <ion-content>
+    <ion-label>
+      <h2>Ingredient</h2>
+    </ion-label>
+    <form [formGroup]="ingredientsForm">
+      <ion-row>
+        <ng-container formArrayName="ingredients">
+          <ng-container *ngFor="let ingredientGroup of ingredients.controls; let i = index">
+            <div [formGroupName]="i">
+              <ion-label>Name</ion-label>
+              <ion-input placeholder="name" formControlName="name"></ion-input>
+              <ion-label>Volume</ion-label>
+              <ion-input placeholder="volume" formControlName="volume"></ion-input>
+              <span class="remove" (click)="removeIngredient(i)">x</span>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ion-row>
+      <ion-button (click)="addIngredient()">Add Ingredient</ion-button>
+    </form>
+  </ion-content>
+
+
+
 </ion-content>

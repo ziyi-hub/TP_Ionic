@@ -1,8 +1,30 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { IonBackButton, IonSelect, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonTextarea, IonIcon, IonHeader, IonToolbar, IonTitle,IonItem, IonContent, IonInput, IonButtons, IonButton, ModalController } from '@ionic/angular/standalone';
+import {
+  IonBackButton,
+  IonSelect,
+  IonCard,
+  IonCardSubtitle,
+  IonCardContent,
+  IonSelectOption,
+  IonTextarea,
+  IonIcon,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonItem,
+  IonContent,
+  IonInput,
+  IonButtons,
+  IonButton,
+  ModalController,
+  IonLabel,
+  IonRow,
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkOutline } from 'ionicons/icons';
 import {
+  FormArray,
+  FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -20,7 +42,7 @@ import {UploadService} from "../../services/upload.service";
   selector: 'app-recipe-modal',
   templateUrl: './recipe-modal.component.html',
   styleUrls: ['./recipe-modal.component.scss'],
-  imports : [ReactiveFormsModule, IonSelect, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
+  imports : [ReactiveFormsModule, IonSelect, IonRow, IonLabel, IonCard, IonCardSubtitle, IonCardContent, IonSelectOption, IonBackButton,IonTextarea, IonIcon, IonItem, IonContent, IonInput, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, CommonModule ]
 })
 export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   @Input() recipeId : string |undefined;
@@ -43,6 +65,34 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   public uploadService = inject(UploadService);
 
   numbers: number[] = Array.from({length: 21}, (_, i) => i);
+
+  ingredientsForm: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) {
+    super();
+    this.ingredientsForm = this.formBuilder.group({
+      ingredients: this.formBuilder.array([])
+    });
+  }
+
+  get ingredients() {
+    return this.ingredientsForm.get('ingredients') as FormArray;
+  }
+
+  addIngredient() {
+    const ingredient = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      volume: ['', [Validators.required]]
+    });
+    this.ingredients.push(ingredient);
+    console.log(this.ingredients.value);
+  }
+
+  removeIngredient(index: number) {
+    this.ingredients.removeAt(index);
+    console.log(this.ingredients.value);
+  }
+
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
