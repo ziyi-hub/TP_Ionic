@@ -68,6 +68,7 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
 
   ingredientsForm: FormGroup;
   stepsForm: FormGroup;
+  tagsForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder) {
     super();
@@ -76,6 +77,9 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     });
     this.stepsForm = this.formBuilder.group({
       steps: this.formBuilder.array([])
+    });
+    this.tagsForm = this.formBuilder.group({
+      tags: this.formBuilder.array([])
     });
   }
 
@@ -87,31 +91,43 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     return this.stepsForm.get('steps') as FormArray;
   }
 
+  get tags(){
+    return this.tagsForm.get('tags') as FormArray;
+  }
+
   addIngredient() {
     const ingredient = this.formBuilder.group({
       name: ['', [Validators.required]],
       volume: ['', [Validators.required]]
     });
     this.ingredients.push(ingredient);
-    // console.log(this.ingredients.value);
   }
 
   addStep() {
     const step = this.formBuilder.group({
-      desc: ['', [Validators.required]],
+      description: ['', [Validators.required]],
     });
     this.steps.push(step);
-    // console.log(this.steps.value);
+  }
+
+  addTag(){
+    const tag = this.formBuilder.group({
+      name: ['', [Validators.required]],
+    });
+    this.tags.push(tag);
+    console.log(this.tags.value);
   }
 
   removeIngredient(index: number) {
     this.ingredients.removeAt(index);
-    // console.log(this.ingredients.value);
   }
 
   removeStep(index: number) {
     this.steps.removeAt(index);
-    // console.log(this.steps.value);
+  }
+
+  removeTag(index: number) {
+    this.tags.removeAt(index);
   }
 
   async ngOnInit() {
@@ -168,6 +184,7 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
         if(res) this.recipeForm.value.imgUrl = res
         if(this.ingredients.value) this.recipeForm.value.ingredients = this.ingredients.value
         if(this.steps.value) this.recipeForm.value.steps = this.steps.value
+        if(this.tags.value) this.recipeForm.value.tags = this.tags.value
         return this.modalCtrl.dismiss(this.recipeForm.value, 'confirm');
       })
       .catch((err) => {
