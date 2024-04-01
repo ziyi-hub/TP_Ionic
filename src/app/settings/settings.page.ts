@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -12,21 +12,23 @@ import {
   IonItem,
   IonButton,
   IonRow,
-  IonCol, 
+  IonCol,
   IonImg,
   IonIcon,
   IonToggle,
-  IonInput, 
+  IonInput,
   IonList,
   IonText,
   IonThumbnail,
-  IonCard, 
+  IonCard,
 
 } from '@ionic/angular/standalone';
-import {AuthService} from "../services/auth.service";
 import { TabPage } from '../components/tab/tab.page';
 import {addIcons} from "ionicons";
-import {logOutOutline} from "ionicons/icons";
+import {logOutOutline, trashOutline} from "ionicons/icons";
+import {Recipe} from "../models/recipe";
+import {User} from "../models/user";
+import {UtilitiesMixin} from "../mixins/utilities-mixin";
 
 @Component({
   selector: 'app-settings',
@@ -35,9 +37,22 @@ import {logOutOutline} from "ionicons/icons";
   standalone: true,
   imports: [IonThumbnail,IonCard, IonToggle,IonInput, IonList,IonText,IonIcon, TabPage,IonImg, CommonModule, FormsModule, IonRow, IonCol,IonButton, FormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
 })
-export class SettingsPage{
+export class SettingsPage extends UtilitiesMixin implements OnInit{
+  recipe : Recipe  | undefined ;
+  categoryId : string | undefined ;
+  users : User[] | undefined;
 
-  constructor(private authService: AuthService) {}
+  constructor() {
+    super();
+  }
+
+  async ngOnInit() {
+    try {
+      this.user = await this.getCurrentUser();
+    } catch (error) {
+      this.presentToast("Failed to retrieve logged-in user.", "danger")
+    }
+  }
 
   async logout() {
     await this.authService.logOut();
@@ -47,5 +62,6 @@ export class SettingsPage{
 
 addIcons({
   'log-out-outline': logOutOutline,
+  'trash-outline' : trashOutline,
 });
 

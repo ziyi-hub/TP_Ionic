@@ -8,7 +8,10 @@
     <ion-buttons slot="end">
       <ion-button>
         <ion-avatar>
-          <ion-img alt="avatar" src="https://ionicframework.com/docs/img/demos/avatar.svg" ></ion-img>
+          <ion-img *ngIf="user?.imgUrl; else defaultImg" src="{{user?.imgUrl}}"></ion-img>
+          <ng-template #defaultImg>
+            <ion-img src="https://ionicframework.com/docs/img/demos/avatar.svg" class="rounded-full" alt="avatar"></ion-img>
+          </ng-template>
         </ion-avatar>
       </ion-button>
     </ion-buttons>

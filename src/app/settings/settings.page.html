@@ -18,11 +18,13 @@
     <ion-row>
       <ion-col class="content-col">
         <ion-thumbnail class="user-image">
-          <ion-img class="rounded-full" src="https://images.unsplash.com/photo-1554151228-14d9def656e4?q=80&w=986&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" ></ion-img>
+          <ion-img *ngIf="user?.imgUrl; else defaultImg" src="{{user?.imgUrl}}"></ion-img>
+          <ng-template #defaultImg>
+            <ion-img src="https://ionicframework.com/docs/img/demos/avatar.svg" class="rounded-full" alt="avatar"></ion-img>
+          </ng-template>
         </ion-thumbnail>
-
         <ion-text color="dark">
-          <h2 class="ion-text-center">Ziyi Wang</h2>
+          <h2 class="ion-text-center">{{user?.firstName}} {{user?.lastName}}</h2>
         </ion-text>
       </ion-col>
     </ion-row>
@@ -37,12 +39,16 @@
       <ion-label position="stacked">Email</ion-label>
       <ion-input color="primary" readonly="true">ziyi.wang&#64;gmail.com</ion-input>
     </ion-item>
-    <ion-item>
-      <ion-toggle>Dark Mode</ion-toggle>
-    </ion-item>
+<!--    <ion-item>-->
+<!--      <ion-toggle>Dark Mode</ion-toggle>-->
+<!--    </ion-item>-->
     <ion-item (click)="logout()" routerDirection="forward">
       <ion-icon name="log-out-outline" slot="start"></ion-icon>
       Logout
+    </ion-item>
+    <ion-item color="danger" (click)="logout()" routerDirection="forward">
+      <ion-icon name="trash-outline" slot="start"></ion-icon>
+      Delete account
     </ion-item>
   </ion-list>
 

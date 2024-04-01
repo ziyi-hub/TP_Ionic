@@ -61,7 +61,7 @@
 </ion-header>
 
 <ion-content color="light">
-  <ion-grid class="ion-text-center ion-align-items-center ion-padding bg-img-style" style="background-image: url({{ recipe?.imgUrl }});">
+  <ion-grid class="ion-text-center ion-align-items-center ion-padding bg-img-style" style="background-image: url({{ !!recipe?.imgUrl ? recipe?.imgUrl : '../../../assets/img/photo_default.png' }});">
     <ion-row class="ion-padding-vertical bg-black-trans">
       <ion-col>
         <h3>{{ recipe?.name }}</h3>
