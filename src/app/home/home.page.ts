@@ -55,6 +55,7 @@ import {
   IonThumbnail,
   IonText,
 } from '@ionic/angular/standalone';
+import {UploadService} from "../services/upload.service";
 
 
 @Component({
@@ -106,6 +107,8 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
+  private readonly uploadService = inject(UploadService);
+
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined;
   async ngOnInit() {
@@ -249,9 +252,13 @@ export class HomePage extends UtilitiesMixin implements OnInit {
         next: (value) => {
           if (value && value.name && this.user) {
             this.categoryService.deleteCategory(categoryId, this.user.username)
-              .then((isDeleted) => {
+              .then(async (isDeleted) => {
                 console.log(isDeleted)
                 if (isDeleted == true && this.user) {
+                  if (value.imgUrl) {
+                    const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);
+                    await this.uploadService.deleteImageByFullPath(imagePath)
+                  }
                   this.presentToast(`${value.name} is succesfully deleted.`, 'success')
                   this.loadCategories(this.user.username)
                 }

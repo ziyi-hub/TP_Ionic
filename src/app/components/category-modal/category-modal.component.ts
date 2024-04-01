@@ -29,7 +29,7 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   categoryForm = new FormGroup({
     name : new FormControl('', [Validators.required]),
-    imgUrl : new FormControl(''), 
+    imgUrl : new FormControl(''),
   });
 
   async ngOnInit(): Promise<void> {
@@ -77,8 +77,8 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
     event.preventDefault();
     this.uploadService.uploadFile(file)
       .then((res: any) => {
-        if(res) 
-          this.categoryForm.value.imgUrl = res
+        if(res) this.categoryForm.value.imgUrl = res
+        return this.modalCtrl.dismiss(this.categoryForm.value, 'confirm');
       })
       .catch((err) => {
         console.log(err)

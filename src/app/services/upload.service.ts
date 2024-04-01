@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import {getStorage, ref, uploadBytes} from "firebase/storage";
-import {FirebaseStorage, getBlob, getDownloadURL, uploadBytesResumable} from "@angular/fire/storage";
+import {getStorage, ref} from "firebase/storage";
+import {deleteObject, FirebaseStorage, getDownloadURL, uploadBytesResumable} from "@angular/fire/storage";
 
 @Injectable({
   providedIn: 'root'
@@ -48,9 +48,6 @@ export class UploadService {
 
   /**
    * get image via cloud storage
-   * to use this function below
-   * const imgUrl = await this.uploadService.getUploadedImageURL("cat.jpeg");
-   * console.log(imgUrl);
    * @param fileName
    */
   async getUploadedImageURL(fileName: string) : Promise<string> {
@@ -59,6 +56,25 @@ export class UploadService {
       return getDownloadURL(storageRef)
     } catch (error) {
       console.error("Error getting download URL:", error);
+      throw error;
+    }
+  }
+
+  getPathStorageFromUrl(url : String){
+    const baseUrl = "https://firebasestorage.googleapis.com/v0/b/tp-ionic-2bf6f.appspot.com/o/";
+    let imageFullPath: string = url.replace(baseUrl,"");
+    const indexOfEndPath = imageFullPath.indexOf("?");
+    imageFullPath = imageFullPath.substring(0,indexOfEndPath);
+    imageFullPath = imageFullPath.replace("%2F","/");
+    return imageFullPath;
+  }
+
+  async deleteImageByFullPath(imageFullPath: string) : Promise<void> {
+    try {
+      const refToDelete = ref(this.storage, imageFullPath);
+      return deleteObject(refToDelete);
+    } catch (error) {
+      console.error("Error delete image:", error);
       throw error;
     }
   }

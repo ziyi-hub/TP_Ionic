@@ -45,6 +45,7 @@ import {
 } from 'ionicons/icons';
 import { UUID } from 'angular2-uuid';
 import { first, map } from 'rxjs';
+import {UploadService} from "../../services/upload.service";
 
 @Component({
   standalone: true,
@@ -60,6 +61,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   private readonly route = inject(ActivatedRoute);
+  private readonly uploadService = inject(UploadService);
 
 
   constructor(public actionSheetController: ActionSheetController) {
@@ -108,7 +110,6 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
           text: 'Delete',
           role: 'destructive',
           handler: () => {
-            console.log('Delete clicked');
             this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, this.user!.username), recipe.id, recipe.name);
           }
         },
@@ -207,13 +208,14 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     if (recipeId) {
       this.categoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
         next: (value: Recipe | undefined) => {
-          console.log(value);
           if (value && this.user && value.owner === this.user.username) {
-            console.log(recipeId);
-            console.log(this.category!.id);
             this.categoryService.deleteRecipe(recipeId, this.category!.id)
-              .then((isDeleted: boolean) => {
+              .then(async (isDeleted: boolean) => {
                 if (isDeleted === true) {
+                  if (value.imgUrl) {
+                    const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);
+                    await this.uploadService.deleteImageByFullPath(imagePath)
+                  }
                   const message = value.name + " is succesfully deleted.";
                   this.presentToast(message, 'success')
                 }
