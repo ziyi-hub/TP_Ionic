@@ -84,7 +84,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         }
       }
     ];
-  
+
     if (this.user && this.user.id === recipe.owner) {
       buttons.splice(1, 0, {
         text: 'Share',
@@ -100,13 +100,13 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         }
       });
     }
-  
+
     const actionSheet = await this.actionSheetController.create({
       buttons: buttons
     });
     await actionSheet.present();
   }
-  
+
 
   /**
    * Charger les categories lors de l'initialisation de la page
@@ -227,7 +227,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     modal.onWillDismiss().then(async (data) => {
       if (this.category?.id && data && data.data && this.user && this.user.id) {
         let category: Category = this.category;
-          
+
             if (data.data.user['id'] && recipe && category && category.id && this.user) {
               if (data.data.role === "editors") {
                 recipe.editors = [...(recipe.editors || []), data.data.user['id']] as string[];
