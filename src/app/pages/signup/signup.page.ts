@@ -86,7 +86,7 @@ export class SignupPage extends UtilitiesMixin {
         throw new Error('Username is required.');
       }
       const account = await this.authService.createUser(email, password);
-      this.authService.logOut();
+      await this.authService.logOut();
       const userValue : User = {
         username: username,
         firstName: firstName,

@@ -69,7 +69,7 @@ export class LoginPage extends UtilitiesMixin implements OnInit {
             this.router.navigate(['/tab/home']);
           } else if (user && !user.emailVerified) {
             this.presentToast("Please verify your email before logging in", 'danger');
-            this.authService.logOut();
+            await this.authService.logOut();
           } else {
             this.presentToast("Login failed", 'danger');
           }

@@ -51,8 +51,10 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
       this.presentToast("Failed to retrieve logged-in user.", "danger");
     }
   }
-  logout() {
-    this.authService.logOut();
+  async logout() {
+    await this.authService.logOut().then(()=>{
+      this.presentToast("User succesfully logged out.", "danger");
+    });
   }
   async updateUser() {
     try {
@@ -113,11 +115,10 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
     try {
       const account = await this.authService.getConnectedUser().pipe(first()).toPromise();
       if (account) {
-        const userIsDeleted = await this.authService.deleteAccount(account);
-        if(userIsDeleted){
+        await this.authService.deleteAccount(account).then(()=>{
           this.presentToast('Account deleted.', 'success');
           this.loadUser()
-        }
+        })
         return true;
       }
       return false;
