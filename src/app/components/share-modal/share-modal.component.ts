@@ -7,7 +7,6 @@ import { first } from 'rxjs';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { User } from 'src/app/models/user';
 import { CommonModule } from '@angular/common';
-import { CategoryService } from 'src/app/services/category.service';
 import { Recipe } from 'src/app/models/recipe';
 @Component({
   selector: 'app-share-modal',
@@ -20,7 +19,6 @@ export class ShareModalComponent  extends UtilitiesMixin implements OnInit {
   @Input() recipe : Recipe |undefined;
   @Input() categoryId : string |undefined;
   private readonly modalController = inject(ModalController)
-  private readonly categoryService = inject(CategoryService)
   userForm = new FormGroup({
     user : new FormControl('', [Validators.required]) ,
     role : new FormControl('', [Validators.required]) 
@@ -65,7 +63,6 @@ export class ShareModalComponent  extends UtilitiesMixin implements OnInit {
       });
 
     } else {
-      console.error('Some required properties are undefined.');
       return [];
     }
   }

@@ -1,91 +1,3 @@
-<!-- <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tab/home"></ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      {{ this.category?.name }}
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="share-social-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-      <ion-title size="large">{{this.category?.name}}</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-list>
-    @for (recipe of recipes; track recipe?.id) {
-      <ion-item-sliding #recipesItem data-testid="recipes">
-        <ion-item-options side="start">
-          <ion-item-option color="success" (click)="updateRecipe(recipe.id);closeIonSliding(recipesItem)">
-            <ion-icon name="pencil-outline"></ion-icon>
-          </ion-item-option>
-        </ion-item-options>
-        <ion-item (click)="showRecipe(this.category!.id, recipe.id)">
-          <ion-label>{{ recipe.name }}</ion-label>
-        </ion-item>
-        <ion-item-options side="end">
-          <ion-item-option color="danger" (click)="presentAlertDelete(this.deleteRecipe.bind(this, this.username!), recipe.id, recipe.name);closeIonSliding(recipesItem)">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-item-option>
-        </ion-item-options>
-      </ion-item-sliding>
-    }
-  </ion-list> -->
-
-<!-- <ion-content color="light">
-  <ion-card *ngFor="let recipe of recipes">
-    <ion-card-content class="bg-img-style" style="background-image: url({{recipe.img}});"></ion-card-content>
-    <ion-item detail lines="none" color="primary">
-      <ion-label>
-        <h1>{{recipe.name}}</h1>
-      </ion-label>
-    </ion-item>
-  </ion-card>
-</ion-content> -->
-
-
-<!--<ion-content [fullscreen]="true">-->
-<!--  <ion-header collapse="condense">-->
-<!--    <ion-toolbar>-->
-<!--      <ion-buttons slot="start">-->
-<!--        <ion-back-button></ion-back-button>-->
-<!--      </ion-buttons>-->
-<!--      <ion-title size="large">{{this.topic?.name}}</ion-title>-->
-<!--    </ion-toolbar>-->
-<!--  </ion-header>-->
-<!--  <ion-list>-->
-<!--    @for (post of posts; track post?.id) {-->
-<!--      <ion-item-sliding #postsItem data-testid="posts">-->
-<!--        <ion-item-options side="start">-->
-<!--          <ion-item-option color="success" (click)="editPost(post.id);closeIonSliding(postsItem)">-->
-<!--            <ion-icon name="pencil-outline"></ion-icon>-->
-<!--          </ion-item-option>-->
-<!--        </ion-item-options>-->
-<!--        <ion-item (click)="showPost(this.topic!.id, post.id)">-->
-<!--          <ion-label>{{ post.name }}</ion-label>-->
-<!--        </ion-item>-->
-<!--        <ion-item-options side="end">-->
-<!--          <ion-item-option color="danger" (click)="presentAlertDelete(this.deletePost.bind(this), post.id, post.name);closeIonSliding(postsItem)">-->
-<!--            <ion-icon name="trash-outline"></ion-icon>-->
-<!--          </ion-item-option>-->
-<!--        </ion-item-options>-->
-<!--      </ion-item-sliding>-->
-<!--    }-->
-<!--  </ion-list>-->
-<!--</ion-content>-->
-
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -98,9 +10,9 @@
 </ion-header>
 
 <ion-content color="light" class="ion-padding">
-  <ng-container *ngIf="recipes.length > 0; else otherContent">
+  <ng-container *ngIf="this.user && this.user.id && recipes.length > 0; else otherContent">
     <ion-card *ngFor="let recipe of recipes" class="ion-no-padding ion-margin">
-      <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)">
+      <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)" *ngIf="this.user && this.user.id && category && (category.editors?.includes(this.user!.id) || category.owner == this.user.id);">
         <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
       <ion-action-sheet trigger="open-action-sheet" header="Actions" [buttons]="actionSheetButtons"></ion-action-sheet>

@@ -104,6 +104,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         {
           text: 'Share',
           handler: () => {
+            if(this.user && this.user.id == recipe.owner)
             this.shareRecipe(recipe);
           }
         },

@@ -1,51 +1,3 @@
-<!-- <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button [defaultHref]="'/category-detail/'+this.categoryId"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Recipes</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-      <ion-title size="large">Recipes</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>{{ recipe?.name }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-item>
-        <ion-label>Duration:</ion-label>
-        <ion-text>{{ recipe?.duration }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label>Serving:</ion-label>
-        <ion-text>{{ recipe?.serving }}</ion-text>
-      </ion-item>
-      <form [formGroup]="userForm">
-        <ion-item>
-          <ion-select label="Username" labelPlacement="stacked" required formControlName="username">
-            <ion-select-option *ngFor="let user of users" [value]="user.username">{{ user.username }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-item>
-          <ion-select label="Role" labelPlacement="stacked" required formControlName="role" errorText="Role is required">
-            <ion-select-option *ngFor="let role of roles" [value]="role">{{ role }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-        <ion-button (click)="shareRecipe()">Share</ion-button>
-      </form>
-    </ion-card-content>
-  </ion-card>
-</ion-content> -->
-
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -53,7 +5,7 @@
     </ion-buttons>
     <ion-title>Plat</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="shareRecipe()" color="primary" >
+      <ion-button (click)="shareRecipe()" color="primary" *ngIf="this.user  && this.user.id === this.recipe!.owner">
         <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
