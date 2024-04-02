@@ -69,62 +69,44 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     super();
   }
 
-  public actionSheetButtons = [
-    {
-      text: 'Delete',
-      role: 'destructive',
-      data: {
-        action: 'delete',
-      },
-    },
-    {
-      text: 'Share',
-      data: {
-        action: 'share',
-      },
-    },
-    {
-      text: 'Cancel',
-      role: 'cancel',
-      data: {
-        action: 'cancel',
-      },
-    },
-  ];
-
   async presentActionSheet(recipe: Recipe) {
-    const actionSheet = await this.actionSheetController.create({
-      buttons: [
-        {
-          text: 'Edit',
-          handler: () => {
-            this.updateRecipe(recipe.id);
-          }
-        },
-        {
-          text: 'Share',
-          handler: () => {
-            if(this.user && this.user.id == recipe.owner)
-            this.shareRecipe(recipe);
-          }
-        },
-        {
-          text: 'Delete',
-          role: 'destructive',
-          handler: () => {
-            this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, this.user!.username), recipe.id, recipe.name);
-          }
-        },
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          handler: () => {
-          }
+    const buttons = [
+      {
+        text: 'Edit',
+        handler: () => {
+          this.updateRecipe(recipe.id);
         }
-      ]
+      },
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        handler: () => {
+        }
+      }
+    ];
+  
+    if (this.user && this.user.id === recipe.owner) {
+      buttons.splice(1, 0, {
+        text: 'Share',
+        handler: () => {
+          this.shareRecipe(recipe);
+        }
+      },
+      {
+        text: 'Delete',
+        role: 'destructive',
+        handler: () => {
+          this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, this.user!.username), recipe.id, recipe.name);
+        }
+      });
+    }
+  
+    const actionSheet = await this.actionSheetController.create({
+      buttons: buttons
     });
     await actionSheet.present();
   }
+  
 
   /**
    * Charger les categories lors de l'initialisation de la page

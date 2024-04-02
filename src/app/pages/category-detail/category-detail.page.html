@@ -15,7 +15,7 @@
       <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)" *ngIf="this.user && this.user.id && category && (category.editors?.includes(this.user!.id) || category.owner == this.user.id);">
         <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
-      <ion-action-sheet trigger="open-action-sheet" header="Actions" [buttons]="actionSheetButtons"></ion-action-sheet>
+      <ion-action-sheet trigger="open-action-sheet" header="Actions"></ion-action-sheet>
 
       <ion-card-content *ngIf="recipe.imgUrl; else defaultImg" (click)="showRecipe(category!.id, recipe.id)" style="background-image: url({{recipe.imgUrl}});"></ion-card-content>
       <ng-template #defaultImg>

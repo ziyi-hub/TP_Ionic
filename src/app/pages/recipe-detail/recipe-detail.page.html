@@ -5,7 +5,7 @@
     </ion-buttons>
     <ion-title>Plat</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="shareRecipe()" color="primary" *ngIf="this.user  && this.user.id === this.recipe!.owner">
+      <ion-button (click)="shareRecipe()" color="primary" *ngIf="this.user  && this.recipe &&  this.user.id === this.recipe.owner">
         <ion-icon name="share-social-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
