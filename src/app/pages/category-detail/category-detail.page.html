@@ -94,17 +94,12 @@
     <ion-title>
       {{ this.category?.name }}
     </ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="share-social-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content color="light" class="ion-padding">
   <ng-container *ngIf="recipes.length > 0; else otherContent">
-    <ion-card *ngFor="let recipe of recipes" class="ion-no-margin ion-margin-top">
+    <ion-card *ngFor="let recipe of recipes" class="ion-no-padding ion-margin">
       <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)">
         <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
@@ -114,9 +109,9 @@
       <ng-template #defaultImg>
         <ion-card-content (click)="showRecipe(category!.id, recipe.id)" style="background-image: url(../../../assets/img/photo_default.png);"></ion-card-content>
       </ng-template>
-        <ion-item detail lines="none" color="primary" (click)="showRecipe(category!.id, recipe.id)">
+        <ion-item detail lines="none" (click)="showRecipe(category!.id, recipe.id)">
         <ion-label>
-          <h1>{{recipe.name}}</h1>
+          <h3>{{recipe.name}}</h3>
         </ion-label>
       </ion-item>
     </ion-card>
@@ -131,7 +126,7 @@
   </ng-template>
 </ion-content>
 
-<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+<ion-fab slot="fixed" class="ion-margin" vertical="bottom" horizontal="end">
   <ion-fab-button id="open-modal" data-testid="open-new-post-modal-btn" expand="block" (click)="createRecipe()">
     <ion-icon name="add-circle"></ion-icon>
   </ion-fab-button>

@@ -44,8 +44,8 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   loadCategory() {
     try {
-      if (this.categoryId && this.user) {
-        this.CategoryService.getCategoryById(this.categoryId, this.user.username).pipe(first()).subscribe({
+      if (this.categoryId && this.user && this.user.id) {
+        this.CategoryService.getCategoryById(this.categoryId, this.user.id).pipe(first()).subscribe({
           next: (value: any) => {
             if (value) {
               this.categoryForm.setValue({

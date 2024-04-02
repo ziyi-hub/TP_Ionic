@@ -14,7 +14,9 @@ import {
   personCircleOutline,
   eyeOutline,
   addCircle,
-  ellipsisVertical
+  ellipsisVertical,
+  chevronDown,
+  chevronUp
 } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
@@ -121,20 +123,20 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   async ngOnInit() {
     try {
       this.user = await this.getCurrentUser();
-      if (this.user)
-        this.loadCategories(this.user.username);
+      if (this.user && this.user.id)
+        this.loadCategories(this.user.id);
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger");
     }
   }
 
-  loadCategories(username: string) {
+  loadCategories(id: string) {
     try {
-      const subscription = this.categoryService.getPrivateCategories(username).subscribe((categories: Category[]) => {
+      const subscription = this.categoryService.getPrivateCategories(id).subscribe((categories: Category[]) => {
         this.categories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         subscription.unsubscribe();
       });
-      const sharedSubscription = this.categoryService.getSharedCategories(username).subscribe((categories: Category[]) => {
+      const sharedSubscription = this.categoryService.getSharedCategories(id).subscribe((categories: Category[]) => {
         this.sharedCategories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
         sharedSubscription.unsubscribe();
       });
@@ -149,8 +151,8 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     const query = event.target.value.toLowerCase();
 
     if (!query) {
-      if (this.user) {
-        this.loadCategories(this.user.username);
+      if (this.user && this.user.id) {
+        this.loadCategories(this.user.id);
       }
       return;
     }
@@ -178,14 +180,14 @@ export class HomePage extends UtilitiesMixin implements OnInit {
           id: UUID.UUID(),
           name: data.data.name,
           imgUrl: data.data.imgUrl || '',
-          owner: this.user.username
+          owner: this.user.id
         };
         this.categoryService.addCategory(newCategory)
           .then((categoryAdded) => {
-            if (this.user) {
+            if (this.user && this.user.id) {
               const message = categoryAdded.name + " is successfully created."
               this.presentToast(message, 'success');
-              this.loadCategories(this.user.username)
+              this.loadCategories(this.user.id)
             }
           })
           .catch((err) => {
@@ -202,6 +204,16 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     await this.authService.logOut();
     await this.loadUser();
   }
+showMyCategories: boolean = true;
+showSharedCategories: boolean = true;
+
+toggleMyCategories() {
+  this.showMyCategories = !this.showMyCategories;
+}
+
+toggleSharedCategories() {
+  this.showSharedCategories = !this.showSharedCategories;
+}
   /**
    * Mise à jour un category
    * @param categoryId
@@ -219,8 +231,8 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
       const { data } = await modal.onWillDismiss();
 
-      if (data && data.name && this.user) {
-        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.user.username).pipe(first()).toPromise();
+      if (data && data.name && this.user && this.user.id) {
+        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).toPromise();
         if (oldCategory) {
           const updatedCategory = {
             id: categoryId,
@@ -230,10 +242,10 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             readers: oldCategory.readers,
             editors: oldCategory.editors
           };
-          if ((oldCategory.editors && oldCategory.editors.includes(this.user.username)) || oldCategory.owner == this.user.username) {
+          if ((oldCategory.editors && this.user.id && oldCategory.editors.includes(this.user.id)) || oldCategory.owner == this.user.id) {
             await this.categoryService.updateCategory(updatedCategory).then(() => {
-              if (this.user) {
-                this.loadCategories(this.user.username);
+              if (this.user && this.user.id) {
+                this.loadCategories(this.user.id);
                 this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
               }
             }).catch(() => {
@@ -253,19 +265,19 @@ export class HomePage extends UtilitiesMixin implements OnInit {
    * @param categoryId
    */
   async deleteCategory(categoryId: string) {
-    if (this.user)
-      this.categoryService.getCategoryById(categoryId, this.user.username).pipe(first()).subscribe({
+    if (this.user && this.user.id)
+      this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).subscribe({
         next: (value) => {
-          if (value && value.name && this.user) {
-            this.categoryService.deleteCategory(categoryId, this.user.username)
+          if (value && value.name && this.user &&this.user.id) {
+            this.categoryService.deleteCategory(categoryId, this.user.id)
               .then(async (isDeleted) => {
-                if (isDeleted == true && this.user) {
+                if (isDeleted == true && this.user && this.user.id) {
                   if (value.imgUrl) {
                     const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);
                     await this.uploadService.deleteImageByFullPath(imagePath)
                   }
                   this.presentToast(`${value.name} is succesfully deleted.`, 'success')
-                  this.loadCategories(this.user.username)
+                  this.loadCategories(this.user.id)
                 }
               })
               .catch((err) => {
@@ -304,5 +316,7 @@ addIcons({
   'person-circle-outline': personCircleOutline,
   'eye-outline': eyeOutline,
   'add-circle': addCircle,
-  'ellipsis-vertical' : ellipsisVertical
+  'ellipsis-vertical' : ellipsisVertical,
+  'chevron-down' : chevronDown,
+  'chevron-up' : chevronUp
 });

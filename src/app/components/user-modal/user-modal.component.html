@@ -7,7 +7,7 @@
       User Details
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(this.uploadService.selectedFile, $event)"
+      <ion-button data-testid="confirm-new-recipe-modal-btn" (click)="confirm(uploadService.selectedFile, $event)"
         [strong]="true" [disabled]="userDetailsForm.errors?.['required']">
         <ion-icon name="checkmark-outline"></ion-icon>
       </ion-button>
@@ -29,21 +29,21 @@
     <ion-item class="ion-padding-top">
       <ion-input label="Given Name" labelPlacement="stacked" formControlName="firstName" placeholder="Given Name"></ion-input>
       <div class="text-danger"
-        *ngIf="this.userDetailsForm.controls['firstName'].touched && this.userDetailsForm.controls['firstName'].invalid">
+        *ngIf="userDetailsForm.controls['firstName'].touched && userDetailsForm.controls['firstName'].invalid">
         A given name is required
       </div>
     </ion-item>
     <ion-item class="ion-padding-top">
       <ion-input label="Family Name" labelPlacement="stacked" formControlName="lastName" placeholder="Family Name"></ion-input>
       <div class="text-danger"
-        *ngIf="this.userDetailsForm.controls['lastName'].touched && this.userDetailsForm.controls['lastName'].invalid">
+        *ngIf="userDetailsForm.controls['lastName'].touched && userDetailsForm.controls['lastName'].invalid">
         A family name is required
       </div>
     </ion-item>
     <ion-item class="ion-padding-top">
       <ion-input label="Username" labelPlacement="stacked" formControlName="username" placeholder="Username"></ion-input>
       <div class="text-danger"
-        *ngIf="this.userDetailsForm.controls['username'].touched && this.userDetailsForm.controls['username'].invalid">
+        *ngIf="userDetailsForm.controls['username'].touched && userDetailsForm.controls['username'].invalid">
         A username is required
       </div>
     </ion-item>

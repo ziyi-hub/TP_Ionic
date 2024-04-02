@@ -46,13 +46,14 @@ import {
 import { UUID } from 'angular2-uuid';
 import { first, map } from 'rxjs';
 import {UploadService} from "../../services/upload.service";
+import { ShareModalComponent } from 'src/app/components/share-modal/share-modal.component';
 
 @Component({
   standalone: true,
   selector: 'app-category-detail',
   templateUrl: './category-detail.page.html',
   styleUrls: ['./category-detail.page.scss'],
-  imports: [CommonModule, IonCard, IonRow, IonCardContent, IonButton, IonFabList, IonActionSheet, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
+  imports: [IonActionSheet, CommonModule, IonCard, IonRow, IonCardContent, IonButton, IonFabList, IonActionSheet, IonSelect, IonSelectOption, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem]
 })
 
 export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
@@ -103,7 +104,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         {
           text: 'Share',
           handler: () => {
-            this.shareRecipe();
+            this.shareRecipe(recipe);
           }
         },
         {
@@ -140,12 +141,12 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   getCurrentCategory() {
     this.route.params.pipe(first()).subscribe(params => {
       const categoryId = params['id'];
-      if (this.user)
-        this.categoryService.getCategoryById(categoryId, this.user.username).pipe(first()).subscribe(
-          category => {
-            if (category && this.user) {
+      if (this.user && this.user.id)
+        this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).subscribe(
+          async category => {
+            if (category && this.user && this.user.id) {
               this.category = category;
-              this.categoryService.getRecipesByCategoryId(categoryId, this.user.username).pipe(
+              (await this.categoryService.getRecipesByCategoryId(categoryId, this.user.id)).pipe(
                 map((recipes: Recipe[] | undefined) => recipes ? recipes.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name)) : [])
               ).subscribe({
                 next: (recipes: Recipe[] | undefined) => {
@@ -174,14 +175,14 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
 
     modal.onWillDismiss().then((data) => {
 
-      if (!!data && data.data && this.category && this.user) {
+      if (!!data && data.data && this.category && this.user && this.user.id) {
         const recipeValue = {
           id: UUID.UUID(),
           name: data.data.name,
           duration: data.data.duration,
           serving: data.data.serving,
           imgUrl: data.data.imgUrl,
-          owner: this.user.username,
+          owner: this.user.id,
           steps: data.data.steps,
           ingredients: data.data.ingredients,
           tags: data.data.tags,
@@ -203,11 +204,11 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
     return await modal.present();
   }
 
-  async deleteRecipe(recipeId: string, username: string) {
+  async deleteRecipe(recipeId: string, id: string) {
     if (recipeId) {
-      this.categoryService.getRecipe(this.category!.id, recipeId, username).pipe(first()).subscribe({
+      this.categoryService.getRecipe(this.category!.id, recipeId, id).pipe(first()).subscribe({
         next: (value: Recipe | undefined) => {
-          if (value && this.user && value.owner === this.user.username) {
+          if (value && this.user && value.owner === this.user.id) {
             this.categoryService.deleteRecipe(recipeId, this.category!.id)
               .then(async (isDeleted: boolean) => {
                 if (isDeleted === true) {
@@ -232,8 +233,34 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
       this.presentToast('Invalid id', 'danger');
     }
   }
-  shareRecipe() {
-    console.log('in')
+  async shareRecipe(recipe:Recipe) {
+    const modal = await this.modalController.create({
+      component: ShareModalComponent,
+      componentProps: {
+        recipe: recipe,
+        categoryId: this.category?.id
+      }
+    });
+    modal.onWillDismiss().then(async (data) => {
+      if (this.category?.id && data && data.data && this.user && this.user.id) {
+        let category: Category = this.category;
+          
+            if (data.data.user['id'] && recipe && category && category.id && this.user) {
+              if (data.data.role === "editors") {
+                recipe.editors = [...(recipe.editors || []), data.data.user['id']] as string[];
+                category.editors = [...(category.editors || []), data.data.user['id']] as string[];
+
+              } else if (data.data.role === "readers") {
+                recipe.readers = [...(recipe.readers || []), data.data.user['id']] as string[];
+                category.readers = [...(category.readers || []), data.data.user['id']] as string[];
+              }
+              const categoryUpdated = await this.categoryService.updateCategory(category);
+              const recipeUpdated = await this.categoryService.updateRecipe(recipe, this.category?.id);
+              this.presentToast(`${recipe?.name} successfully shared`, 'success')
+            }
+      }
+    });
+    return await modal.present();
   }
   async updateRecipe(recipeId: string) {
     const modal = await this.modalController.create({
@@ -244,8 +271,8 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
       }
     });
     modal.onWillDismiss().then(async (data) => {
-      if (!!data && data.data && this.category && this.user) {
-        const oldRecipe = await this.categoryService.getRecipe(this.category.id, recipeId, this.user.username).pipe(first()).toPromise();
+      if (!!data && data.data && this.category && this.user && this.user.id) {
+        const oldRecipe = await this.categoryService.getRecipe(this.category.id, recipeId, this.user.id).pipe(first()).toPromise();
         if (oldRecipe) {
           const recipeValue = {
             id: recipeId,
@@ -260,7 +287,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
             readers: oldRecipe.readers,
             editors: oldRecipe.editors
           }
-          if ((oldRecipe.editors && oldRecipe.editors.includes(this.user.username)) || oldRecipe.owner == this.user.username) {
+          if ((oldRecipe.editors && this.user.id && oldRecipe.editors.includes(this.user.id)) || oldRecipe.owner == this.user.id) {
             await this.categoryService.updateRecipe(recipeValue, this.category.id)
               .then((updatedRecipe: Recipe) => {
                 const message = updatedRecipe.name + " is successfully updated."

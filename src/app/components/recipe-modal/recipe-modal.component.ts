@@ -167,8 +167,8 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
 
   loadRecipe() {
     try {
-      if (this.recipeId && this.categoryId && this.user) {
-        this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.user.username).pipe(first()).subscribe({
+      if (this.recipeId && this.categoryId && this.user && this.user.id) {
+        this.CategoryService.getRecipe(this.categoryId, this.recipeId, this.user.id).pipe(first()).subscribe({
           next: (value: any) => {
             if (value) {
               this.recipeForm.setValue({

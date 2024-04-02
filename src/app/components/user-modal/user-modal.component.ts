@@ -23,6 +23,7 @@ import {
   IonInput, IonIcon } from '@ionic/angular/standalone';
 import { UploadService } from 'src/app/services/upload.service';
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
+import { User } from 'src/app/models/user';
 @Component({
   selector: 'app-user-modal',
   templateUrl: './user-modal.component.html',
@@ -83,6 +84,7 @@ export class UserModalComponent extends UtilitiesMixin implements OnInit{
       this.presentToast(msg, "danger");
     }
   }
+
   async confirm(file: any, event: Event) {
     event.preventDefault();
     let imgUrl: string | null = null;

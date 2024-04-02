@@ -1,0 +1,31 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-button (click)="cancel()" fill="none" slot="start">
+      <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <ion-title>Caring is sharing</ion-title>
+    <ion-button (click)="confirm()" [disabled]="userForm.invalid" fill="none" slot="end">
+      <ion-icon slot="icon-only" name="checkmark-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding ion-margin-vertical">
+  <form [formGroup]="userForm">
+    <ion-item [class.disabled]="usersNotShared && usersNotShared.length === 0">
+      <ion-select label="Contacts" labelPlacement="stacked" required formControlName="user" [disabled]="usersNotShared! && usersNotShared.length === 0">
+        <ion-select-option *ngFor="let user of usersNotShared" [value]="user">
+          {{ user.firstName }} {{ user.lastName }} ({{ user.username }})
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item class="ion-no-padding-top" *ngIf="!usersNotShared || usersNotShared.length === 0" >
+      <ion-text color="danger"> <small>Contact list is empty</small></ion-text>
+    </ion-item>
+    
+    <ion-item>
+      <ion-select label="Role" labelPlacement="stacked" required formControlName="role" errorText="Role is required">
+        <ion-select-option *ngFor="let role of roles" [value]="role">{{ role }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </form>
+</ion-content>

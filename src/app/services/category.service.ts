@@ -1,41 +1,42 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, query, where, or } from '@angular/fire/firestore';
-import { Observable, first, map, switchMap } from 'rxjs';
+import { Observable, catchError, first, map, of, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
+import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class CategoryService {
-  
+
   private readonly firestore = inject(Firestore);
   private readonly categoryCollection = collection(this.firestore, 'categories');
-  
+
   /**
    * Retrieve all private categories 
    * @returns Observable array of categories
    **/
-  getPrivateCategories(username : string): Observable<Category[]> {
-    return collectionData(query(this.categoryCollection, where("owner", "==", username)), { idField: 'id' }) as Observable<Category[]>
+  getPrivateCategories(uid: string): Observable<Category[]> {
+    return collectionData(query(this.categoryCollection, where("owner", "==", uid)), { idField: 'id' }) as Observable<Category[]>
   }
 
   /**
    * Retrieve all shared categories 
    * @returns Observable array of categories
    **/
-  getSharedCategories(username : string): Observable<Category[]> {
-    return collectionData(query(this.categoryCollection, or(where("editors", "array-contains", username), where("readers", "array-contains", username))), { idField: 'id' }) as Observable<Category[]>
+  getSharedCategories(uid: string): Observable<Category[]> {
+    return collectionData(query(this.categoryCollection, or(where("editors", "array-contains", uid), where("readers", "array-contains", uid))), { idField: 'id' }) as Observable<Category[]>
   }
-  
+
   /**
    * Retrieve a category (owned and shared) by its identifier. 
    * @param categoryId Category ID
    * @returns Observable of the category with the specified ID
    */
-  getCategoryById(categoryId: string, username : string): Observable<Category | undefined> {
-    return (collectionData(query(this.categoryCollection, or(where("owner", "==", username), where("editors", "array-contains", username), where("readers", "array-contains", username))), { idField: 'id' }) as Observable<Category[]>
+  getCategoryById(categoryId: string, uid: string): Observable<Category | undefined> {
+    return (collectionData(query(this.categoryCollection, or(where("owner", "==", uid), where("editors", "array-contains", uid), where("readers", "array-contains", uid))), { idField: 'id' }) as Observable<Category[]>
     ).pipe(
       map(categories => categories.find(category => category.id === categoryId))
     );
@@ -46,28 +47,28 @@ export class CategoryService {
    * @param categoryId Category ID
    * @returns Observable array of recipes for the specified category
    */
-  getRecipesByCategoryId(categoryId: string, username : string): Observable<Recipe[] | undefined> {
-   const recipeCollection = collection(this.firestore, 'categories/' + categoryId + '/recipes');
-   return collectionData(query(recipeCollection, or(where("editors", "array-contains", username), where("readers", "array-contains", username), where("owner", "==", username))), { idField: 'id' }) as Observable<Recipe[]>;
+  async getRecipesByCategoryId(categoryId: string, uid: string): Promise<Observable<Recipe[] | undefined>> {
+    const recipeCollection = collection(this.firestore, 'categories/' + categoryId + '/recipes');
+    return collectionData(query(recipeCollection, or(where("editors", "array-contains", uid), where("readers", "array-contains", uid), where("owner", "==", uid))), { idField: 'id' }) as Observable<Recipe[]>;
   }
-
-
   /**
    * Retrieve a recipe by its ID.
    * @param categoryId Category ID
    * @param recipeId Recipe ID
    * @returns Observable of the recipe with the specified ID
    */
-  getRecipe(categoryId: string, recipeId: string, username : string): Observable<Recipe | undefined> {
-    return this.getCategoryById(categoryId, username).pipe(
-      switchMap((category) => {
+  getRecipe(categoryId: string, recipeId: string, uid: string): Observable<Recipe | undefined> {
+    return this.getCategoryById(categoryId, uid).pipe(
+      switchMap(async (category) => {
         if (category) {
-          return this.getRecipesByCategoryId(categoryId, username).pipe(
-            map(recipes => recipes!.find(recipe => recipe.id === recipeId))
-          );
+          const recipes = await (await this.getRecipesByCategoryId(categoryId, uid)).toPromise();
+          return recipes!.find(recipe => recipe.id === recipeId);
         } else {
           throw new Error('Category not found or does not contain recipes.');
         }
+      }),
+      catchError(error => {
+        return of(undefined);
       })
     );
   }
@@ -90,7 +91,7 @@ export class CategoryService {
     };
 
     const docRef = await addDoc(collection(this.firestore, 'categories'), categoryValue);
-    return { ...category, id: docRef.id};
+    return { ...category, id: docRef.id };
   }
 
   /**
@@ -101,7 +102,7 @@ export class CategoryService {
    */
   async updateCategory(categoryToUpdate: Category): Promise<Category> {
     if (!categoryToUpdate.id) throw new Error('Category id is required');
-    
+
     const categoryValue = {
       name: categoryToUpdate.name,
       imgUrl: categoryToUpdate.imgUrl || '',
@@ -118,23 +119,33 @@ export class CategoryService {
   /**
    * Delete a category from Firestore.
    * @param categoryId The ID of the category to delete
-   * @param username The current username
+   * @param uid The current uid
    * @returns Promise that resolves with a boolean indicating success
    * @throws Error if the category ID is not provided
    */
-  async deleteCategory(categoryId: string, username: string): Promise<boolean> {
-    if (!categoryId) throw new Error('Category id is required');
-    const recipes = this.getRecipesByCategoryId(categoryId, username).pipe(first()).toPromise()
-    recipes.then(async (recipes)=>{
-      if(recipes)
-        recipes.map(async (recipe)=>{
-          await this.deleteRecipe(recipe.id, categoryId)
-        })
+  async deleteCategory(categoryId: string, uid: string): Promise<boolean> {
+    if (!categoryId) {
+      throw new Error('Category id is required');
+    }
+  
+    try {
+      const recipes = await (await this.getRecipesByCategoryId(categoryId, uid)).pipe(first()).toPromise();
+  
+      if (recipes) {
+        await Promise.all(recipes.map(async (recipe: { id: string; }) => {
+          await this.deleteRecipe(recipe.id, categoryId);
+        }));
+      }
+  
       await deleteDoc(doc(this.categoryCollection, categoryId));
-    })
-    return true;
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      return false;
+    }
   }
-
+  
   /**
    * Add a new recipe to a category in Firestore.
    * @param recipe The recipe to add
@@ -148,9 +159,9 @@ export class CategoryService {
     const recipeValue = {
       name: recipe.name,
       duration: recipe.duration,
-      imgUrl : recipe.imgUrl,
+      imgUrl: recipe.imgUrl,
       serving: recipe.serving,
-      owner : recipe.owner,
+      owner: recipe.owner,
       steps: recipe.steps,
       ingredients: recipe.ingredients,
       tags: recipe.tags,
@@ -177,9 +188,9 @@ export class CategoryService {
       name: updatedRecipe.name,
       duration: updatedRecipe.duration,
       serving: updatedRecipe.serving,
-      imgUrl : updatedRecipe.imgUrl,
+      imgUrl: updatedRecipe.imgUrl,
       owner: updatedRecipe.owner,
-      steps: updatedRecipe.steps, 
+      steps: updatedRecipe.steps,
       ingredients: updatedRecipe.ingredients,
       tags: updatedRecipe.tags,
       readers: updatedRecipe.readers,
@@ -201,7 +212,7 @@ export class CategoryService {
     if (!recipeId || !categoryId) throw new Error('Recipe id and category id are required');
     const recipeDocRef = doc(collection(this.firestore, `categories/${categoryId}/recipes`), recipeId);
     await deleteDoc(recipeDocRef);
-    return true;   
+    return true;
   }
 
 }

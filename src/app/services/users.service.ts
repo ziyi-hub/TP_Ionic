@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import {Firestore, collection, collectionData, deleteDoc, doc,updateDoc, setDoc} from '@angular/fire/firestore';
+import {Firestore, collection, collectionData, deleteDoc, doc,updateDoc, setDoc, query, or, where} from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import  { User } from '../models/user';
 import { serverTimestamp } from 'firebase/firestore';
+import { Recipe } from '../models/recipe';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class UsersService {
     return collectionData(collection(this.firestore, 'users'), {idField: 'id'}) as Observable<User[]>
 
   }
+  
   /**
    * Retrieve a user by its identifier.
    * @param userId user ID
