@@ -1,6 +1,7 @@
+import { AuthService } from './auth.service';
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, query, where, or } from '@angular/fire/firestore';
-import { Observable, catchError, first, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, first, map, of, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
 import { User } from '../models/user';
@@ -13,6 +14,44 @@ export class CategoryService {
 
   private readonly firestore = inject(Firestore);
   private readonly categoryCollection = collection(this.firestore, 'categories');
+  private readonly authService = inject(AuthService)
+  private privateCategoriesSubject = new BehaviorSubject<Category[]>([]);
+  private sharedCategoriesSubject = new BehaviorSubject<Category[]>([]);
+
+  constructor() {
+    this.initializeCategories();
+  }
+  private async initializeCategories() {
+    try {
+      const uid = await this.getCurrentUser();
+      if (uid) {
+        this.loadCategories(uid);
+      }
+    } catch (error) {
+      console.error('Error initializing categories:', error);
+    }
+  }
+  // Load categories from Firestore and update BehaviorSubjects
+  private loadCategories(uid:string) {
+    // Load private categories
+    this.getPrivateCategories(uid).subscribe(categories => {
+      this.privateCategoriesSubject.next(categories);
+    });
+
+    // Load shared categories
+    this.getSharedCategories(uid).subscribe(categories => {
+      this.sharedCategoriesSubject.next(categories);
+    });
+  }
+  // Get observable for private categories
+  getPrivateCategoriesObservable(): Observable<Category[]> {
+    return this.privateCategoriesSubject.asObservable();
+  }
+
+  // Get observable for shared categories
+  getSharedCategoriesObservable(): Observable<Category[]> {
+    return this.sharedCategoriesSubject.asObservable();
+  }
 
   /**
    * Retrieve all private categories 
@@ -20,6 +59,20 @@ export class CategoryService {
    **/
   getPrivateCategories(uid: string): Observable<Category[]> {
     return collectionData(query(this.categoryCollection, where("owner", "==", uid)), { idField: 'id' }) as Observable<Category[]>
+  }
+  
+  async getCurrentUser(): Promise<string | undefined> {
+    try {
+      const user = await this.authService.getConnectedUser().pipe(first()).toPromise();
+  
+      if (user) {
+        return user.uid
+      }
+      return undefined;
+    } catch (error) {
+      console.log('Error retrieving username:', error);
+      throw error;
+    }
   }
 
   /**
@@ -29,6 +82,7 @@ export class CategoryService {
   getSharedCategories(uid: string): Observable<Category[]> {
     return collectionData(query(this.categoryCollection, or(where("editors", "array-contains", uid), where("readers", "array-contains", uid))), { idField: 'id' }) as Observable<Category[]>
   }
+  
 
   /**
    * Retrieve a category (owned and shared) by its identifier. 

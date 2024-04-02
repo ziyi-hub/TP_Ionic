@@ -34,13 +34,16 @@ export class CategoryModalComponent extends UtilitiesMixin implements OnInit {
 
   async ngOnInit(): Promise<void> {
     try {
-      this.user = await this.getCurrentUser();
-      if(this.user)
+      this.user = await this.getCurrentUser()
+      if(this.user){
         this.loadCategory()
+      }
+       
     } catch (error) {
       this.presentToast("Failed to retrieve logged-in user.", "danger")
     }
   }
+ 
 
   loadCategory() {
     try {

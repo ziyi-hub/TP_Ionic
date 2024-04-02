@@ -4,18 +4,6 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>DishShare</ion-title>
-    <!-- <ion-tie class="ion-padding-horizontal">DishShare</ion-tie> -->
-    <!-- <p class="ion-padding-horizontal" *ngIf="this.user">Good morning {{this.user.username}}</p>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-avatar>
-          <ion-img *ngIf="user?.imgUrl; else defaultImg" src="{{user?.imgUrl}}"></ion-img>
-          <ng-template #defaultImg>
-            <ion-img src="https://ionicframework.com/docs/img/demos/avatar.svg" class="rounded-full" alt="avatar"></ion-img>
-          </ng-template>
-        </ion-avatar>
-      </ion-button>
-    </ion-buttons> -->
   </ion-toolbar>
   <ion-toolbar *ngIf="searchService.showSearchBar$ | async">
     <ion-searchbar (ionInput)="handleInput($event)" animated="true" placeholder="Search name"></ion-searchbar>
@@ -35,7 +23,7 @@
     @for (category of categories$ | async; track category.id) {
 
       <ion-list class="ion-padding-vertical" lines="none">
-        <ion-item-sliding data-testid="categories" #ionItemSliding>
+        <ion-item-sliding class="ion-margin-top" data-testid="categories" #ionItemSliding>
           <ion-item-options side="start">
             <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
           </ion-item-options>
@@ -74,7 +62,7 @@
   <div *ngIf="showSharedCategories">
     @for (category of sharedCategories$ | async; track category.id) {
       <ion-list class="ion-padding ion-margin-vertical" lines="none" >
-        <ion-item-sliding data-testid="categories" #ionItemSliding *ngIf="this.user && this.user.id && category.editors?.includes(this.user!.id);else otherContent">
+        <ion-item-sliding  class="ion-margin-top" data-testid="categories" #ionItemSliding *ngIf="this.user && this.user.id && category.editors?.includes(this.user!.id);else otherContent">
           <ion-item-options side="start">
             <ion-item-option color="success" (click)="updateCategory(category.id);closeIonSliding(ionItemSliding)"><ion-icon name="pencil-outline"></ion-icon></ion-item-option>
           </ion-item-options>
@@ -93,7 +81,7 @@
           </ion-item>
         </ion-item-sliding>
         <ng-template #otherContent>
-          <ion-item class="ion-no-margin" (click)="navigateToDetail(category.id)" >
+          <ion-item class="ion-margin-top" class="ion-no-margin" (click)="navigateToDetail(category.id)" >
             <ion-avatar slot="start">
               <ion-img *ngIf="category.imgUrl; else defaultImg" src="{{category.imgUrl}}"></ion-img>
               <ng-template #defaultImg>

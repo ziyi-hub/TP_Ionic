@@ -53,11 +53,11 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
     name : new FormControl('', [Validators.required]) ,
     serving:new FormControl('', [Validators.required]),
     duration:new FormControl('', [Validators.required]),
-    steps: new FormControl([], [Validators.required]),
-    ingredients : new FormControl([], [Validators.required]),
-    tags : new FormControl([], [Validators.required]),
-    readers : new FormControl([], [Validators.required]),
-    editors : new FormControl([], [Validators.required]),
+    steps: new FormControl([]),
+    ingredients : new FormControl([]),
+    tags : new FormControl([]),
+    readers : new FormControl([]),
+    editors : new FormControl([]),
     imgUrl: new FormControl(''),
   });
 
@@ -65,7 +65,7 @@ export class RecipeModalComponent extends UtilitiesMixin implements OnInit{
   private readonly modalCtrl = inject(ModalController);
   public uploadService = inject(UploadService);
 
-  numbers: number[] = Array.from({length: 21}, (_, i) => i);
+  numbers: number[] = Array.from({length: 20}, (_, i) => i + 1);
 
   ingredientsForm: FormGroup;
   stepsForm: FormGroup;

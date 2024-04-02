@@ -12,7 +12,7 @@
 <ion-content color="light" class="ion-padding">
   <ng-container *ngIf="this.user && this.user.id && recipes.length > 0; else otherContent">
     <ion-card *ngFor="let recipe of recipes" class="ion-no-padding ion-margin">
-      <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="presentActionSheet(recipe)" *ngIf="this.user && this.user.id && category && (category.editors?.includes(this.user!.id) || category.owner == this.user.id);">
+      <ion-button fill="clear" class="button-right-top"  id="ellipsis" (click)="  presentActionSheet(recipe)" *ngIf="this.user && this.user.id && category && (category.editors?.includes(this.user!.id) || category.owner == this.user.id);">
         <ion-icon color="secondary" slot="icon-only" name="ellipsis-vertical"></ion-icon>
       </ion-button>
 

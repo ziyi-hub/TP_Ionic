@@ -96,7 +96,7 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         text: 'Delete',
         role: 'destructive',
         handler: () => {
-          this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, this.user!.username), recipe.id, recipe.name);
+            this.presentAlertDelete((categoryId: string) => this.deleteRecipe(recipe.id, recipe.owner), recipe.id, recipe.name);
         }
       });
     }
@@ -154,10 +154,10 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   async createRecipe() {
     const modal = await this.modalController.create({
       component: RecipeModalComponent,
+
     });
 
     modal.onWillDismiss().then((data) => {
-
       if (!!data && data.data && this.category && this.user && this.user.id) {
         const recipeValue = {
           id: UUID.UUID(),
@@ -174,8 +174,11 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
         }
         this.categoryService.addRecipe(recipeValue, this.category.id)
           .then((res: Recipe) => {
-            const message = res.name + " is successfully created."
-            this.presentToast(message, 'success');
+            if(res){
+              const message = res.name + " is successfully created."
+              this.presentToast(message, 'success');
+            }
+            
           })
           .catch((err) => {
             this.presentToast(err, 'danger');
@@ -188,8 +191,8 @@ export class CategoryDetailPage extends UtilitiesMixin implements OnInit {
   }
 
   async deleteRecipe(recipeId: string, id: string) {
-    if (recipeId) {
-      this.categoryService.getRecipe(this.category!.id, recipeId, id).pipe(first()).subscribe({
+    if (recipeId && this.category) {
+      this.categoryService.getRecipe(this.category.id, recipeId, id).pipe(first()).subscribe({
         next: (value: Recipe | undefined) => {
           if (value && this.user && value.owner === this.user.id) {
             this.categoryService.deleteRecipe(recipeId, this.category!.id)

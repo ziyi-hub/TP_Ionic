@@ -90,7 +90,7 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
     const modal = await this.modalController.create({
       component: ShareModalComponent,
       componentProps: {
-        recipeId: this.recipe,
+        recipe: this.recipe,
         categoryId: this.categoryId
       }
     });

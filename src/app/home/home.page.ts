@@ -115,36 +115,24 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined;
-
+  
   constructor(public searchService: SearchService) {
     super();
   }
 
   async ngOnInit() {
     try {
-      this.user = await this.getCurrentUser();
-      if (this.user && this.user.id)
-        this.loadCategories(this.user.id);
-    } catch (error) {
-      this.presentToast("Failed to retrieve logged-in user.", "danger");
-    }
+          this.user = await this.getCurrentUser();
+          if (this.user && this.user.id)
+            this.loadCategories();
+        } catch (error) {
+          this.presentToast("Failed to retrieve logged-in user.", "danger");
+        }
   }
 
-  loadCategories(id: string) {
-    try {
-      const subscription = this.categoryService.getPrivateCategories(id).subscribe((categories: Category[]) => {
-        this.categories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
-        subscription.unsubscribe();
-      });
-      const sharedSubscription = this.categoryService.getSharedCategories(id).subscribe((categories: Category[]) => {
-        this.sharedCategories$ = of(categories.sort((a, b) => a.name.localeCompare(b.name)));
-        sharedSubscription.unsubscribe();
-      });
-    } catch (error) {
-      const msg = 'Error fetching categories: ' + error
-      this.presentToast(msg, 'danger')
-    }
-
+  loadCategories(){
+    this.categories$ = this.categoryService.getPrivateCategoriesObservable();
+    this.sharedCategories$ = this.categoryService.getSharedCategoriesObservable();
   }
 
   handleInput(event: any) {
@@ -152,7 +140,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
 
     if (!query) {
       if (this.user && this.user.id) {
-        this.loadCategories(this.user.id);
+        this.loadCategories();
       }
       return;
     }
@@ -187,7 +175,7 @@ export class HomePage extends UtilitiesMixin implements OnInit {
             if (this.user && this.user.id) {
               const message = categoryAdded.name + " is successfully created."
               this.presentToast(message, 'success');
-              this.loadCategories(this.user.id)
+              this.loadCategories()
             }
           })
           .catch((err) => {
@@ -245,7 +233,7 @@ toggleSharedCategories() {
           if ((oldCategory.editors && this.user.id && oldCategory.editors.includes(this.user.id)) || oldCategory.owner == this.user.id) {
             await this.categoryService.updateCategory(updatedCategory).then(() => {
               if (this.user && this.user.id) {
-                this.loadCategories(this.user.id);
+                this.loadCategories();
                 this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
               }
             }).catch(() => {
@@ -277,7 +265,7 @@ toggleSharedCategories() {
                     await this.uploadService.deleteImageByFullPath(imagePath)
                   }
                   this.presentToast(`${value.name} is succesfully deleted.`, 'success')
-                  this.loadCategories(this.user.id)
+                  this.loadCategories()
                 }
               })
               .catch((err) => {
