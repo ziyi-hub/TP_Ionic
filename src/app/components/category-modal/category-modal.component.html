@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">Cancel</ion-button>
+    </ion-buttons>
+    <div *ngIf="categoryId; else newCategory">
+      <ion-title>Update Category</ion-title>
+    </div>
+    <ng-template #newCategory>
+      <ion-title>Add new Category</ion-title>
+    </ng-template>
+    <ion-buttons slot="end">
+      <ion-button (click)="confirm(this.uploadService.selectedFile, $event)" data-testid="confirm-new-category-modal-btn" [strong]="true" [disabled]="categoryForm.errors?.['required']">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="categoryForm">
+    <ion-item>
+      <ion-input data-testid="category-name" labelPlacement="stacked"  label="Name"  required formControlName="name" errorText="Category name is required" ></ion-input>
+    </ion-item>
+  </form>
+
+  <ion-card>
+    <ion-card-subtitle class="ion-padding">
+      Upload image
+    </ion-card-subtitle>
+    <ion-card-content>
+      <form>
+        <ion-item>
+          <ion-input type="file" name="inputFile" (change)="uploadService.chooseFile($event)" required></ion-input>
+        </ion-item>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,128 +1,304 @@
 import { UtilitiesMixin } from 'src/app/mixins/utilities-mixin';
 import { Component, OnInit, inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { TopicService } from '../services/topic.service';
-import { Topic } from '../models/topic';
-import { TopicModalComponent } from '../components/topic-modal/topic-modal.component';
-import { ModalController, IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { addOutline, pencilOutline, trashOutline} from 'ionicons/icons';
+import { CategoryService } from '../services/category.service';
+import { Category } from '../models/category';
+import { CategoryModalComponent } from '../components/category-modal/category-modal.component';
 import { UUID } from 'angular2-uuid';
+import { addIcons } from 'ionicons';
+import {
+  logOutOutline,
+  pencilOutline,
+  personCircle,
+  settingsOutline,
+  trashOutline,
+  personCircleOutline,
+  eyeOutline,
+  addCircle,
+  ellipsisVertical,
+  chevronDown,
+  chevronUp
+} from 'ionicons/icons';
+import { TabPage } from '../components/tab/tab.page';
+import { AsyncPipe } from "@angular/common";
+import {Observable, first, of, map, pipe} from "rxjs";
+import { CommonModule } from '@angular/common';
+import {
+  IonSearchbar,
+  IonBackButton,
+  IonButtons,
+  ModalController,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItemSliding,
+  IonIcon,
+  IonCardHeader,
+  IonCard,
+  IonCardContent,
+  IonItemOption,
+  IonItemOptions,
+  IonLabel,
+  IonItem,
+  IonButton,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonRow,
+  IonCol,
+  IonImg,
+  IonMenu,
+  IonMenuButton,
+  IonMenuToggle,
+  IonToggle,
+  IonAvatar,
+  IonGrid,
+  IonThumbnail,
+  IonText,
+} from '@ionic/angular/standalone';
+import {UploadService} from "../services/upload.service";
+import {SearchService} from "../services/search.service";
+
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
   standalone: true,
-  imports: [ IonFab, IonFabButton, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItemSliding, IonIcon, IonItemOption, IonItemOptions, IonLabel, IonItem],
+  imports: [
+    CommonModule,
+    IonSearchbar,
+    IonButton,
+    IonFab,
+    IonFabButton,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItemSliding,
+    IonIcon,
+    IonImg,
+    IonBackButton,
+    IonButtons,
+    IonItemOption,
+    IonItemOptions,
+    IonLabel,
+    IonItem,
+    AsyncPipe,
+    IonCardHeader,
+    IonCard,
+    IonCardContent,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonRow,
+    IonCol,
+    IonMenu,
+    IonMenuButton,
+    IonMenuToggle,
+    IonToggle,
+    TabPage,
+    IonAvatar,
+    IonGrid,
+    IonThumbnail,
+    IonText,
+  ],
 })
 
 export class HomePage extends UtilitiesMixin implements OnInit {
-  topics: Topic[] = [];
-  private readonly topicService = inject(TopicService);
+
+  private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
-  private readonly router = inject(Router);
+  private readonly uploadService = inject(UploadService);
 
-  /**
-   * Charger les topics lors de l'initialisation de la page
-   */
-  ngOnInit() {
-    this.loadTopics();
+  categories$: Observable<Category[]> | undefined;
+  sharedCategories$: Observable<Category[]> | undefined;
+  
+  constructor(public searchService: SearchService) {
+    super();
   }
 
-  /**
-   * Utiliser le service pour récupérer tous les topics
-   */
-  loadTopics() {
-    this.topics = this.topicService.getAll();
+  async ngOnInit() {
+    try {
+          this.user = await this.getCurrentUser();
+          if (this.user && this.user.id)
+            this.loadCategories();
+        } catch (error) {
+          this.presentToast("Failed to retrieve logged-in user.", "danger");
+        }
   }
 
-  /**
-   * Ouvrir Modal Topic
-   */
-  async createTopic() {
+  loadCategories(){
+    this.categories$ = this.categoryService.getPrivateCategoriesObservable();
+    this.sharedCategories$ = this.categoryService.getSharedCategoriesObservable();
+  }
+
+  handleInput(event: any) {
+    const query = event.target.value.toLowerCase();
+
+    if (!query) {
+      if (this.user && this.user.id) {
+        this.loadCategories();
+      }
+      return;
+    }
+
+    if (this.categories$) {
+      this.categories$ = this.categories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
+
+    if (this.sharedCategories$) {
+      this.sharedCategories$ = this.sharedCategories$.pipe(
+        map(categories => categories.filter(category => category.name.toLowerCase().includes(query)))
+      );
+    }
+  }
+
+  async createCategory() {
     const modal = await this.modalController.create({
-      component: TopicModalComponent,
+      component: CategoryModalComponent,
     });
-
     modal.onWillDismiss().then((data) => {
-      if (!!data && data.data) {
-        const newTopic = { id: UUID.UUID(), name: data.data, posts: [] }
-        this.topicService.addTopic(newTopic)
-          .then(() => {
-            const message =  data.data + " is successfully created."
-            this.presentToast(message, 'success');
+      if (!!data && data.data && this.user) {
+        const newCategory = {
+          id: UUID.UUID(),
+          name: data.data.name,
+          imgUrl: data.data.imgUrl || '',
+          owner: this.user.id
+        };
+        this.categoryService.addCategory(newCategory)
+          .then((categoryAdded) => {
+            if (this.user && this.user.id) {
+              const message = categoryAdded.name + " is successfully created."
+              this.presentToast(message, 'success');
+              this.loadCategories()
+            }
           })
           .catch((err) => {
-            this.presentToast(err, 'danger');
-          })
-        this.loadTopics();
+            this.presentToast("in" + err, 'danger');
+          });
       }
     });
-
     return await modal.present();
+  }
+
+showMyCategories: boolean = true;
+showSharedCategories: boolean = true;
+
+toggleMyCategories() {
+  this.showMyCategories = !this.showMyCategories;
+}
+
+toggleSharedCategories() {
+  this.showSharedCategories = !this.showSharedCategories;
+}
+  /**
+   * Mise à jour un category
+   * @param categoryId
+   */
+  async updateCategory(categoryId: string) {
+    try {
+      const modal = await this.modalController.create({
+        component: CategoryModalComponent,
+        componentProps: {
+          categoryId: categoryId
+        }
+      });
+
+      await modal.present();
+
+      const { data } = await modal.onWillDismiss();
+
+      if (data && data.name && this.user && this.user.id) {
+        const oldCategory = await this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).toPromise();
+        if (oldCategory) {
+          const updatedCategory = {
+            id: categoryId,
+            name: data.name,
+            imgUrl: data.imgUrl || oldCategory.imgUrl,
+            owner: oldCategory.owner,
+            readers: oldCategory.readers,
+            editors: oldCategory.editors
+          };
+          if ((oldCategory.editors && this.user.id && oldCategory.editors.includes(this.user.id)) || oldCategory.owner == this.user.id) {
+            await this.categoryService.updateCategory(updatedCategory).then(() => {
+              if (this.user && this.user.id) {
+                this.loadCategories();
+                this.presentToast(`${updatedCategory.name} is successfully updated.`, 'success');
+              }
+            }).catch(() => {
+              this.presentToast(`Failed to update ${oldCategory.name}.`, 'danger');
+            });
+          }
+        }
+      }
+    } catch (error) {
+      this.presentToast(error + "", 'danger');
+    }
+  }
+
+
+  /**
+   * Suppression un category
+   * @param categoryId
+   */
+  async deleteCategory(categoryId: string) {
+    if (this.user && this.user.id)
+      this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).subscribe({
+        next: (value) => {
+          if (value && value.name && this.user &&this.user.id) {
+            this.categoryService.deleteCategory(categoryId, this.user.id)
+              .then(async (isDeleted) => {
+                if (isDeleted == true && this.user && this.user.id) {
+                  if (value.imgUrl) {
+                    const imagePath = this.uploadService.getPathStorageFromUrl(value.imgUrl);
+                    await this.uploadService.deleteImageByFullPath(imagePath)
+                  }
+                  this.presentToast(`${value.name} is succesfully deleted.`, 'success')
+                  this.loadCategories()
+                }
+              })
+              .catch((err) => {
+                this.presentToast(err, 'danger');
+              });
+          }
+        },
+        error: (error) => {
+          this.presentToast(error, 'danger');
+        },
+        complete: () => {
+          console.log('Observable terminé');
+        }
+      });
   }
 
   /**
    * Redirect page
-   * @param topicId
+   * @param categoryId
    */
-  navigateToDetail(topicId: string) {
-    this.router.navigate(['/topic-detail', topicId]);
+  navigateToDetail(categoryId: string) {
+    this.router.navigate(['/category-detail', categoryId]);
   }
 
-  /**
-   * Update topic
-   * @param topicId
-   */
-  async updateTopic(topicId: string) {
-    const modal = await this.modalController.create({
-      component: TopicModalComponent,
-      componentProps: {
-        topicId: topicId
-      }
-    });
-
-    modal.onWillDismiss().then((data) => {
-      if (!!data && data.data) {
-          const updatedTopic = { id: topicId, name: data.data, posts: [] }
-          this.topicService.updateTopic(updatedTopic)
-            .then(() => {
-              const message = data.data + " is successfully updated."
-              this.presentToast(message, 'success');
-            })
-            .catch((err) => {
-              this.presentToast(err, 'danger');
-            })
-          this.loadTopics();
-
-      }
-    });
-
-    return await modal.present();
-  }
-
-  /**
-   * Delete topic id
-   * @param topicId
-   */
-  async deleteTopic(topicId: string){
-    const topicName =  this.topicService.get(topicId)?.name;
-    this.topicService.deleteTopic(topicId).then(() => {
-      const message = topicName + " is succesfully deleted."
-      this.presentToast(message,  'success');
-    })
-    .catch((err) => {
-      this.presentToast(err, 'danger');
-    });
+  closeIonSliding(ionItemSliding: IonItemSliding) {
+    ionItemSliding.close()
   }
 }
 
-/**
-* Add icons
-**/
 addIcons({
-  'add-outline': addOutline,
   'trash-outline': trashOutline,
-  'pencil-outline' : pencilOutline
+  'pencil-outline': pencilOutline,
+  'person-circle': personCircle,
+  'settings-outline': settingsOutline,
+  'log-out-outline': logOutOutline,
+  'person-circle-outline': personCircleOutline,
+  'eye-outline': eyeOutline,
+  'add-circle': addCircle,
+  'ellipsis-vertical' : ellipsisVertical,
+  'chevron-down' : chevronDown,
+  'chevron-up' : chevronUp
 });

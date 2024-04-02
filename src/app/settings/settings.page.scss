@@ -1,0 +1,26 @@
+ion-content {
+  --padding-top: 16px;
+
+  .content-col {
+    --ion-grid-column-padding: 0px;
+  }
+
+  .user-image {
+    --size: 100px;
+    margin: auto;
+  }
+
+  .rounded-full{
+    border-radius: 100%;
+  }
+  .button-right-top {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    color: black;
+  }
+  .textDanger{
+    color: red !important;
+  }
+}

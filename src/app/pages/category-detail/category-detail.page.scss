@@ -1,0 +1,26 @@
+ion-title.title-large {
+    font-size: 24px;
+}
+ion-toolbar{
+    margin-left: 5px;
+}
+
+ion-list{
+    margin-left: 5px;
+}
+
+ion-card-content{
+  height: 170px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.button-right-top {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  color: black;
+}
+
