@@ -198,12 +198,6 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     return await modal.present();
   }
 
-
-
-  async logout() {
-    await this.authService.logOut();
-    await this.loadUser();
-  }
 showMyCategories: boolean = true;
 showSharedCategories: boolean = true;
 

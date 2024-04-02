@@ -20,8 +20,8 @@ import {
   IonList,
   IonText,
   IonThumbnail,
-  IonCard, 
-  ActionSheetController, ModalController 
+  IonCard,
+  ActionSheetController, ModalController
 
 } from '@ionic/angular/standalone';
 import { TabPage } from '../components/tab/tab.page';
@@ -51,15 +51,15 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
       this.presentToast("Failed to retrieve logged-in user.", "danger");
     }
   }
-  async logout() {
-    await this.authService.logOut();
+  logout() {
+    this.authService.logOut();
   }
   async updateUser() {
     try {
       const modal = await this.modalController.create({
         component: UserModalComponent,
       });
-  
+
       await modal.present();
       const { data } = await modal.onWillDismiss();
       if (data && this.user && this.user.id) {
@@ -77,7 +77,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
         //   await this.authService.sendEmailVerification(currentAccount);
         //   await this.logout()
         // }
-  
+
         // Update user details
         await this.usersService.updateUser(userToUpdate);
         this.getCurrentUser();
@@ -88,7 +88,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
       this.presentToast('Failed to update user.', 'danger');
     }
   }
-  
+
   async presentActionSheet() {
     const actionSheet = await this.actionSheetController.create({
       buttons: [
@@ -108,7 +108,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
     });
     await actionSheet.present();
   }
- 
+
   async deleteUser(id: string) : Promise<Boolean> {
     try {
       const account = await this.authService.getConnectedUser().pipe(first()).toPromise();
@@ -118,16 +118,16 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
           this.presentToast('Account deleted.', 'success');
           this.loadUser()
         }
-        return true; 
+        return true;
       }
-      return false; 
+      return false;
     } catch (error) {
       this.presentToast('Failed to delete account.', 'danger');
       throw new Error('Failed to delete account.');
     }
   }
-  
-  
+
+
 }
 addIcons({
   'log-out-outline': logOutOutline,

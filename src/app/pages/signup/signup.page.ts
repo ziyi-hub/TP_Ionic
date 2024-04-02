@@ -14,10 +14,10 @@ import {
   IonItem,
   IonButton,
   IonRow,
-  IonCol, 
+  IonCol,
   IonImg,
   IonCard,
-  IonCardSubtitle, 
+  IonCardSubtitle,
   IonCardContent,
   IonInput,
   LoadingController
@@ -34,7 +34,7 @@ import { UploadService } from 'src/app/services/upload.service';
   styleUrls: ['./signup.page.scss'],
   standalone: true,
   imports: [IonInput, IonCard,
-    IonCardSubtitle, 
+    IonCardSubtitle,
     IonCardContent, IonImg, CommonModule,RouterModule, ReactiveFormsModule, FormsModule, IonRow, IonCol,IonButton, ReactiveFormsModule, IonButton, IonBackButton, IonButtons, IonHeader, IonToolbar, IonTitle, IonContent, IonLabel, IonItem]
 })
 export class SignupPage extends UtilitiesMixin {
@@ -86,7 +86,7 @@ export class SignupPage extends UtilitiesMixin {
         throw new Error('Username is required.');
       }
       const account = await this.authService.createUser(email, password);
-      await this.authService.logOut();
+      this.authService.logOut();
       const userValue : User = {
         username: username,
         firstName: firstName,
@@ -100,15 +100,15 @@ export class SignupPage extends UtilitiesMixin {
   }
   async addFile(file: any, event: Event) {
     event.preventDefault();
-    
+
     const loading = await this.loadingController.create({
       message: 'Loading ...'
     });
-    
+
     try {
       await loading.present();
       let imgUrl: string | null = null;
-  
+
       if (file) {
         imgUrl = await this.uploadService.uploadFile(file);
       }
@@ -121,10 +121,10 @@ export class SignupPage extends UtilitiesMixin {
     } finally {
       await loading.dismiss();
     }
-  
+
     this.router.navigate(['/login']);
   }
- 
+
   private async signUpDefault(imgUrl?: string | null) {
     if (imgUrl) {
       await this.signUpWithImage(imgUrl);
@@ -132,11 +132,11 @@ export class SignupPage extends UtilitiesMixin {
       await this.signUpWithoutImage();
     }
   }
-  
+
   private async signUpWithImage(imgUrl: string) {
     await this.signUp(imgUrl);
   }
-  
+
   private async signUpWithoutImage() {
     await this.signUp();
   }
