@@ -17,6 +17,7 @@ export class UploadService {
    * @param $event
    */
   chooseFile($event: any) {
+    if (!$event) return;
     this.selectedFile = $event.target.files;
   }
 
@@ -33,6 +34,7 @@ export class UploadService {
             .then(async() => {
               const imgUrl = await this.getUploadedImageURL(file[0].name);
               resolve(imgUrl);
+              this.selectedFile = null;
             })
             .catch(err => {
               reject(err);
