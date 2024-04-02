@@ -53,7 +53,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
   }
   async logout() {
     await this.authService.logOut().then(()=>{
-      this.presentToast("User succesfully logged out.", "danger");
+      this.presentToast("User succesfully logged out.", "success");
     });
   }
   async updateUser() {
