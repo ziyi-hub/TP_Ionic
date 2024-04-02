@@ -41,37 +41,29 @@ export class CategoryService {
       map(categories => categories.find(category => category.id === categoryId))
     );
   }
-
-  /**
-   * Retrieve all recipes of a category.
-   * @param categoryId Category ID
-   * @returns Observable array of recipes for the specified category
-   */
-  async getRecipesByCategoryId(categoryId: string, uid: string): Promise<Observable<Recipe[] | undefined>> {
+  getRecipesByCategoryId(categoryId: string, uid : string): Observable<Recipe[] | undefined> {
     const recipeCollection = collection(this.firestore, 'categories/' + categoryId + '/recipes');
     return collectionData(query(recipeCollection, or(where("editors", "array-contains", uid), where("readers", "array-contains", uid), where("owner", "==", uid))), { idField: 'id' }) as Observable<Recipe[]>;
-  }
-  /**
+   }
+    /**
    * Retrieve a recipe by its ID.
    * @param categoryId Category ID
    * @param recipeId Recipe ID
    * @returns Observable of the recipe with the specified ID
    */
-  getRecipe(categoryId: string, recipeId: string, uid: string): Observable<Recipe | undefined> {
-    return this.getCategoryById(categoryId, uid).pipe(
-      switchMap(async (category) => {
-        if (category) {
-          const recipes = await (await this.getRecipesByCategoryId(categoryId, uid)).toPromise();
-          return recipes!.find(recipe => recipe.id === recipeId);
-        } else {
-          throw new Error('Category not found or does not contain recipes.');
-        }
-      }),
-      catchError(error => {
-        return of(undefined);
-      })
-    );
-  }
+    getRecipe(categoryId: string, recipeId: string, uid : string): Observable<Recipe | undefined> {
+      return this.getCategoryById(categoryId, uid).pipe(
+        switchMap((category) => {
+          if (category) {
+            return this.getRecipesByCategoryId(categoryId, uid).pipe(
+              map(recipes => recipes!.find(recipe => recipe.id === recipeId))
+            );
+          } else {
+            throw new Error('Category not found or does not contain recipes.');
+          }
+        })
+      );
+    }
   /**
    * Add a new category to Firestore.
    * @param category The category to add
