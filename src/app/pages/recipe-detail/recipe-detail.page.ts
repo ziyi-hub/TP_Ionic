@@ -102,9 +102,8 @@ export class RecipeDetailPage extends UtilitiesMixin implements OnInit {
             category = value
             if (data.data.user.id && this.recipe && this.categoryId && this.user) {
               if (data.data.role === "editors") {
-                this.recipe.editors = [...(this.recipe.editors || []), data.data.user.idd] as string[];
+                this.recipe.editors = [...(this.recipe.editors || []), data.data.user.id] as string[];
                 category.editors = [...(category.editors || []), data.data.user.id] as string[];
-
               } else if (data.data.role === "readers") {
                 this.recipe.readers = [...(this.recipe.readers || []), data.data.user.id] as string[];
                 category.readers = [...(category.readers || []), data.data.user.id] as string[];
