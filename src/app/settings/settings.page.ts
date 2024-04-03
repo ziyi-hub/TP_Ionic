@@ -111,7 +111,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
     await actionSheet.present();
   }
 
-  async deleteUser(id: string) : Promise<Boolean> {
+  async deleteUser() : Promise<Boolean> {
     try {
       const account = await this.authService.getConnectedUser().pipe(first()).toPromise();
       if (account) {

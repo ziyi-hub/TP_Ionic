@@ -1,10 +1,9 @@
 import { AuthService } from './auth.service';
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, collectionData, addDoc, deleteDoc, doc, updateDoc, serverTimestamp, query, where, or } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, catchError, first, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, first, map, of, switchMap } from 'rxjs';
 import { Category } from '../models/category';
 import { Recipe } from '../models/recipe';
-import { User } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -18,37 +17,26 @@ export class CategoryService {
   private privateCategoriesSubject = new BehaviorSubject<Category[]>([]);
   private sharedCategoriesSubject = new BehaviorSubject<Category[]>([]);
 
-  constructor() {
-    this.initializeCategories();
-  }
-  private async initializeCategories() {
+
+  async initializeCategories(uid:string) {
     try {
-      const uid = await this.getCurrentUser();
-      if (uid) {
         this.loadCategories(uid);
-      }
     } catch (error) {
-      console.error('Error initializing categories:', error);
+      throw new Error(`Error initializing categories: ${error}`);
     }
   }
-  // Load categories from Firestore and update BehaviorSubjects
   private loadCategories(uid:string) {
-    // Load private categories
     this.getPrivateCategories(uid).subscribe(categories => {
       this.privateCategoriesSubject.next(categories);
     });
-
-    // Load shared categories
     this.getSharedCategories(uid).subscribe(categories => {
       this.sharedCategoriesSubject.next(categories);
     });
   }
-  // Get observable for private categories
   getPrivateCategoriesObservable(): Observable<Category[]> {
     return this.privateCategoriesSubject.asObservable();
   }
 
-  // Get observable for shared categories
   getSharedCategoriesObservable(): Observable<Category[]> {
     return this.sharedCategoriesSubject.asObservable();
   }
@@ -59,20 +47,6 @@ export class CategoryService {
    **/
   getPrivateCategories(uid: string): Observable<Category[]> {
     return collectionData(query(this.categoryCollection, where("owner", "==", uid)), { idField: 'id' }) as Observable<Category[]>
-  }
-  
-  async getCurrentUser(): Promise<string | undefined> {
-    try {
-      const user = await this.authService.getConnectedUser().pipe(first()).toPromise();
-  
-      if (user) {
-        return user.uid
-      }
-      return undefined;
-    } catch (error) {
-      console.log('Error retrieving username:', error);
-      throw error;
-    }
   }
 
   /**
