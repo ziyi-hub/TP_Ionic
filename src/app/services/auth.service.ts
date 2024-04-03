@@ -76,11 +76,11 @@ export class AuthService {
     }
   }
 
-  public async deleteAccount(user:User) : Promise<void>{
+  public async deleteAccount(user: User): Promise<void> {
     try {
-      const userToDelete = await this.usersService.deleteUser(user.uid)
+      const userToDelete = await this.usersService.deleteUser(user.uid);
       if (userToDelete) 
-        await deleteUser(user);
+        await deleteUser(user); 
     } catch (error) {
       throw error;
     }
