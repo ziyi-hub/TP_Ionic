@@ -20,7 +20,7 @@ import {
 } from 'ionicons/icons';
 import { TabPage } from '../components/tab/tab.page';
 import { AsyncPipe } from "@angular/common";
-import {Observable, first, of, map, pipe} from "rxjs";
+import { Observable, first, map } from "rxjs";
 import { CommonModule } from '@angular/common';
 import {
   IonSearchbar,
@@ -57,10 +57,12 @@ import {
   IonGrid,
   IonThumbnail,
   IonText,
+  Platform,
+  IonRouterOutlet
 } from '@ionic/angular/standalone';
-import {UploadService} from "../services/upload.service";
-import {SearchService} from "../services/search.service";
-
+import { UploadService } from "../services/upload.service";
+import { SearchService } from "../services/search.service";
+import { App } from '@capacitor/app';
 
 @Component({
   selector: 'app-home',
@@ -112,32 +114,48 @@ export class HomePage extends UtilitiesMixin implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly modalController = inject(ModalController);
   private readonly uploadService = inject(UploadService);
-
+  private readonly routerOutlet = inject(IonRouterOutlet);
+  private readonly platform = inject(Platform);
   categories$: Observable<Category[]> | undefined;
   sharedCategories$: Observable<Category[]> | undefined;
-  
+
   constructor(public searchService: SearchService) {
     super();
+    this.initializeApp()
+    this.platform.backButton.subscribeWithPriority(10, () => {
+      if (this.routerOutlet && this.routerOutlet.canGoBack()) {
+        this.routerOutlet.pop();
+      } else if (this.router.url === '/tab/home') {
+        App.exitApp();
+      }
+    });
   }
 
+  initializeApp() {
+    App.addListener('appStateChange', ({ isActive }) => {
+      if(isActive)
+        this.loadUser();
+    });
+  }
   async ngOnInit() {
     try {
-          this.user = await this.getCurrentUser();
-          if (this.user && this.user.id)
-            this.loadCategories();
-        } catch (error) {
-          this.presentToast("Failed to retrieve logged-in user.", "danger");
-        }
+      await this.loadCategories()
+    } catch (error) {
+      this.presentToast("Failed to retrieve logged-in user.", "danger");
+    }
   }
 
-  loadCategories(){
-    this.categories$ = this.categoryService.getPrivateCategoriesObservable();
-    this.sharedCategories$ = this.categoryService.getSharedCategoriesObservable();
+  async loadCategories() {
+    this.user = await this.getCurrentUser();
+    if (this.user && this.user.id) {
+      this.categoryService.initializeCategories(this.user.id)
+      this.categories$ = this.categoryService.getPrivateCategoriesObservable();
+      this.sharedCategories$ = this.categoryService.getSharedCategoriesObservable();
+    }
   }
 
   handleInput(event: any) {
     const query = event.target.value.toLowerCase();
-
     if (!query) {
       if (this.user && this.user.id) {
         this.loadCategories();
@@ -186,16 +204,16 @@ export class HomePage extends UtilitiesMixin implements OnInit {
     return await modal.present();
   }
 
-showMyCategories: boolean = true;
-showSharedCategories: boolean = true;
+  showMyCategories: boolean = true;
+  showSharedCategories: boolean = true;
 
-toggleMyCategories() {
-  this.showMyCategories = !this.showMyCategories;
-}
+  toggleMyCategories() {
+    this.showMyCategories = !this.showMyCategories;
+  }
 
-toggleSharedCategories() {
-  this.showSharedCategories = !this.showSharedCategories;
-}
+  toggleSharedCategories() {
+    this.showSharedCategories = !this.showSharedCategories;
+  }
   /**
    * Mise à jour un category
    * @param categoryId
@@ -250,7 +268,7 @@ toggleSharedCategories() {
     if (this.user && this.user.id)
       this.categoryService.getCategoryById(categoryId, this.user.id).pipe(first()).subscribe({
         next: (value) => {
-          if (value && value.name && this.user &&this.user.id) {
+          if (value && value.name && this.user && this.user.id) {
             this.categoryService.deleteCategory(categoryId, this.user.id)
               .then(async (isDeleted) => {
                 if (isDeleted == true && this.user && this.user.id) {
@@ -298,7 +316,7 @@ addIcons({
   'person-circle-outline': personCircleOutline,
   'eye-outline': eyeOutline,
   'add-circle': addCircle,
-  'ellipsis-vertical' : ellipsisVertical,
-  'chevron-down' : chevronDown,
-  'chevron-up' : chevronUp
+  'ellipsis-vertical': ellipsisVertical,
+  'chevron-down': chevronDown,
+  'chevron-up': chevronUp
 });

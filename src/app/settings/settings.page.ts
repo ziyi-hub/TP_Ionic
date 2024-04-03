@@ -31,7 +31,7 @@ import { UtilitiesMixin } from '../mixins/utilities-mixin';
 import { UserModalComponent } from '../components/user-modal/user-modal.component';
 import { User as UserFirebase } from '../models/user';
 import { first } from 'rxjs';
-import { User } from '@angular/fire/auth';
+import { CategoryService } from '../services/category.service';
 
 @Component({
   selector: 'app-settings',
@@ -43,6 +43,7 @@ import { User } from '@angular/fire/auth';
 export class SettingsPage extends UtilitiesMixin implements OnInit{
   private readonly actionSheetController = inject(ActionSheetController);
   private readonly modalController = inject(ModalController)
+  private readonly categoryService = inject(CategoryService)
   showButton = false;
   async ngOnInit() {
     try {
@@ -111,14 +112,21 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
     await actionSheet.present();
   }
 
-  async deleteUser(id: string) : Promise<Boolean> {
+  async deleteUserData(uid: string) {
+    const categories = await this.categoryService.getPrivateCategories(uid).pipe(first()).toPromise();
+    if (categories) {
+      await Promise.all(categories.map(category => this.categoryService.deleteCategory(category.id, uid)));
+    }
+  }
+
+  async deleteUser(): Promise<boolean> {
     try {
       const account = await this.authService.getConnectedUser().pipe(first()).toPromise();
       if (account) {
-        await this.authService.deleteAccount(account).then(()=>{
-          this.presentToast('Account deleted.', 'success');
-          this.loadUser()
-        })
+        await this.deleteUserData(account.uid);
+        await this.authService.deleteAccount(account);
+        this.presentToast('Account deleted.', 'success');
+        this.router.navigateByUrl("/login");
         return true;
       }
       return false;
@@ -126,7 +134,7 @@ export class SettingsPage extends UtilitiesMixin implements OnInit{
       this.presentToast('Failed to delete account.', 'danger');
       throw new Error('Failed to delete account.');
     }
-  }
+  }  
 
 
 }
